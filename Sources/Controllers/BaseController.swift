@@ -30,6 +30,17 @@ public class BaseController {
           let logsController = LogsController(request)
           response = logsController.process(logs: logs)
 
+        case "/cookie":
+          response = Response(status: 200,
+                              headers: ["Content-Type": "text/html",
+                                        "Set-Cookie": "type=chocolate"],
+                              body: "Eat")
+
+        case "/eat_cookie":
+          response = Response(status: 200,
+                              headers: ["Content-Type": "text/html"],
+                              body: "mmmm chocolate")
+
         default:
           logs.append("\(request.verb) \(request.path) HTTP/1.1")
           response = Response(status: 200,

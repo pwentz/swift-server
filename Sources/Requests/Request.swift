@@ -4,6 +4,7 @@ import Util
 public class Request {
   public let verb: String
   public let path: String
+  public let params: [String: String]?
 
   public var headers: [String: String] = [:]
 
@@ -22,6 +23,25 @@ public class Request {
     let mainHeaderParsed = separate(mainHeader, by: " ")
     verb = mainHeaderParsed[0]
     // breaks here
-    path = mainHeaderParsed[1]
+
+    if mainHeaderParsed[1].contains("?") {
+      let rawParams = separate(mainHeaderParsed[1], by: "?").last!
+      path = separate(mainHeaderParsed[1], by: "?").first!
+      let splitParams = separate(rawParams, by: "=")
+      let paramsKey = splitParams.first!
+      let paramsVal = splitParams.last!
+
+      if paramsKey != paramsVal {
+        params = [paramsKey: paramsVal]
+      }
+      else {
+        params = nil
+      }
+
+    }
+    else {
+      path = mainHeaderParsed[1]
+      params = nil
+    }
   }
 }
