@@ -58,6 +58,19 @@ class RequestTest: XCTestCase {
         XCTAssertEqual(request.headers, expectedResult)
     }
 
+    func testItCanTranslateEmptyHeaderValues() {
+        let rawRequest = "POST /form HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
+        let request = Request(for: rawRequest)
+        let expectedResult = [
+          "host": "",
+          "connection": "Keep-Alive",
+          "user-agent": "chrome",
+          "accept-encoding": "gzip,deflate"
+        ]
+
+        XCTAssertEqual(request.headers, expectedResult)
+    }
+
     func testItHasNoParams() {
         let rawRequest = "GET /cookie HTTP/1.1\r\nHost:yahoo.com\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
         let request = Request(for: rawRequest)
@@ -70,6 +83,20 @@ class RequestTest: XCTestCase {
         let request = Request(for: rawRequest)
 
         XCTAssertNil(request.params)
+    }
+
+    func testItCanRecognizeBlankParamVals() {
+        let rawRequest = "GET /cookie?sometihgnaksjnd= HTTP/1.1\r\nHost:yahoo.com\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
+        let request = Request(for: rawRequest)
+
+        XCTAssertEqual(request.params!, ["sometihgnaksjnd": ""])
+    }
+
+    func testItCanRecognizeBlankParamKey() {
+        let rawRequest = "GET /cookie?=sometihgnaksjnd HTTP/1.1\r\nHost:yahoo.com\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
+        let request = Request(for: rawRequest)
+
+        XCTAssertEqual(request.params!, ["": "sometihgnaksjnd"])
     }
 
     func testItHasParams() {

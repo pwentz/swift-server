@@ -10,7 +10,8 @@ public class LogsController {
   }
 
   public func process(logs: [String]) -> Response {
-    let auth = request.headers["authorization"].map { separate($0, by: " ").last ?? "" }
+    let auth = request.headers["authorization"].map { $0.components(separatedBy: " ").last ?? "" }
+
     let status = auth == getBase64(of: "admin:hunter2") ? 200 : 401
 
     let headers = ["WWW-Authenticate" : "Basic realm=\"simple\""]
