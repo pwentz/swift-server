@@ -31,10 +31,10 @@ class RequestTest: XCTestCase {
     }
 
     func testItTakesRawRequestAndExtractsAllValidHeaders() {
-        let rawRequest = "GET /logs HTTP/1.1\r\n Host: google.com\r\nAuthorization: Basic YWRtaW46aHVudGVyMg==\r\n Connection: Keep-Alive\r\n User-Agent:Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding:gzip,deflate\r\nAccept-Charset: utf-8"
+        let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\nAuthorization: Basic YWRtaW46aHVudGVyMg==\r\n Connection: Keep-Alive\r\n User-Agent:Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding:gzip,deflate\r\nAccept-Charset: utf-8"
         let request = Request(for: rawRequest)
         let expectedResult = [
-          "host": "google.com",
+          "host": "localhost:5000",
           "authorization": "Basic YWRtaW46aHVudGVyMg==",
           "connection": "Keep-Alive",
           "user-agent": "Apache-HttpClient/4.3.5 (java 1.5)",
@@ -56,5 +56,43 @@ class RequestTest: XCTestCase {
         ]
 
         XCTAssertEqual(request.headers, expectedResult)
+    }
+
+    func testItHasNoParams() {
+        let rawRequest = "GET /cookie HTTP/1.1\r\nHost:yahoo.com\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
+        let request = Request(for: rawRequest)
+
+        XCTAssertNil(request.params)
+    }
+
+    func testItHasInvalidParams() {
+        let rawRequest = "GET /cookie?sometihgnaksjnd HTTP/1.1\r\nHost:yahoo.com\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
+        let request = Request(for: rawRequest)
+
+        XCTAssertNil(request.params)
+    }
+
+    func testItHasParams() {
+        let rawRequest = "GET /cookie?type=chocolate HTTP/1.1\r\nHost:yahoo.com\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
+        let request = Request(for: rawRequest)
+
+
+        XCTAssertEqual(request.params!, ["type": "chocolate"])
+    }
+
+    func testItCanHandleDifferentParams() {
+        let rawRequest = "GET /cookie?roast=beef HTTP/1.1\r\nHost:yahoo.com\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
+        let request = Request(for: rawRequest)
+
+
+        XCTAssertEqual(request.params!, ["roast": "beef"])
+    }
+
+    func testHavingParamsDoesntChangePath() {
+        let rawRequest = "GET /cookie?roast=beef HTTP/1.1\r\nHost:yahoo.com\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
+        let request = Request(for: rawRequest)
+
+
+        XCTAssertEqual(request.path, "/cookie")
     }
 }
