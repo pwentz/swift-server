@@ -1,47 +1,39 @@
 import Foundation
-import Util
 
 public class Request {
   public let verb: String
   public let path: String
   public let params: [String: String]?
 
-  public var headers: [String: String] = [:]
+  public let headers: [String: String]
 
   public init(for rawRequest: String) {
-    // Request will break if passed a string without a verb + path
-    // use null object pattern for invalid request at higher level
-    let parsedRequest = separate(rawRequest, by: "\r\n")
+    let parsedRequest = rawRequest.components(separatedBy: "\r\n").filter { !$0.isEmpty }
+
     let requestHeaders = parsedRequest[parsedRequest.index(after: parsedRequest.startIndex)..<parsedRequest.endIndex]
                                       .map { RequestHeader(for: $0) }
 
-    for header in requestHeaders {
-      headers[header.key] = header.value
-    }
+    headers = requestHeaders.reduce([:], {
+      var mutable = $0
+      mutable[$1.key] = $1.value
+      return mutable
+    })
 
     let mainHeader = parsedRequest.first!
-    let mainHeaderParsed = separate(mainHeader, by: " ")
-    verb = mainHeaderParsed[0]
-    // breaks here
+    let mainHeaderParsed = mainHeader.components(separatedBy: " ")
 
-    if mainHeaderParsed[1].contains("?") {
-      let rawParams = separate(mainHeaderParsed[1], by: "?").last!
-      path = separate(mainHeaderParsed[1], by: "?").first!
-      let splitParams = separate(rawParams, by: "=")
-      let paramsKey = splitParams.first!
-      let paramsVal = splitParams.last!
+    verb = mainHeaderParsed.first ?? ""
 
-      if paramsKey != paramsVal {
-        params = [paramsKey: paramsVal]
-      }
-      else {
-        params = nil
-      }
+    let fullPath = mainHeaderParsed[mainHeaderParsed.index(after: mainHeaderParsed.startIndex)]
 
-    }
-    else {
-      path = mainHeaderParsed[1]
-      params = nil
-    }
+    let parsedPath = fullPath.components(separatedBy: "?")
+
+    path = parsedPath.first ?? fullPath
+
+    params = parsedPath.index(where: { $0.contains("=") }).map({ (paramIndex: Array.Index) -> [String: String] in
+      let paramsKey = parsedPath[paramIndex].components(separatedBy: "=").first ?? ""
+      let paramsVal = parsedPath[paramIndex].components(separatedBy: "=").last ?? ""
+      return [paramsKey: paramsVal]
+    })
   }
 }

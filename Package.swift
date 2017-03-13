@@ -6,9 +6,7 @@ let package = Package(
       Target(name: "Server", dependencies: [
         .Target(name: "Controllers")
       ]),
-      Target(name: "Requests", dependencies: [
-        .Target(name: "Util")
-      ]),
+      Target(name: "Requests"),
       Target(name: "Responses"),
       Target(name: "Controllers", dependencies: [
         .Target(name: "Util"),

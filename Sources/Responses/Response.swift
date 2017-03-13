@@ -4,7 +4,7 @@ public class Response {
   public let body: [UInt8]
 
   public init(status: Int, headers: [String: String], body: String) {
-    self.statusCode = statusCodes[status]!
+    self.statusCode = statusCodes[status] ?? "404 Not Found"
 
     let conjoinedHeaders = headers.map { $0 + ":" + $1 }
 
