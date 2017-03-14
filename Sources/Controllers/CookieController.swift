@@ -2,25 +2,28 @@ import Requests
 import Responses
 
 public class CookieController {
-  let request: Request
+  static var cookie: [String: String] = [:]
 
-  public init(_ request: Request) {
-    self.request = request
-  }
-
-  public func process() -> Response {
+  static public func process(_ request: Request) -> FormattedResponse {
     let status = 200
-    var body: String = "mmmm chocolate"
+
+    var body: String = ""
     var headers: [String: String] = ["Content-Type": "text/html"]
 
-    if let params = request.params?.map({ "\($0)=\($1)" }).joined(separator: "") {
+    if let params = request.params {
       body = "Eat"
-      headers.updateValue(params,
-                          forKey: "Set-Cookie")
+
+      cookie = params.zip()
+
+      headers.updateValue(params.toString(), forKey: "Set-Cookie")
     }
 
-    return Response(status: status,
-                    headers: headers,
-                    body: body)
+    if request.headers["cookie"] != nil {
+      body = "mmmm \(cookie["type"] ?? "")"
+    }
+
+    return FormattedResponse(status: status,
+                             headers: headers,
+                             body: body)
   }
 }

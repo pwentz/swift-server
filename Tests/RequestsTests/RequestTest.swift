@@ -89,14 +89,14 @@ class RequestTest: XCTestCase {
         let rawRequest = "GET /cookie?sometihgnaksjnd= HTTP/1.1\r\nHost:yahoo.com\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
         let request = Request(for: rawRequest)
 
-        XCTAssertEqual(request.params!, ["sometihgnaksjnd": ""])
+        XCTAssertEqual(request.params!.zip(), ["sometihgnaksjnd": ""])
     }
 
     func testItCanRecognizeBlankParamKey() {
         let rawRequest = "GET /cookie?=sometihgnaksjnd HTTP/1.1\r\nHost:yahoo.com\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
         let request = Request(for: rawRequest)
 
-        XCTAssertEqual(request.params!, ["": "sometihgnaksjnd"])
+        XCTAssertEqual(request.params!.zip(), ["": "sometihgnaksjnd"])
     }
 
     func testItHasParams() {
@@ -104,7 +104,7 @@ class RequestTest: XCTestCase {
         let request = Request(for: rawRequest)
 
 
-        XCTAssertEqual(request.params!, ["type": "chocolate"])
+        XCTAssertEqual(request.params!.zip(), ["type": "chocolate"])
     }
 
     func testItCanHandleDifferentParams() {
@@ -112,7 +112,7 @@ class RequestTest: XCTestCase {
         let request = Request(for: rawRequest)
 
 
-        XCTAssertEqual(request.params!, ["roast": "beef"])
+        XCTAssertEqual(request.params!.zip(), ["roast": "beef"])
     }
 
     func testHavingParamsDoesntChangePath() {
