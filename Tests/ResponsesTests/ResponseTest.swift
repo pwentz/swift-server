@@ -7,7 +7,7 @@ class ResponseTest: XCTestCase {
     let headers = ["Content-Type": "ABCD"]
     let body = "BODY"
 
-    let response = Response(status: statusCode, headers: headers, body: body)
+    let response = FormattedResponse(status: statusCode, headers: headers, body: body)
 
     XCTAssertEqual(response.statusCode, "200 OK")
   }
@@ -17,7 +17,7 @@ class ResponseTest: XCTestCase {
     let headers = ["Content-Type": "ABCD"]
     let body = "BODY"
 
-    let response = Response(status: statusCode, headers: headers, body: body)
+    let response = FormattedResponse(status: statusCode, headers: headers, body: body)
 
     XCTAssertEqual(response.statusCode, "418 I'm a teapot")
   }
@@ -28,7 +28,7 @@ class ResponseTest: XCTestCase {
     let body = "BODY"
     let formattedBody: [UInt8] = Array(("\n\n" + body).utf8)
 
-    let response = Response(status: statusCode, headers: headers, body: body)
+    let response = FormattedResponse(status: statusCode, headers: headers, body: body)
 
     XCTAssertEqual(response.body, formattedBody)
   }
@@ -42,7 +42,7 @@ class ResponseTest: XCTestCase {
     let body = "BODY"
     let formattedHeaders: [UInt8] = Array(rawHeaders.utf8)
 
-    let response = Response(status: statusCode, headers: headers, body: body)
+    let response = FormattedResponse(status: statusCode, headers: headers, body: body)
 
     XCTAssertEqual(response.headers, formattedHeaders)
   }
@@ -59,7 +59,7 @@ class ResponseTest: XCTestCase {
     let formattedBody: [UInt8] = Array(("\n\n" + body).utf8)
     let formattedResponse = formattedStatus + formattedHeaders + formattedBody
 
-    let response = Response(status: statusCode, headers: headers, body: body)
+    let response = FormattedResponse(status: statusCode, headers: headers, body: body)
 
     XCTAssertEqual(response.formatted, formattedResponse)
   }

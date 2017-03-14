@@ -3,7 +3,7 @@ import Foundation
 public class Request {
   public let verb: String
   public let path: String
-  public let params: [String: String]?
+  public let params: Params?
 
   public let headers: [String: String]
 
@@ -30,10 +30,8 @@ public class Request {
 
     path = parsedPath.first ?? fullPath
 
-    params = parsedPath.index(where: { $0.contains("=") }).map({ (paramIndex: Array.Index) -> [String: String] in
-      let paramsKey = parsedPath[paramIndex].components(separatedBy: "=").first ?? ""
-      let paramsVal = parsedPath[paramIndex].components(separatedBy: "=").last ?? ""
-      return [paramsKey: paramsVal]
+    params = parsedPath.index(where: { $0.contains("=") }).map({ _ -> Params in
+      return Params(for: fullPath)
     })
   }
 }

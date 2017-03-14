@@ -1,4 +1,4 @@
-public class Response {
+public class FormattedResponse {
   public let statusCode: String
   public let headers: [UInt8]
   public let body: [UInt8]

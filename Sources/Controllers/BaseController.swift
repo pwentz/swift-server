@@ -23,27 +23,18 @@ public class BaseController {
         let client = try socket.accept()
         let data = try client.recv()
         let request = try Request(for: data.toString())
-        var response: Response
+        var response: FormattedResponse
 
         switch request.path {
         case "/logs":
-          let logsController = LogsController(request)
-          response = logsController.process(logs: logs)
+          response = LogsController.process(request, logs: logs)
 
-        case "/cookie":
-          response = Response(status: 200,
-                              headers: ["Content-Type": "text/html",
-                                        "Set-Cookie": "type=chocolate"],
-                              body: "Eat")
-
-        case "/eat_cookie":
-          response = Response(status: 200,
-                              headers: ["Content-Type": "text/html"],
-                              body: "mmmm chocolate")
+        case let path where path.contains("cookie"):
+          response = CookieController.process(request)
 
         default:
           logs.append("\(request.verb) \(request.path) HTTP/1.1")
-          response = Response(status: 200,
+          response = FormattedResponse(status: 200,
                               headers: ["Content-Type": "text/html"],
                               body: "")
         }
