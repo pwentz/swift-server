@@ -1,7 +1,7 @@
 public class FormattedResponse {
   public let statusCode: String
   public let headers: [UInt8]
-  public let body: [UInt8]
+  public var body: [UInt8]
 
   public init(status: Int, headers: [String: String], body: String) {
     self.statusCode = statusCodes[status] ?? "404 Not Found"

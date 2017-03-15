@@ -1,8 +1,9 @@
 import SocksCore
 import Requests
 import Responses
+import Controllers
 
-public class BaseController {
+public class Router {
   public var logs: [String]
 
   public init() {
@@ -27,16 +28,27 @@ public class BaseController {
 
         switch request.path {
         case "/logs":
-          response = LogsController.process(request, logs: logs)
+          let combinedLogs = logs.reduce("", { $0 + ($1 + "\n") }) +
+                             "\(request.verb) \(request.path) HTTP/1.1"
+
+          response = LogsController.process(request)
+          response.body = Array(("\n\n" + combinedLogs).utf8)
 
         case let path where path.contains("cookie"):
           response = CookieController.process(request)
 
+        case "/":
+          logs.append("\(request.verb) \(request.path) HTTP/1.1")
+
+          response = FormattedResponse(status: 200,
+                                       headers: ["Content-Type": "text/html"],
+                                       body: "<a href=\"/public/file1\">file1</a>")
+
         default:
           logs.append("\(request.verb) \(request.path) HTTP/1.1")
           response = FormattedResponse(status: 200,
-                              headers: ["Content-Type": "text/html"],
-                              body: "")
+                                       headers: ["Content-Type": "text/html", "Content-Location": ""],
+                                       body: "")
         }
 
         try client.send(data: response.formatted)

@@ -1,5 +1,5 @@
-import Controllers
+import Router
 
-let base = BaseController()
+let router = Router()
 
-try base.listen()
+try router.listen()
