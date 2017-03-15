@@ -49,6 +49,13 @@ public class Router {
           response = FormattedResponse(status: 404,
                                        headers: emptyHeaders,
                                        body: "")
+
+        case "/coffee":
+          let emptyHeaders: [String: String] = [:]
+          response = FormattedResponse(status: 418,
+                                       headers: emptyHeaders,
+                                       body: "I'm a teapot")
+
         default:
           logs.append("\(request.verb) \(request.path) HTTP/1.1")
           response = FormattedResponse(status: 200,
