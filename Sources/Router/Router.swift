@@ -32,7 +32,7 @@ public class Router {
                              "\(request.verb) \(request.path) HTTP/1.1"
 
           response = LogsController.process(request)
-          response.body = Array(("\n\n" + combinedLogs).utf8)
+          response.body += combinedLogs
 
         case let path where path.contains("cookie"):
           response = CookieController.process(request)

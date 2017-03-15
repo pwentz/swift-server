@@ -8,11 +8,10 @@ class CookieControllerTest: XCTestCase {
     let request = Request(for: rawRequest)
 
     let result = "\n\nEat"
-    let formattedResult = Array(result.utf8)
 
     let res = CookieController.process(request)
 
-    XCTAssertEqual(res.body, formattedResult)
+    XCTAssertEqual(res.body, result)
   }
 
   func testItCanFormatCorrectHeaders() {
@@ -20,15 +19,13 @@ class CookieControllerTest: XCTestCase {
     let request = Request(for: rawRequest)
 
     let headers = [
-      "Content-Type:text/html",
-      "Set-Cookie:type=chocolate"
-    ].joined(separator: "\r\n")
-
-    let formattedHeaders = Array(headers.utf8)
+      "Content-Type" : "text/html",
+      "Set-Cookie" : "type=chocolate"
+    ]
 
     let res = CookieController.process(request)
 
-    XCTAssertEqual(res.headers, formattedHeaders)
+    XCTAssertEqual(res.headers, headers)
   }
 
   func testItCanCookieFormatResponseWithCorrectStatus() {
@@ -44,14 +41,12 @@ class CookieControllerTest: XCTestCase {
     let request = Request(for: rawRequest)
 
     let headers = [
-      "Content-Type:text/html",
-    ].joined(separator: "\r\n")
-
-    let formattedHeaders = Array(headers.utf8)
+      "Content-Type" : "text/html",
+    ]
 
     let res = CookieController.process(request)
 
-    XCTAssertEqual(res.headers, formattedHeaders)
+    XCTAssertEqual(res.headers, headers)
   }
 
   func testItCanResponseWithTheCorrectBodyWithCookieHeader() {
@@ -60,11 +55,9 @@ class CookieControllerTest: XCTestCase {
 
     let result = "\n\nmmmm chocolate"
 
-    let formattedResult = Array(result.utf8)
-
     let res = CookieController.process(request)
 
-    XCTAssertEqual(res.body, formattedResult)
+    XCTAssertEqual(res.body, result)
   }
 
   func testItCanResponseWithToDynamicCookieHeader() {
@@ -78,9 +71,7 @@ class CookieControllerTest: XCTestCase {
 
     let result = "\n\nmmmm oatmeal"
 
-    let formattedResult = Array(result.utf8)
-
-    XCTAssertEqual(secondResponse.body, formattedResult)
+    XCTAssertEqual(secondResponse.body, result)
   }
 
   func testItCanFormatResponseWithCorrectStatus() {
