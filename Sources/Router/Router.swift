@@ -42,7 +42,13 @@ public class Router {
 
           response = FormattedResponse(status: 200,
                                        headers: ["Content-Type": "text/html"],
-                                       body: "<a href=\"/public/file1\">file1</a>")
+                                       body: "<a href=\"/file1\">file1</a>")
+
+        case "/file1":
+          response = FormattedResponse(status: 200,
+                                       headers: ["Content-Type": "text/html"],
+                                       body: "file1 contents")
+
 
         case "/foobar":
           let emptyHeaders: [String: String] = [:]

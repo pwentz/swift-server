@@ -13,15 +13,39 @@ formatter.dateFormat = "MM-dd-yyyy"
 
 let fileName = "logs-\(hour):\(minutes):\(seconds)--" + formatter.string(from: today)
 
-let contents = CommandLine.arguments.joined(separator: "/n")
+let contents = CommandLine.arguments
 
-let DocumentDirURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-let fileURL = DocumentDirURL.appendingPathComponent("../8th-light/projects/swift/server/Sources/Server/Debug/\(fileName)").appendingPathExtension("txt")
+let fullDirPath = contents.first!.components(separatedBy: "/Users/").last!.components(separatedBy: "/.build").first!
 
-print("FilePath: \(fileURL.path)")
+let DocumentDirURL = try! FileManager.default.url(for: .userDirectory, in: .allDomainsMask, appropriateFor: nil, create: true)
+let logsFileUrl = DocumentDirURL.appendingPathComponent("\(fullDirPath)/Sources/Server/Debug/\(fileName)").appendingPathExtension("txt")
+
+if let directoryFlagIndex = contents.index(where: { $0 == "-d" }) {
+  let pathIndex = contents.index(after: directoryFlagIndex)
+  let directoryPath: String = contents[pathIndex]
+  let publicFileNames = try! FileManager.default.contentsOfDirectory(atPath: directoryPath)
+
+  var publicFiles: [String: String] = [:]
+
+  for file in publicFileNames {
+    let relativeDirectoryPath = directoryPath.components(separatedBy: "/Users/").last!
+    let publicFileUrl = DocumentDirURL.appendingPathComponent("\(relativeDirectoryPath)/\(file)")
+
+    do {
+      let fileContents = try String(contentsOf: publicFileUrl)
+
+      publicFiles.updateValue(fileContents, forKey: file)
+
+    } catch let fileError as NSError {
+      print("ERROR: ", fileError)
+    }
+  }
+
+  print("|||||||||||||||", publicFiles)
+}
 
 do {
-  try contents.write(to: fileURL, atomically: true, encoding: String.Encoding.utf8)
+  try contents.first!.write(to: logsFileUrl, atomically: true, encoding: String.Encoding.utf8)
 } catch let error as NSError {
   print("ERROR:", error)
 }
