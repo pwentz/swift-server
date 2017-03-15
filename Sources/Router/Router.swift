@@ -44,6 +44,11 @@ public class Router {
                                        headers: ["Content-Type": "text/html"],
                                        body: "<a href=\"/public/file1\">file1</a>")
 
+        case "/foobar":
+          let emptyHeaders: [String: String] = [:]
+          response = FormattedResponse(status: 404,
+                                       headers: emptyHeaders,
+                                       body: "")
         default:
           logs.append("\(request.verb) \(request.path) HTTP/1.1")
           response = FormattedResponse(status: 200,
