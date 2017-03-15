@@ -26,11 +26,10 @@ class ResponseTest: XCTestCase {
     let statusCode = 200
     let headers = ["Content-Type": "ABCD"]
     let body = "BODY"
-    let formattedBody: [UInt8] = Array(("\n\n" + body).utf8)
 
     let response = FormattedResponse(status: statusCode, headers: headers, body: body)
 
-    XCTAssertEqual(response.body, formattedBody)
+    XCTAssertEqual(response.body, "\n\n\(body)")
   }
 
   func testItCanFormatItsHeaders() {
@@ -38,13 +37,13 @@ class ResponseTest: XCTestCase {
     let headers = ["Content-Type": "text/html",
                    "WWW-Authenticate" : "Basic realm=\"simple\""]
 
-    let rawHeaders = "Content-Type:text/html\r\nWWW-Authenticate:Basic realm=\"simple\""
+    // let rawHeaders = "Content-Type:text/html\r\nWWW-Authenticate:Basic realm=\"simple\""
     let body = "BODY"
-    let formattedHeaders: [UInt8] = Array(rawHeaders.utf8)
+    // let formattedHeaders: [UInt8] = Array(rawHeaders.utf8)
 
     let response = FormattedResponse(status: statusCode, headers: headers, body: body)
 
-    XCTAssertEqual(response.headers, formattedHeaders)
+    XCTAssertEqual(response.headers, headers)
   }
 
   func testItCanFormatItself() {

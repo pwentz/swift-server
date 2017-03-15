@@ -1,7 +1,7 @@
 import Requests
 import Responses
 
-public class CookieController {
+public class CookieController: Controller {
   static var cookie: [String: String] = [:]
 
   static public func process(_ request: Request) -> FormattedResponse {
