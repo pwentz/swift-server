@@ -42,20 +42,29 @@ public class Router {
           response = CookieController.process(request)
 
         case "/":
-          response = FormattedResponse(status: 200,
-                                       headers: ["Content-Type": "text/html"],
-                                       body: "<a href=\"/file1\">file1</a><br><a href=\"/image.gif\">image.gif</a>")
+          let fileLinks = directoryContents.keys.map { "<a href=\"/\($0)\">\($0)</a>" }
 
-        case "/file1":
           response = FormattedResponse(status: 200,
                                        headers: ["Content-Type": "text/html"],
-                                       body: "file1 contents")
+                                       body: fileLinks.joined(separator: "<br>"))
 
-        case "/image.gif":
-          let baseEncodedImage = directoryContents["image.gif"]!
-          response = FormattedResponse(status: 200,
-                                       headers: ["Content-Type": "text/html"],
-                                       body: "<img src=\"data:image/gif;base64,\(baseEncodedImage)\"/>")
+        case let path where directoryContents.keys.contains { path.hasSuffix($0) }:
+          let pathName = path.components(separatedBy: "/").last!
+          let fileContents = directoryContents[pathName]!
+
+          let isAnImage = path.contains("jpeg") || path.contains("gif") || path.contains("png")
+
+          if isAnImage {
+            let ext = path.components(separatedBy: ".").last!
+            response = FormattedResponse(status: 200,
+                                         headers: ["Content-Type": "text/html"],
+                                         body: "<img src=\"data:image/\(ext);base64,\(fileContents)\"/>")
+          }
+          else {
+            response = FormattedResponse(status: 200,
+                                         headers: ["Content-Type": "text/html"],
+                                         body: fileContents)
+          }
 
         case "/foobar":
           let emptyHeaders: [String: String] = [:]
