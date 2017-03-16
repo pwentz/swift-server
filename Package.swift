@@ -3,8 +3,11 @@ import PackageDescription
 let package = Package(
     name: "Server",
     targets: [
+      Target(name: "FileHelpers"),
       Target(name: "Server", dependencies: [
-        .Target(name: "Router")
+        .Target(name: "Router"),
+        .Target(name: "FileHelpers"),
+        .Target(name: "Util")
       ]),
       Target(name: "Requests"),
       Target(name: "Responses"),
