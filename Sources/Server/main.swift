@@ -1,4 +1,5 @@
 import Foundation
+import FileHelpers
 import Router
 
 let today = Date()
@@ -23,25 +24,8 @@ let logsFileUrl = DocumentDirURL.appendingPathComponent("\(fullDirPath)/Sources/
 if let directoryFlagIndex = contents.index(where: { $0 == "-d" }) {
   let pathIndex = contents.index(after: directoryFlagIndex)
   let directoryPath: String = contents[pathIndex]
-  let publicFileNames = try! FileManager.default.contentsOfDirectory(atPath: directoryPath)
 
-  var publicFiles: [String: String] = [:]
-
-  for file in publicFileNames {
-    let relativeDirectoryPath = directoryPath.components(separatedBy: "/Users/").last!
-    let publicFileUrl = DocumentDirURL.appendingPathComponent("\(relativeDirectoryPath)/\(file)")
-
-    do {
-      let fileContents = try String(contentsOf: publicFileUrl)
-
-      publicFiles.updateValue(fileContents, forKey: file)
-
-    } catch let fileError as NSError {
-      print("ERROR: ", fileError)
-    }
-  }
-
-  print("|||||||||||||||", publicFiles)
+  print("||||||", FileReader(at: directoryPath).readContents())
 }
 
 do {
