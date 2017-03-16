@@ -5,9 +5,11 @@ import Controllers
 
 public class Router {
   public var logs: [String]
+  public let directoryContents: [String: String]
 
-  public init() {
+  public init(_ directoryContents: [String: String]) {
     self.logs = []
+    self.directoryContents = directoryContents
   }
 
   public func listen() throws {
@@ -26,6 +28,8 @@ public class Router {
         let request = try Request(for: data.toString())
         var response: FormattedResponse
 
+        logs.append("\(request.verb) \(request.path) HTTP/1.1")
+
         switch request.path {
         case "/logs":
           let combinedLogs = logs.reduce("", { $0 + ($1 + "\n") }) +
@@ -38,17 +42,20 @@ public class Router {
           response = CookieController.process(request)
 
         case "/":
-          logs.append("\(request.verb) \(request.path) HTTP/1.1")
-
           response = FormattedResponse(status: 200,
                                        headers: ["Content-Type": "text/html"],
-                                       body: "<a href=\"/file1\">file1</a>")
+                                       body: "<a href=\"/file1\">file1</a><br><a href=\"/image.gif\">image.gif</a>")
 
         case "/file1":
           response = FormattedResponse(status: 200,
                                        headers: ["Content-Type": "text/html"],
                                        body: "file1 contents")
 
+        case "/image.gif":
+          let baseEncodedImage = directoryContents["image.gif"]!
+          response = FormattedResponse(status: 200,
+                                       headers: ["Content-Type": "text/html"],
+                                       body: "<img src=\"data:image/gif;base64,\(baseEncodedImage)\"/>")
 
         case "/foobar":
           let emptyHeaders: [String: String] = [:]

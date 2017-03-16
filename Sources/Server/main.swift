@@ -18,9 +18,9 @@ if let directoryFlagIndex = contents.index(where: { $0 == "-d" }) {
   let pathIndex = contents.index(after: directoryFlagIndex)
   let directoryPath: String = contents[pathIndex]
 
-  print("||||||", FileReader(at: directoryPath).readContents())
+  let directoryContents = FileReader(at: directoryPath).readContents()
+
+  let router = Router(directoryContents)
+
+  try router.listen()
 }
-
-let router = Router()
-
-try router.listen()

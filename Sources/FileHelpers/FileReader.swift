@@ -1,5 +1,7 @@
 import Foundation
 
+// component should throw
+
 public class FileReader {
   let path: String
   let userDirectory = try! FileManager.default.url(for: .userDirectory, in: .allDomainsMask, appropriateFor: nil, create: true)
@@ -16,20 +18,31 @@ public class FileReader {
     let publicFileNames = try! FileManager.default.contentsOfDirectory(atPath: path)
     var publicFiles: [String: String] = [:]
 
-    for file in publicFileNames {
+    publicFileNames.forEach {
       let relativeDirectoryPath = path.components(separatedBy: "/Users/").last!
-      let publicFileUrl = userDirectory.appendingPathComponent("\(relativeDirectoryPath)/\(file)")
+      let publicFileUrl = userDirectory.appendingPathComponent("\(relativeDirectoryPath)/\($0)")
+      let isAnImage = $0.contains("jpeg") || $0.contains("gif") || $0.contains("png")
 
       do {
-        let fileContents = try String(contentsOf: publicFileUrl)
+        let fileContents = isAnImage ? getImage(at: publicFileUrl)
+                                     : try String(contentsOf: publicFileUrl)
 
-        publicFiles.updateValue(fileContents, forKey: file)
-
-      } catch let fileError as NSError {
-        print("ERROR: ", fileError)
+        publicFiles.updateValue(fileContents, forKey: $0)
+      }
+      catch let error as NSError {
+        print("ERROR!!!", error)
       }
     }
 
     return publicFiles
+  }
+
+  public func getImage(at url: URL) -> String {
+    if let imageData = NSData(contentsOf: url) {
+      return imageData.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0))
+    }
+    else {
+      return ""
+    }
   }
 }
