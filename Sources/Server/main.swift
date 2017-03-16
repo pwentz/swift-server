@@ -1,18 +1,14 @@
 import Foundation
 import FileHelpers
 import Router
+import Util
 
-let today = Date()
-let calendar = Calendar.current
+let dateHelper = DateHelper()
+let currentTime = dateHelper.time(separator: ":")
+let today = dateHelper.date(separator: "-")
 
-let hour = calendar.component(.hour, from: today)
-let minutes = calendar.component(.minute, from: today)
-let seconds = calendar.component(.second, from: today)
+let fileName = "logs-\(currentTime)--\(today)"
 
-let formatter = DateFormatter()
-formatter.dateFormat = "MM-dd-yyyy"
-
-let fileName = "logs-\(hour):\(minutes):\(seconds)--" + formatter.string(from: today)
 let contents = CommandLine.arguments
 let fullDirPath = contents.first!.components(separatedBy: "/Users/").last!.components(separatedBy: "/.build").first! + "/Sources/Server/Debug"
 

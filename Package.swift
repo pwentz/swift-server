@@ -6,7 +6,8 @@ let package = Package(
       Target(name: "FileHelpers"),
       Target(name: "Server", dependencies: [
         .Target(name: "Router"),
-        .Target(name: "FileHelpers")
+        .Target(name: "FileHelpers"),
+        .Target(name: "Util")
       ]),
       Target(name: "Requests"),
       Target(name: "Responses"),
