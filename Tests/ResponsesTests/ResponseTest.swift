@@ -37,9 +37,7 @@ class ResponseTest: XCTestCase {
     let headers = ["Content-Type": "text/html",
                    "WWW-Authenticate" : "Basic realm=\"simple\""]
 
-    // let rawHeaders = "Content-Type:text/html\r\nWWW-Authenticate:Basic realm=\"simple\""
     let body = "BODY"
-    // let formattedHeaders: [UInt8] = Array(rawHeaders.utf8)
 
     let response = FormattedResponse(status: statusCode, headers: headers, body: body)
 

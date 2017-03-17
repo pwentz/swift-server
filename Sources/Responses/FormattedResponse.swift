@@ -6,7 +6,6 @@ public class FormattedResponse {
   public init(status: Int, headers: [String: String], body: String) {
     self.statusCode = statusCodes[status] ?? "404 Not Found"
 
-
     self.headers = headers
     self.body = "\n\n" + body
   }

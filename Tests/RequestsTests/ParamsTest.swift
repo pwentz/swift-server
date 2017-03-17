@@ -74,19 +74,19 @@ class ParamsTest: XCTestCase {
     XCTAssertEqual(params.values(), [""])
   }
 
-  func testItCanZipParams() {
+  func testItCanConvertToDictionary() {
     let fullPath = "/some_path?type=oatmeal"
 
     let params = Params(for: fullPath)
 
-    XCTAssertEqual(params.zip(), ["type": "oatmeal"])
+    XCTAssertEqual(params.toDictionary(), ["type": "oatmeal"])
   }
 
-  func testItCanDynamicallyZipParams() {
+  func testItCanDynamicallyConvertToDictionary() {
     let fullPath = "/some_path?my=params"
 
     let params = Params(for: fullPath)
 
-    XCTAssertEqual(params.zip(), ["my": "params"])
+    XCTAssertEqual(params.toDictionary(), ["my": "params"])
   }
 }

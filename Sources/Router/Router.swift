@@ -2,14 +2,13 @@ import SocksCore
 import Requests
 import Responses
 import Controllers
+import Util
 
 public class Router {
   public var logs: [String]
-  public let directoryContents: [String: String]
 
-  public init(_ directoryContents: [String: String]) {
+  public init() {
     self.logs = []
-    self.directoryContents = directoryContents
   }
 
   public func listen() throws {
@@ -22,6 +21,8 @@ public class Router {
     print("Listening on \"\(address.hostname)\" (\(address.addressFamily)) \(address.port)")
 
     do {
+      let publicDirectoryContents = try getPublicDirectoryContents(flag: "-d")
+
       while true {
         let client = try socket.accept()
         let data = try client.recv()
@@ -42,29 +43,10 @@ public class Router {
           response = CookieController.process(request)
 
         case "/":
-          let fileLinks = directoryContents.keys.map { "<a href=\"/\($0)\">\($0)</a>" }
+          response = RootController.process(request, contents: publicDirectoryContents)
 
-          response = FormattedResponse(status: 200,
-                                       headers: ["Content-Type": "text/html"],
-                                       body: fileLinks.joined(separator: "<br>"))
-
-        case let path where directoryContents.keys.contains { path.hasSuffix($0) }:
-          let pathName = path.components(separatedBy: "/").last!
-          let fileContents = directoryContents[pathName]!
-
-          let isAnImage = path.contains("jpeg") || path.contains("gif") || path.contains("png")
-
-          if isAnImage {
-            let ext = path.components(separatedBy: ".").last!
-            response = FormattedResponse(status: 200,
-                                         headers: ["Content-Type": "text/html"],
-                                         body: "<img src=\"data:image/\(ext);base64,\(fileContents)\"/>")
-          }
-          else {
-            response = FormattedResponse(status: 200,
-                                         headers: ["Content-Type": "text/html"],
-                                         body: fileContents)
-          }
+        case let path where publicDirectoryContents.keys.contains { file in path == "/\(file)" }:
+          response = ResourcesController.process(request, contents: publicDirectoryContents)
 
         case "/foobar":
           let emptyHeaders: [String: String] = [:]
@@ -79,7 +61,6 @@ public class Router {
                                        body: "I'm a teapot")
 
         default:
-          logs.append("\(request.verb) \(request.path) HTTP/1.1")
           response = FormattedResponse(status: 200,
                                        headers: ["Content-Type": "text/html", "Content-Location": ""],
                                        body: "")
@@ -87,12 +68,15 @@ public class Router {
 
         try client.send(data: response.formatted)
 
-        print("Client: \(client.address), Request: \(try data.toString()), Response \(try response.formatted.toString())\n\n")
+        let fileContents = "REQUEST: \(try data.toString())\r\nRESPONSE: \(try response.formatted.toString())"
+
+        try FileWriter(at: logsPath, with: fileContents).write(to: formatTimestamp(prefix: "SUCCESS"))
+
+        print(fileContents)
 
         try client.close()
       }
-    } catch {
-      print("Error \(error)")
     }
+    catch { throw error }
   }
 }

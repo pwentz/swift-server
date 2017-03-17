@@ -1,26 +1,13 @@
 import Foundation
-import FileHelpers
 import Router
 import Util
 
-let dateHelper = DateHelper()
-let currentTime = dateHelper.time(separator: ":")
-let today = dateHelper.date(separator: "-")
-
-let fileName = "logs-\(currentTime)--\(today)"
-
-let contents = CommandLine.arguments
-let fullDirPath = contents.first!.components(separatedBy: "/Users/").last!.components(separatedBy: "/.build").first! + "/Sources/Server/Debug"
-
-FileWriter(at: fullDirPath, with: contents.joined(separator: "\r\n")).write(to: fileName)
-
-if let directoryFlagIndex = contents.index(where: { $0 == "-d" }) {
-  let pathIndex = contents.index(after: directoryFlagIndex)
-  let directoryPath: String = contents[pathIndex]
-
-  let directoryContents = FileReader(at: directoryPath).readContents()
-
-  let router = Router(directoryContents)
-
-  try router.listen()
+do {
+  try Router().listen()
+}
+catch {
+  let fileName = formatTimestamp(prefix: "FAIL")
+  let joinedArgs = CommandLine.arguments.joined(separator: "\r\n")
+  try FileWriter(at: logsPath, with: "ERROR: \(error)\r\nARGS: \(joinedArgs)").write(to: fileName)
+  print(" ‼️  :", error)
 }

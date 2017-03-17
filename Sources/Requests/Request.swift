@@ -30,8 +30,6 @@ public class Request {
 
     path = parsedPath.first ?? fullPath
 
-    params = parsedPath.index(where: { $0.contains("=") }).map({ _ -> Params in
-      return Params(for: fullPath)
-    })
+    params = parsedPath.index(where: { $0.contains("=") }).map { _ in Params(for: fullPath) }
   }
 }
