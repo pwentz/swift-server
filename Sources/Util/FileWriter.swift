@@ -10,15 +10,14 @@ public class FileWriter {
     self.content = content
   }
 
-  public func write(to fileName: String, fileExtension: String = "txt") -> Void {
+  public func write(to fileName: String, fileExtension: String = "txt") throws {
     let logsFileUrl = userDirectory.appendingPathComponent("\(path)/\(fileName)").appendingPathExtension(fileExtension)
 
     do {
       try content.write(to: logsFileUrl, atomically: true, encoding: String.Encoding.utf8)
-    } catch let error as NSError {
-      print("******* ERROR **********", error)
+    }
+    catch {
+      throw error
     }
   }
 }
-
-

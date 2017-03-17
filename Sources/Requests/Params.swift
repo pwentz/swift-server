@@ -11,6 +11,16 @@ public class Params {
     return rawParams
   }
 
+  public func toDictionary() -> [String: String] {
+    var zippedParams: [String: String] = [:]
+
+    for (index, paramKey) in keys().enumerated() {
+      zippedParams[paramKey] = values()[index]
+    }
+
+    return zippedParams
+  }
+
   public func keys() -> [String] {
     let stringParams = toString()
     let splitParams = stringParams.components(separatedBy: "=")
@@ -23,15 +33,5 @@ public class Params {
     let splitParams = stringParams.components(separatedBy: "=")
 
     return [splitParams.last!]
-  }
-
-  public func zip() -> [String: String] {
-    var zippedParams: [String: String] = [:]
-
-    for (index, paramKey) in keys().enumerated() {
-      zippedParams[paramKey] = values()[index]
-    }
-
-    return zippedParams
   }
 }

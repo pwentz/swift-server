@@ -13,7 +13,7 @@ public class CookieController: Controller {
     if let params = request.params {
       body = "Eat"
 
-      cookie = params.zip()
+      cookie = params.toDictionary()
 
       headers.updateValue(params.toString(), forKey: "Set-Cookie")
     }
