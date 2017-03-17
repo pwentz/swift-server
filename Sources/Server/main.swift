@@ -1,31 +1,26 @@
 import Foundation
+import FileHelpers
 import Router
+import Util
 
-let today = Date()
-let calendar = Calendar.current
+let dateHelper = DateHelper()
+let currentTime = dateHelper.time(separator: ":")
+let today = dateHelper.date(separator: "-")
 
-let hour = calendar.component(.hour, from: today)
-let minutes = calendar.component(.minute, from: today)
-let seconds = calendar.component(.second, from: today)
+let fileName = "logs-\(currentTime)--\(today)"
 
-let formatter = DateFormatter()
-formatter.dateFormat = "MM-dd-yyyy"
+let contents = CommandLine.arguments
+let fullDirPath = contents.first!.components(separatedBy: "/Users/").last!.components(separatedBy: "/.build").first! + "/Sources/Server/Debug"
 
-let fileName = "logs-\(hour):\(minutes):\(seconds)--" + formatter.string(from: today)
+FileWriter(at: fullDirPath, with: contents.joined(separator: "\r\n")).write(to: fileName)
 
-let contents = CommandLine.arguments.joined(separator: "/n")
+if let directoryFlagIndex = contents.index(where: { $0 == "-d" }) {
+  let pathIndex = contents.index(after: directoryFlagIndex)
+  let directoryPath: String = contents[pathIndex]
 
-let DocumentDirURL = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-let fileURL = DocumentDirURL.appendingPathComponent("../8th-light/projects/swift/server/Sources/Server/Debug/\(fileName)").appendingPathExtension("txt")
+  let directoryContents = FileReader(at: directoryPath).readContents()
 
-print("FilePath: \(fileURL.path)")
+  let router = Router(directoryContents)
 
-do {
-  try contents.write(to: fileURL, atomically: true, encoding: String.Encoding.utf8)
-} catch let error as NSError {
-  print("ERROR:", error)
+  try router.listen()
 }
-
-let router = Router()
-
-try router.listen()
