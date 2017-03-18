@@ -1,5 +1,5 @@
 public enum ServerStartError: Error {
   case missingPublicDirectoryArgument
+  case missingDirectoryFlagArgument
   case invalidPublicDirectoryGiven
-  case missingArgumentFor(flag: String)
 }

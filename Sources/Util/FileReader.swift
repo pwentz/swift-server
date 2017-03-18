@@ -14,29 +14,41 @@ public class FileReader {
   }
 
   public func readContents() throws -> [String: String] {
-    return try getDirectoryContents()
+    do { return try getDirectoryContents() }
+    catch {
+      throw error
+    }
   }
 
   public func getDirectoryContents() throws -> [String: String] {
-    let publicFileNames = try getFileNames()
-    let relativeDirectoryPath = path.components(separatedBy: "/Users/").last!
+    do {
+      let publicFileNames = try getFileNames()
+      var publicFiles: [String: String] = [:]
+      let relativeDirectoryPath = path.components(separatedBy: "/Users/").last!
 
-    let publicFiles: [String: String] = try publicFileNames.reduce([:], { (result, fileName) throws in
-      let publicFileUrl = userDirectory.appendingPathComponent("\(relativeDirectoryPath)/\(fileName)")
+      try publicFileNames.forEach { fileName in
+        let publicFileUrl = userDirectory.appendingPathComponent("\(relativeDirectoryPath)/\(fileName)")
 
-      let fileContents = isAnImage(fileName) ? getImage(at: publicFileUrl)
-                                             : try String(contentsOf: publicFileUrl)
+        let fileContents = isAnImage(fileName) ? getImage(at: publicFileUrl)
+                                               : try String(contentsOf: publicFileUrl)
 
-      var mutableResult = result
-      mutableResult[fileName] = fileContents
-      return mutableResult
-    })
+        publicFiles.updateValue(fileContents, forKey: fileName)
+      }
 
-    return publicFiles
+      return publicFiles
+    }
+    catch {
+      throw error
+    }
   }
 
   public func getFileNames() throws -> [String] {
-    return try FileManager.default.contentsOfDirectory(atPath: path)
+    do {
+      return try FileManager.default.contentsOfDirectory(atPath: path)
+    }
+    catch {
+      throw error
+    }
   }
 
   public func getImage(at url: URL) -> String {
