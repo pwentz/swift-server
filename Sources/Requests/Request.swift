@@ -10,6 +10,7 @@ public class Request {
   public init(for rawRequest: String) {
     let parsedRequest = rawRequest.components(separatedBy: "\r\n").filter { !$0.isEmpty }
 
+    // unsafe
     let requestHeaders = parsedRequest[parsedRequest.index(after: parsedRequest.startIndex)..<parsedRequest.endIndex]
                                       .map { RequestHeader(for: $0) }
 

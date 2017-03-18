@@ -4,7 +4,7 @@ import Responses
 public class CookieController: Controller {
   static var cookie: [String: String] = [:]
 
-  static public func process(_ request: Request) -> FormattedResponse {
+  static public func process(_ request: Request) -> Response {
     let status = 200
 
     var body: String = ""
@@ -22,8 +22,8 @@ public class CookieController: Controller {
       body = "mmmm \(cookie["type"] ?? "")"
     }
 
-    return FormattedResponse(status: status,
-                             headers: headers,
-                             body: body)
+    return Response(status: status,
+                    headers: headers,
+                    body: body)
   }
 }
