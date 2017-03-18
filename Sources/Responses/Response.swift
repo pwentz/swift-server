@@ -1,4 +1,4 @@
-public class FormattedResponse {
+public class Response {
   public let statusCode: String
   public let headers: [String: String]
   public var body: String
@@ -7,7 +7,7 @@ public class FormattedResponse {
     self.statusCode = statusCodes[status] ?? "404 Not Found"
 
     self.headers = headers
-    self.body = "\n\n" + body
+    self.body = body.isEmpty ? body : "\n\n" + body
   }
 
   public var formatted: [UInt8] {
