@@ -10,7 +10,7 @@ public class RootController: Controller {
     self.contents = contents
   }
 
-  public func process(_ request: Request) throws -> Response {
+  public func process(_ request: Request) -> Response {
     let fileLinks = contents.keys.map { file in
       "<a href=\"/\(file)\">\(file)</a>"
     }

@@ -10,7 +10,7 @@ public class ResourcesController: Controller {
     self.contents = contents
   }
 
-  public func process(_ request: Request) throws -> Response {
+  public func process(_ request: Request) -> Response {
     let path = request.path
     let pathName = path.substring(from: path.index(after: path.startIndex))
 

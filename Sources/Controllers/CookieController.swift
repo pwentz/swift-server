@@ -2,7 +2,7 @@ import Requests
 import Responses
 
 public class CookieController: Controller {
-  public func process(_ request: Request) throws -> Response {
+  public func process(_ request: Request) -> Response {
     let status = 200
 
     var body: String = ""

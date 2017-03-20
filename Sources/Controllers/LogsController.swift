@@ -9,7 +9,7 @@ public class LogsController: Controller {
     self.logs = logs
   }
 
-  public func process(_ request: Request) throws -> Response {
+  public func process(_ request: Request) -> Response {
     let auth = request.headers["authorization"].map { $0.components(separatedBy: " ").last ?? "" }
 
     let combinedLogs = logs.reduce("", { $0 + ($1 + "\n") }) +

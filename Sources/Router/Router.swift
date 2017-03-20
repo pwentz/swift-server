@@ -30,7 +30,7 @@ public class Router {
 
         let controller = try ControllerFactory.getController(request.path, logs: logs)
 
-        let response = try controller.process(request)
+        let response = controller.process(request)
 
         try client.send(data: response.formatted)
 
