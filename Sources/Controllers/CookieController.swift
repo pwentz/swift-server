@@ -2,9 +2,7 @@ import Requests
 import Responses
 
 public class CookieController: Controller {
-  static var cookie: [String: String] = [:]
-
-  static public func process(_ request: Request) -> Response {
+  public func process(_ request: Request) -> Response {
     let status = 200
 
     var body: String = ""
@@ -13,13 +11,12 @@ public class CookieController: Controller {
     if let params = request.params {
       body = "Eat"
 
-      cookie = params.toDictionary()
-
       headers.updateValue(params.toString(), forKey: "Set-Cookie")
     }
 
-    if request.headers["cookie"] != nil {
-      body = "mmmm \(cookie["type"] ?? "")"
+    if let cookie = request.headers["cookie"] {
+      let cookieValue = cookie.components(separatedBy: "=").last ?? ""
+      body = "mmmm \(cookieValue)"
     }
 
     return Response(status: status,

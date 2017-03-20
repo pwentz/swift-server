@@ -1,9 +1,16 @@
 import Foundation
 import Responses
 import Requests
+import Util
 
-public class RootController {
-  static public func process(_ request: Request, contents: [String: String]) -> Response {
+public class RootController: Controller {
+  let contents: [String: String]
+
+  public init(contents: [String: String]) {
+    self.contents = contents
+  }
+
+  public func process(_ request: Request) -> Response {
     let fileLinks = contents.keys.map { file in
       "<a href=\"/\(file)\">\(file)</a>"
     }
@@ -11,5 +18,6 @@ public class RootController {
     return Response(status: 200,
                     headers: ["Content-Type": "text/html"],
                     body: fileLinks.joined(separator: "<br>"))
+
   }
 }

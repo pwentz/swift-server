@@ -10,7 +10,7 @@ class ResourcesControllerTest: XCTestCase {
     let contents = ["file1": "this is a text file.",
                     "file2": "this is another text file."]
 
-    let response = ResourcesController.process(request, contents: contents)
+    let response = ResourcesController(contents: contents).process(request)
 
     XCTAssertEqual(response.body, "\n\nthis is a text file.")
   }
@@ -25,7 +25,7 @@ class ResourcesControllerTest: XCTestCase {
 
     let expected = "\n\n<img src=\"data:image/jpeg;base64,\(longBase64String)\"/>"
 
-    let response = ResourcesController.process(request, contents: contents)
+    let response = ResourcesController(contents: contents).process(request)
 
     XCTAssertEqual(response.body, expected)
   }
@@ -36,7 +36,7 @@ class ResourcesControllerTest: XCTestCase {
 
     let contents = ["file2": "this is another text file."]
 
-    let response = ResourcesController.process(request, contents: contents)
+    let response = ResourcesController(contents: contents).process(request)
 
     XCTAssertEqual(response.statusCode, "404 Not Found")
   }
