@@ -29,18 +29,9 @@ public class Router {
         let request = try Request(for: data.toString())
         var response: Response
 
-        logs.append("\(request.verb) \(request.path) HTTP/1.1")
-
         switch request.path {
         case "/logs":
-          let combinedLogs = logs.reduce("", { $0 + ($1 + "\n") }) +
-                             "\(request.verb) \(request.path) HTTP/1.1"
-
-          response = LogsController.process(request)
-
-          if response.statusCode.hasPrefix("200") {
-            response.body += "\n\n\(combinedLogs)"
-          }
+          response = LogsController.process(request, logs: logs)
 
         case let path where path.contains("cookie"):
           response = CookieController.process(request)
@@ -65,8 +56,10 @@ public class Router {
 
         default:
           response = Response(status: 200,
-                              headers: ["Content-Type": "text/html", "Content-Location": ""],
+                              headers: ["Content-Type": "text/html"],
                               body: "")
+
+          logs.append("\(request.verb) \(request.path) HTTP/1.1")
         }
 
         try client.send(data: response.formatted)
