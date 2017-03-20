@@ -2,5 +2,5 @@ import Requests
 import Responses
 
 public protocol Controller {
-  static func process(_ request: Request) -> Response
+  func process(_ request: Request) throws -> Response
 }

@@ -2,8 +2,14 @@ import Requests
 import Responses
 import Util
 
-public class LogsController {
-  static public func process(_ request: Request, logs: [String]) -> Response {
+public class LogsController: Controller {
+  let logs: [String]
+
+  public init(_ logs: [String]) {
+    self.logs = logs
+  }
+
+  public func process(_ request: Request) throws -> Response {
     let auth = request.headers["authorization"].map { $0.components(separatedBy: " ").last ?? "" }
 
     let combinedLogs = logs.reduce("", { $0 + ($1 + "\n") }) +
