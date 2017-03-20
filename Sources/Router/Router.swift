@@ -21,7 +21,7 @@ public class Router {
     print("Listening on \"\(address.hostname)\" (\(address.addressFamily)) \(address.port)")
 
     do {
-      let publicDirectoryContents = try CommandLineReader.getPublicDirectoryContents()
+      let publicDirectoryContents = try CommandLineReader().getPublicDirectoryContents()
 
       while true {
         let client = try socket.accept()
@@ -37,7 +37,10 @@ public class Router {
                              "\(request.verb) \(request.path) HTTP/1.1"
 
           response = LogsController.process(request)
-          response.body += combinedLogs
+
+          if response.statusCode.hasPrefix("200") {
+            response.body += "\n\n\(combinedLogs)"
+          }
 
         case let path where path.contains("cookie"):
           response = CookieController.process(request)
