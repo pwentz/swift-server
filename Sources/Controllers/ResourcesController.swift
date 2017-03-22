@@ -11,6 +11,13 @@ public class ResourcesController: Controller {
   }
 
   public func process(_ request: Request) -> Response {
+    guard request.verb == "GET" else {
+      let emptyHeaders: [String: String] = [:]
+      return Response(status: 405,
+                      headers: emptyHeaders,
+                      body: "")
+    }
+
     let path = request.path
     let pathName = path.substring(from: path.index(after: path.startIndex))
 
@@ -26,4 +33,5 @@ public class ResourcesController: Controller {
                     body: isAnImage(path) ? formattedImage ?? "Image extension not found."
                                           : fileContents)
   }
+
 }
