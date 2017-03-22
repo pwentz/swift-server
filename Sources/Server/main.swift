@@ -10,9 +10,10 @@ do {
   let givenPort = try reader.getPortArgument()
 
   try Router().listen(port: givenPort ?? defaultPort)
-}
-catch {
+} catch {
   let fileName = formatTimestamp(prefix: "FAILURE")
-  try FileWriter(at: logsPath, with: "ERROR: \(error)\r\nARGS: \(reader.joinedArgs)").write(to: fileName)
+  try FileWriter(at: logsPath, with: "ERROR: \(error)\r\nARGS: \(reader.joinedArgs)")
+                .write(to: fileName)
+
   print(" ‼️  :", error)
 }

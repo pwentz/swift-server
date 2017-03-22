@@ -11,14 +11,15 @@ public class Request {
     let parsedRequest = rawRequest.components(separatedBy: "\r\n").filter { !$0.isEmpty }
 
     // unsafe
-    let requestHeaders = parsedRequest[parsedRequest.index(after: parsedRequest.startIndex)..<parsedRequest.endIndex]
-                                      .map { RequestHeader(for: $0) }
+    let requestHeaders = parsedRequest[
+      parsedRequest.index(after: parsedRequest.startIndex)..<parsedRequest.endIndex
+    ].map { RequestHeader(for: $0) }
 
-    headers = requestHeaders.reduce([:], {
+    headers = requestHeaders.reduce([:]) {
       var mutable = $0
       mutable[$1.key] = $1.value
       return mutable
-    })
+    }
 
     let mainHeader = parsedRequest.first!
     let mainHeaderParsed = mainHeader.components(separatedBy: " ")
@@ -33,4 +34,5 @@ public class Request {
 
     params = parsedPath.index(where: { $0.contains("=") }).map { _ in Params(for: fullPath) }
   }
+
 }

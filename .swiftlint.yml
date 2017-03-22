@@ -1,0 +1,12 @@
+disabled_rules:
+
+opt_in_rules:
+  - force_unwrapping
+
+included:
+  - Sources
+
+excluded:
+  - Tests
+  - Packages
+  - Package.swift

@@ -2,6 +2,7 @@ import Requests
 import Responses
 
 public class CoffeeController: Controller {
+
   public func process(_ request: Request) -> Response {
     let emptyHeaders: [String: String] = [:]
 
@@ -9,4 +10,5 @@ public class CoffeeController: Controller {
                     headers: emptyHeaders,
                     body: "I'm a teapot")
   }
+
 }

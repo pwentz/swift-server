@@ -2,6 +2,7 @@ import Requests
 import Responses
 
 public class FoobarController: Controller {
+
   public func process(_ request: Request) -> Response {
     let emptyHeaders: [String: String] = [:]
 
@@ -9,4 +10,5 @@ public class FoobarController: Controller {
                     headers: emptyHeaders,
                     body: "")
   }
+
 }

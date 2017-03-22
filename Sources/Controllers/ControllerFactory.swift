@@ -1,6 +1,7 @@
 import Util
 
 public class ControllerFactory {
+
   public static func getController(_ path: String, logs: [String]) throws -> Controller {
     let contents = try CommandLineReader().getPublicDirectoryContents()
 
@@ -27,4 +28,5 @@ public class ControllerFactory {
       return DefaultController()
     }
   }
+
 }

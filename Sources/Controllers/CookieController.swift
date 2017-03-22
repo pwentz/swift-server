@@ -2,6 +2,7 @@ import Requests
 import Responses
 
 public class CookieController: Controller {
+
   public func process(_ request: Request) -> Response {
     let status = 200
 
@@ -23,4 +24,5 @@ public class CookieController: Controller {
                     headers: headers,
                     body: body)
   }
+
 }

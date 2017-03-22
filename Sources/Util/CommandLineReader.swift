@@ -13,9 +13,9 @@ public class CommandLineReader {
   }
 
   public func getArgumentAfter(flag: String) throws -> String? {
-    return try args.index(where: { file in file.contains(flag) }).map{ flagIndex throws -> String in
+    return try args.index(where: { $0.contains(flag) }).map { flagIndex throws -> String in
       guard flagIndex != args.count - 1 else {
-        throw ServerStartError.missingArgumentFor(flag: flag)
+        throw ServerStartError.MissingArgumentFor(flag: flag)
       }
 
       return args[args.index(after: flagIndex)]
@@ -30,8 +30,9 @@ public class CommandLineReader {
   public func getPortArgument() throws -> UInt16? {
     if let formattedPort = try getArgumentAfter(flag: "-p") {
       return UInt16(formattedPort)
+    } else {
+      return nil
     }
-    else { return nil }
   }
 
 }
