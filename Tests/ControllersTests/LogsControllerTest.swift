@@ -38,11 +38,11 @@ class LogsControllerTest: XCTestCase {
     let request = Request(for: rawRequest)
     let logs = ["PUT /these HTTP/1.1"]
 
-    let expected = "\n\nPUT /these HTTP/1.1\nGET /logs HTTP/1.1"
+    let expected = Array("\n\nPUT /these HTTP/1.1\nGET /logs HTTP/1.1".utf8)
 
     let res = LogsController(logs).process(request)
 
-    XCTAssertEqual(res.body, expected)
+    XCTAssertEqual(res.body!, expected)
   }
 
   func testItGivesNoBodyIfAuthDoesntMatch() {
@@ -52,6 +52,6 @@ class LogsControllerTest: XCTestCase {
 
     let res = LogsController(logs).process(request)
 
-    XCTAssert(res.body.isEmpty)
+    XCTAssert(res.body == nil)
   }
 }

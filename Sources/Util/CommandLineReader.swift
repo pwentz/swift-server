@@ -22,7 +22,7 @@ public class CommandLineReader {
     }
   }
 
-  public func getPublicDirectoryContents() throws -> [String: String] {
+  public func getPublicDirectoryContents() throws -> [String: [UInt8]] {
     let directoryPath = try getArgumentAfter(flag: "-d")
     return try FileReader(at: directoryPath ?? "").readContents()
   }

@@ -12,7 +12,7 @@ public class CookieController: Controller {
     if let params = request.params {
       body = "Eat"
 
-      headers.updateValue(params.toString(), forKey: "Set-Cookie")
+      headers["Set-Cookie"] = params.toString()
     }
 
     if let cookie = request.headers["cookie"] {
@@ -20,9 +20,11 @@ public class CookieController: Controller {
       body = "mmmm \(cookieValue)"
     }
 
+    let formattedBody: [UInt8]? = Array(body.utf8)
+
     return Response(status: status,
                     headers: headers,
-                    body: body)
+                    body: formattedBody)
   }
 
 }
