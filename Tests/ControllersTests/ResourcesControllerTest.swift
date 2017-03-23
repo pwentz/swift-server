@@ -7,34 +7,35 @@ class ResourcesControllerTest: XCTestCase {
     let rawRequest = "GET /file1 HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let request = Request(for: rawRequest)
 
-    let contents = ["file1": "this is a text file.",
-                    "file2": "this is another text file."]
+    let contents = ["file1": Array("this is a text file.".utf8),
+                    "file2": Array("this is another text file.".utf8)]
 
+    let expected = Array("\n\nthis is a text file.".utf8)
     let response = ResourcesController(contents: contents).process(request)
 
-    XCTAssertEqual(response.body, "\n\nthis is a text file.")
+    XCTAssertEqual(response.body!, expected)
   }
 
   func testItCanProcessAnImageRequest() {
     let rawRequest = "GET /image.jpeg HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let request = Request(for: rawRequest)
-    let longBase64String = "kdjnakjenawew09eqea///a20jq203jq+++ekqjn23kj32=="
+    let encodedImage = Array("someEncodedStuff".utf8)
 
-    let contents = ["image.jpeg": longBase64String,
-                    "file2": "this is another text file."]
+    let contents = ["image.jpeg": encodedImage,
+                    "file2": Array("this is another text file.".utf8)]
 
-    let expected = "\n\n<img src=\"data:image/jpeg;base64,\(longBase64String)\"/>"
+    let expected = Array("\n\n".utf8) + encodedImage
 
     let response = ResourcesController(contents: contents).process(request)
 
-    XCTAssertEqual(response.body, expected)
+    XCTAssertEqual(response.body!, expected)
   }
 
   func testItReturns404IfNoFileIsFound() {
     let rawRequest = "GET /file1 HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let request = Request(for: rawRequest)
 
-    let contents = ["file2": "this is another text file."]
+    let contents = ["file2": Array("this is another text file.".utf8)]
 
     let response = ResourcesController(contents: contents).process(request)
 
@@ -45,8 +46,8 @@ class ResourcesControllerTest: XCTestCase {
     let rawRequest = "PUT /file1 HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let request = Request(for: rawRequest)
 
-    let contents = ["file1": "this is a text file.",
-                    "file2": "this is another text file."]
+    let contents = ["file1": Array("this is a text file.".utf8),
+                    "file2": Array("this is another text file.".utf8)]
 
     let response = ResourcesController(contents: contents).process(request)
 
@@ -57,8 +58,8 @@ class ResourcesControllerTest: XCTestCase {
     let rawRequest = "POST /file1 HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let request = Request(for: rawRequest)
 
-    let contents = ["file1": "this is a text file.",
-                    "file2": "this is another text file."]
+    let contents = ["file1": Array("this is a text file.".utf8),
+                    "file2": Array("this is another text file.".utf8)]
 
     let response = ResourcesController(contents: contents).process(request)
 

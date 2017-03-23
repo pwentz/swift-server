@@ -8,7 +8,7 @@ public class FoobarController: Controller {
 
     return Response(status: 404,
                     headers: emptyHeaders,
-                    body: "")
+                    body: nil)
   }
 
 }

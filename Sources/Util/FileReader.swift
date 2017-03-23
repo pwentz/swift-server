@@ -20,19 +20,19 @@ public class FileReader {
     self.path = path
   }
 
-  public func readContents() throws -> [String: String] {
+  public func readContents() throws -> [String: [UInt8]] {
     return try getDirectoryContents()
   }
 
-  public func getDirectoryContents() throws -> [String: String] {
+  public func getDirectoryContents() throws -> [String: [UInt8]] {
     let publicFileNames = try getFileNames()
-    let relativeDirectoryPath = path.components(separatedBy: "/Users/").last!
+    let relativeDirectoryPath = path.components(separatedBy: "/Users/").last ?? defaultPublicDirPath
 
-    let publicFiles: [String: String] = try publicFileNames.reduce([:]) { (result, file) throws in
+    let publicFiles: [String: [UInt8]] = try publicFileNames.reduce([:]) { (result, file) throws in
       let publicFileUrl = userDirectory.appendingPathComponent("\(relativeDirectoryPath)/\(file)")
 
-      let fileContents = isAnImage(file) ? getImage(at: publicFileUrl)
-                                         : try String(contentsOf: publicFileUrl)
+      let fileData = try Data(contentsOf: publicFileUrl)
+      let fileContents: [UInt8] = [UInt8](fileData)
 
       var mutableResult = result
       mutableResult[file] = fileContents
@@ -46,11 +46,11 @@ public class FileReader {
     return try FileManager.default.contentsOfDirectory(atPath: path)
   }
 
-  public func getImage(at url: URL) -> String {
-    if let imageData = NSData(contentsOf: url) {
-      return imageData.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0))
-    } else {
-      return ""
-    }
-  }
+  // public func getImage(at url: URL) -> String {
+  //   if let imageData = NSData(contentsOf: url) {
+  //     return imageData.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0))
+  //   } else {
+  //     return ""
+  //   }
+  // }
 }

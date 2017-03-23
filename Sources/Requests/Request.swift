@@ -21,7 +21,7 @@ public class Request {
       return mutable
     }
 
-    let mainHeader = parsedRequest.first!
+    let mainHeader = parsedRequest.first ?? ""
     let mainHeaderParsed = mainHeader.components(separatedBy: " ")
 
     verb = mainHeaderParsed.first ?? ""

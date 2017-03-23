@@ -4,9 +4,9 @@ import Requests
 import Util
 
 public class ResourcesController: Controller {
-  let contents: [String: String]
+  let contents: [String: [UInt8]]
 
-  public init(contents: [String: String]) {
+  public init(contents: [String: [UInt8]]) {
     self.contents = contents
   }
 
@@ -15,23 +15,19 @@ public class ResourcesController: Controller {
       let emptyHeaders: [String: String] = [:]
       return Response(status: 405,
                       headers: emptyHeaders,
-                      body: "")
+                      body: nil)
     }
 
     let path = request.path
     let pathName = path.substring(from: path.index(after: path.startIndex))
 
-    let fileContents = contents[pathName] ?? ""
-    let status = fileContents.isEmpty ? 404 : 200
+    let status = contents[pathName].map { _ in 200 }
 
-    let formattedImage = path.range(of: ".").map {
-      "<img src=\"data:image/\(path.substring(from: $0.upperBound));base64,\(fileContents)\"/>"
-    }
-
-    return Response(status: status,
-                    headers: ["Content-Type": "text/html"],
-                    body: isAnImage(path) ? formattedImage ?? "Image extension not found."
-                                          : fileContents)
+    return Response(status: status ?? 404,
+                    headers: [
+                      "Content-Type": "text/html"
+                    ],
+                    body: contents[pathName])
   }
 
 }

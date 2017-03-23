@@ -35,7 +35,7 @@ public class Router {
         try client.send(data: response.formatted)
 
         let fileContents = "REQUEST: \(try data.toString())\r\n" +
-                           "RESPONSE: \(try response.formatted.toString())"
+                           "RESPONSE: \(response.toString())"
 
         try FileWriter(at: logsPath, with: fileContents)
                       .write(to: formatTimestamp(prefix: "SUCCESS"))

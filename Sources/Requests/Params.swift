@@ -25,14 +25,14 @@ public class Params {
     let stringParams = toString()
     let splitParams = stringParams.components(separatedBy: "=")
 
-    return [splitParams.first!]
+    return [splitParams.first ?? ""]
   }
 
   public func values() -> [String] {
     let stringParams = toString()
     let splitParams = stringParams.components(separatedBy: "=")
 
-    return [splitParams.last!]
+    return [splitParams.last ?? ""]
   }
 
 }
