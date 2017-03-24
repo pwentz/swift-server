@@ -24,6 +24,9 @@ public class ControllerFactory {
     case "/coffee":
       return CoffeeController()
 
+    case "/parameters":
+      return ParametersController()
+
     default:
       return DefaultController()
     }

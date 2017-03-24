@@ -1,3 +1,5 @@
+import Foundation
+
 public class Params {
   public let path: String
 
@@ -6,9 +8,9 @@ public class Params {
   }
 
   public func toString() -> String {
-    let rawParams = path.components(separatedBy: "?").last ?? ""
+    let formattedParams = getParams().replacingOccurrences(of: "&", with: "\n")
 
-    return rawParams
+    return decode(formattedParams)
   }
 
   public func toDictionary() -> [String: String] {
@@ -22,17 +24,23 @@ public class Params {
   }
 
   public func keys() -> [String] {
-    let stringParams = toString()
-    let splitParams = stringParams.components(separatedBy: "=")
-
-    return [splitParams.first ?? ""]
+    return getParams().components(separatedBy: "&").map {
+      decode($0.components(separatedBy: "=").first ?? "")
+    }
   }
 
   public func values() -> [String] {
-    let stringParams = toString()
-    let splitParams = stringParams.components(separatedBy: "=")
+    return getParams().components(separatedBy: "&").map {
+      decode($0.components(separatedBy: "=").last ?? "")
+    }
+  }
 
-    return [splitParams.last ?? ""]
+  private func getParams() -> String {
+    return path.components(separatedBy: "?").last ?? ""
+  }
+
+  private func decode(_ rawParams: String) -> String {
+    return rawParams.removingPercentEncoding ?? rawParams
   }
 
 }
