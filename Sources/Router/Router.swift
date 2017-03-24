@@ -20,31 +20,29 @@ public class Router {
 
     print("Listening on \"\(address.hostname)\" (\(address.addressFamily)) \(address.port)")
 
-    do {
-      while true {
-        let client = try socket.accept()
-        let data = try client.recv()
-        let request = try Request(for: data.toString())
+    while true {
+      let client = try socket.accept()
+      let data = try client.recv()
+      let request = try Request(for: data.toString())
 
-        logs.append("\(request.verb) \(request.path) HTTP/1.1")
+      logs.append("\(request.verb) \(request.path) HTTP/1.1")
 
-        let controller = try ControllerFactory.getController(request.path, logs: logs)
+      let controller = try ControllerFactory.getController(request.path, logs: logs)
 
-        let response = controller.process(request)
+      let response = controller.process(request)
 
-        try client.send(data: response.formatted)
+      try client.send(data: response.formatted)
 
-        let fileContents = "REQUEST: \(try data.toString())\r\n" +
-                           "RESPONSE: \(response.toString())"
+      let fileContents = "REQUEST: \(try data.toString())\r\n" +
+                         "RESPONSE: \(response.toString())"
 
-        try FileWriter(at: logsPath, with: fileContents)
-                      .write(to: formatTimestamp(prefix: "SUCCESS"))
+      try FileWriter(at: logsPath, with: fileContents)
+                    .write(to: formatTimestamp(prefix: "SUCCESS"))
 
-        print(fileContents)
+      print(fileContents)
 
-        try client.close()
-      }
-    } catch { throw error }
+      try client.close()
+    }
   }
 
 }

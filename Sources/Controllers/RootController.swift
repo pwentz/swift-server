@@ -1,7 +1,5 @@
-import Foundation
 import Responses
 import Requests
-import Util
 
 public class RootController: Controller {
   let contents: [String: [UInt8]]
@@ -15,11 +13,9 @@ public class RootController: Controller {
       "<a href=\"/\(file)\">\(file)</a>"
     }.joined(separator: "<br>")
 
-    let formattedBody: [UInt8]? = Array(fileLinks.utf8)
-
     return Response(status: 200,
                     headers: ["Content-Type": "text/html"],
-                    body: formattedBody)
+                    body: Array(fileLinks.utf8))
 
   }
 

@@ -3,7 +3,8 @@ import Util
 public class ControllerFactory {
 
   public static func getController(_ path: String, logs: [String]) throws -> Controller {
-    let contents = try CommandLineReader().getPublicDirectoryContents()
+    let publicDir = try CommandLineReader().publicDirectoryArgs()
+    let contents = try FileReader(at: publicDir ?? "").read()
 
     switch path {
     case "/logs":

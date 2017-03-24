@@ -14,13 +14,13 @@ public class Params {
   }
 
   public func toDictionary() -> [String: String] {
-    var zippedParams: [String: String] = [:]
+    var matchedParams: [String: String] = [:]
 
     for (index, paramKey) in keys().enumerated() {
-      zippedParams[paramKey] = values()[index]
+      matchedParams[paramKey] = values()[index]
     }
 
-    return zippedParams
+    return matchedParams
   }
 
   public func keys() -> [String] {

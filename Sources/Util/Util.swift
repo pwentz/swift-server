@@ -22,6 +22,6 @@ public func isAnImage(_ file: String) -> Bool {
            file.hasSuffix("png")
 }
 
-public let logsPath = "patrickwentz/8th-light/projects/swift/server/Sources/Server/Debug"
-public let defaultPublicDirPath = "patrickwentz/cob_spec/public"
+public let logsPath = "/Users/patrickwentz/8th-light/projects/swift/server/Sources/Server/Debug"
+public let defaultPublicDirPath = "/Users/patrickwentz/cob_spec/public"
 public let authCredentials = "admin:hunter2"

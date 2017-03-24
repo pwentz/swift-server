@@ -12,9 +12,8 @@ public class ResourcesController: Controller {
 
   public func process(_ request: Request) -> Response {
     guard request.verb == "GET" else {
-      let emptyHeaders: [String: String] = [:]
       return Response(status: 405,
-                      headers: emptyHeaders,
+                      headers: [:],
                       body: nil)
     }
 
