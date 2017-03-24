@@ -1,11 +1,11 @@
 import Foundation
 import Errors
 
-public func getBase64(of input: String) -> String {
+public func getBase64(of input: String) -> String? {
   let data = input.data(using: .utf8)
   return data.map {
     $0.base64EncodedString(options: Data.Base64EncodingOptions(rawValue: 0))
-  } ?? ""
+  }
 }
 
 public func formatTimestamp(prefix: String) -> String {
@@ -24,3 +24,4 @@ public func isAnImage(_ file: String) -> Bool {
 
 public let logsPath = "patrickwentz/8th-light/projects/swift/server/Sources/Server/Debug"
 public let defaultPublicDirPath = "patrickwentz/cob_spec/public"
+public let authCredentials = "admin:hunter2"
