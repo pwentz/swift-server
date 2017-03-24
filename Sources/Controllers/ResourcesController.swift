@@ -23,9 +23,15 @@ public class ResourcesController: Controller {
 
     let status = contents[pathName].map { _ in 200 }
 
+    let contentType = path.range(of: ".").map { extStart -> String in
+      let ext = path.substring(from: extStart.upperBound)
+
+      return isAnImage(ext) ? "image/\(ext)" : "text/plain"
+    }
+
     return Response(status: status ?? 404,
                     headers: [
-                      "Content-Type": "text/html"
+                      "Content-Type": contentType ?? "text/html"
                     ],
                     body: contents[pathName])
   }

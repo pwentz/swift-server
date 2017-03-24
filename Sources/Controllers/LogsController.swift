@@ -15,12 +15,17 @@ public class LogsController: Controller {
     let combinedLogs = logs.reduce("") { $0 + ($1 + "\n") } +
                        "\(request.verb) \(request.path) HTTP/1.1"
 
-    let status = auth == getBase64(of: "admin:hunter2") ? 200 : 401
+    let status = getBase64(of: authCredentials).map { auth == $0 ? 200 : 401 } ?? 401
+
     let body: [UInt8]? = status == 200 ? Array(combinedLogs.utf8) : nil
 
     let headers = ["WWW-Authenticate": "Basic realm=\"simple\""]
 
-    return Response(status: status, headers: headers, body: body)
+    return Response(
+      status: status,
+      headers: headers,
+      body: body
+    )
   }
 
 }

@@ -29,4 +29,5 @@ public class Response {
   private func statusLine() -> String {
     return "HTTP/1.1 \(statusCode)\r\n"
   }
+
 }
