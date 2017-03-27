@@ -1,15 +1,22 @@
+import Foundation
+
 struct RequestHeader {
   let key: String
   let value: String
 
   init(for rawHeader: String) {
-    let separatorIndex = rawHeader.characters.index(of: ":")!
+    let separatorIndex = rawHeader.range(of: ":")
 
-    key = rawHeader[rawHeader.startIndex..<separatorIndex]
-                   .trimmingCharacters(in: .whitespaces)
-                   .lowercased()
+    key = separatorIndex.map {
+      rawHeader.substring(to: $0.lowerBound)
+               .trimmingCharacters(in: .whitespaces)
+               .lowercased()
+    } ?? ""
 
-    value = rawHeader[rawHeader.index(after: separatorIndex)..<rawHeader.endIndex]
-                     .trimmingCharacters(in: .whitespaces)
+    value = separatorIndex.map {
+      rawHeader.substring(from: $0.upperBound)
+               .trimmingCharacters(in: .whitespaces)
+    } ?? ""
+
   }
 }

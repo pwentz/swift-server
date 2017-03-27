@@ -7,7 +7,7 @@ let reader = CommandLineReader()
 
 do {
   let defaultPort: UInt16 = 5000
-  let givenPort = try reader.getPortArgument()
+  let givenPort = try reader.portArgs()
 
   try Router().listen(port: givenPort ?? defaultPort)
 } catch {
@@ -16,4 +16,5 @@ do {
                 .write(to: fileName)
 
   print(" ‼️  :", error)
+  throw error
 }

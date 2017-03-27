@@ -1,7 +1,7 @@
 public class Response {
   public let statusCode: String
   public let headers: [String: String]
-  public var body: [UInt8]?
+  public let body: [UInt8]?
 
   public init(status: Int, headers: [String: String], body: [UInt8]?) {
     self.statusCode = statusCodes[status] ?? "404 Not Found"
@@ -12,8 +12,8 @@ public class Response {
 
   public var formatted: [UInt8] {
     let formattedHeaders = Array(joinHeaders().utf8)
-    let formattedStatus: [UInt8] = Array(statusLine().utf8)
-    let formattedBody: [UInt8] = body ?? []
+    let formattedStatus = Array(statusLine().utf8)
+    let formattedBody = body ?? []
 
     return formattedStatus + formattedHeaders + formattedBody
   }

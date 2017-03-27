@@ -20,11 +20,9 @@ public class CookieController: Controller {
       body = "mmmm \(cookieValue)"
     }
 
-    let formattedBody: [UInt8]? = Array(body.utf8)
-
     return Response(status: status,
                     headers: headers,
-                    body: formattedBody)
+                    body: Array(body.utf8))
   }
 
 }

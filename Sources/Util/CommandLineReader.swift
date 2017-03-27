@@ -22,12 +22,11 @@ public class CommandLineReader {
     }
   }
 
-  public func getPublicDirectoryContents() throws -> [String: [UInt8]] {
-    let directoryPath = try getArgumentAfter(flag: "-d")
-    return try FileReader(at: directoryPath ?? "").readContents()
+  public func publicDirectoryArgs() throws -> String? {
+    return try getArgumentAfter(flag: "-d")
   }
 
-  public func getPortArgument() throws -> UInt16? {
+  public func portArgs() throws -> UInt16? {
     if let formattedPort = try getArgumentAfter(flag: "-p") {
       return UInt16(formattedPort)
     } else {

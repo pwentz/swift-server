@@ -10,15 +10,10 @@ public class Request {
   public init(for rawRequest: String) {
     let parsedRequest = rawRequest.components(separatedBy: "\r\n").filter { !$0.isEmpty }
 
-    // unsafe
-    let requestHeaders = parsedRequest[
-      parsedRequest.index(after: parsedRequest.startIndex)..<parsedRequest.endIndex
-    ].map { RequestHeader(for: $0) }
-
-    headers = requestHeaders.reduce([:]) {
-      var mutable = $0
-      mutable[$1.key] = $1.value
-      return mutable
+    headers = parsedRequest.dropFirst().map { RequestHeader(for: $0) }.reduce([:]) {
+       var mutable = $0
+       mutable[$1.key] = $1.value
+       return mutable
     }
 
     let mainHeader = parsedRequest.first ?? ""
