@@ -3,17 +3,21 @@ import Responses
 import Util
 
 public class LogsController: Controller {
-  let logs: [String]
+  static var aggregateLogs: [String] = []
+  public let logs: [String]
 
-  public init(_ logs: [String]) {
-    self.logs = logs
+  public init() {
+    self.logs = LogsController.aggregateLogs
+  }
+
+  static public func updateLogs(_ request: Request) {
+    aggregateLogs.append("\(request.verb) \(request.path) HTTP/1.1")
   }
 
   public func process(_ request: Request) -> Response {
     let auth = request.headers["authorization"].map { $0.components(separatedBy: " ").last ?? "" }
 
-    let combinedLogs = logs.reduce("") { $0 + ($1 + "\n") } +
-                       "\(request.verb) \(request.path) HTTP/1.1"
+    let combinedLogs = logs.joined(separator: "\n")
 
     let status = getBase64(of: authCredentials).map { auth == $0 ? 200 : 401 } ?? 401
 

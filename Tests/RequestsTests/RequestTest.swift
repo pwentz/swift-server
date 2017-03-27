@@ -122,4 +122,11 @@ class RequestTest: XCTestCase {
 
         XCTAssertEqual(request.path, "/cookie")
     }
+
+    func testItHasABody() {
+      let rawRequest = "POST /form HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate\r\ndata=fatcat"
+      let request = Request(for: rawRequest)
+
+      XCTAssertEqual(request.body!, "data=fatcat")
+    }
 }

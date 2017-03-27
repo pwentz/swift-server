@@ -5,11 +5,8 @@ import Controllers
 import Util
 
 public class Router {
-  public var logs: [String]
 
-  public init() {
-    self.logs = []
-  }
+  public init() {}
 
   public func listen(port: UInt16) throws {
     let address = InternetAddress.localhost(port: port)
@@ -25,9 +22,7 @@ public class Router {
       let data = try client.recv()
       let request = try Request(for: data.toString())
 
-      logs.append("\(request.verb) \(request.path) HTTP/1.1")
-
-      let controller = try ControllerFactory.getController(request.path, logs: logs)
+      let controller = try ControllerFactory.getController(request)
 
       let response = controller.process(request)
 

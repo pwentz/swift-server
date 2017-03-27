@@ -4,6 +4,7 @@ public class Request {
   public let verb: String
   public let path: String
   public let params: Params?
+  public let body: String?
 
   public let headers: [String: String]
 
@@ -28,6 +29,8 @@ public class Request {
     path = parsedPath.first ?? fullPath
 
     params = parsedPath.index(where: { $0.contains("=") }).map { _ in Params(for: fullPath) }
+
+    body = parsedRequest.last?.range(of: "data=").map { _ in parsedRequest.last! }
   }
 
 }
