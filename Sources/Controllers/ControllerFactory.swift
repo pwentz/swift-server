@@ -34,6 +34,9 @@ public class ControllerFactory {
     case "/form":
       return FormController()
 
+    case "/redirect":
+      return RedirectController()
+
     default:
       return DefaultController()
     }
