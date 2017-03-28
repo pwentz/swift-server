@@ -19,6 +19,9 @@ public class ControllerFactory {
     case "/":
       return RootController(contents: contents)
 
+    case "/patch-content.txt":
+      return PatchedContentController(contents: contents)
+
     case let path where contents.keys.contains { file in path == "/\(file)" }:
       return ResourcesController(contents: contents)
 

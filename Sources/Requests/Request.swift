@@ -30,7 +30,7 @@ public class Request {
 
     params = parsedPath.index(where: { $0.contains("=") }).map { _ in Params(for: fullPath) }
 
-    body = parsedRequest.last?.range(of: "data=").map { _ in parsedRequest.last! }
+    body = parsedRequest.last!.contains(":") ? nil : parsedRequest.last!
   }
 
 }
