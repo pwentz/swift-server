@@ -40,6 +40,9 @@ public class ControllerFactory {
     case "/redirect":
       return RedirectController()
 
+    case "/method_options":
+      return MethodOptionsController()
+
     default:
       return DefaultController()
     }
