@@ -1,14 +1,17 @@
 import Util
+import Requests
 
 public class ControllerFactory {
 
-  public static func getController(_ path: String, logs: [String]) throws -> Controller {
+  public static func getController(_ request: Request) throws -> Controller {
     let publicDir = try CommandLineReader().publicDirectoryArgs()
     let contents = try FileReader(at: publicDir ?? "").read()
+    LogsController.updateLogs(request)
+    let path = request.path
 
     switch path {
     case "/logs":
-      return LogsController(logs)
+      return LogsController()
 
     case let path where path.contains("cookie"):
       return CookieController()
@@ -27,6 +30,9 @@ public class ControllerFactory {
 
     case "/parameters":
       return ParametersController()
+
+    case "/form":
+      return FormController()
 
     default:
       return DefaultController()

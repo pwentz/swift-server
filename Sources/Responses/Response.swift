@@ -11,23 +11,19 @@ public class Response {
   }
 
   public var formatted: [UInt8] {
-    let formattedHeaders = Array(joinHeaders().utf8)
-    let formattedStatus = Array(statusLine().utf8)
+    let joinedHeaders = headers.map { $0 + ":" + $1 }.joined(separator: "\r\n")
+    let statusLine = "HTTP/1.1 \(statusCode)\r\n"
+    let formattedHeaders = Array(joinedHeaders.utf8)
+    let formattedStatus = Array(statusLine.utf8)
     let formattedBody = body ?? []
 
     return formattedStatus + formattedHeaders + formattedBody
   }
 
   public func toString() -> String {
-    return statusLine() + joinHeaders()
-  }
-
-  private func joinHeaders() -> String {
-    return headers.map { $0 + ":" + $1 }.joined(separator: "\r\n")
-  }
-
-  private func statusLine() -> String {
-    return "HTTP/1.1 \(statusCode)\r\n"
+    let joinedHeaders = headers.map { $0 + ":" + $1 }.joined(separator: "\r\n")
+    let statusLine = "HTTP/1.1 \(statusCode)\r\n"
+    return statusLine + joinedHeaders
   }
 
 }
