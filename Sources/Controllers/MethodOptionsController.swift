@@ -3,7 +3,9 @@ import Responses
 
 class MethodOptionsController: Controller {
   public func process(_ request: Request) -> Response {
-    let headers = ["Allow": "GET,HEAD,POST,OPTIONS,PUT"]
+    let allowedVerbs = request.path.contains("2") ? "GET,OPTIONS"
+                                                  : "GET,HEAD,POST,OPTIONS,PUT"
+    let headers = ["Allow": allowedVerbs]
 
     return Response(status: 200,
                     headers: headers,

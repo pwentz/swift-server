@@ -40,7 +40,7 @@ public class ControllerFactory {
     case "/redirect":
       return RedirectController()
 
-    case "/method_options":
+    case let path where path.contains("method_options"):
       return MethodOptionsController()
 
     default:
