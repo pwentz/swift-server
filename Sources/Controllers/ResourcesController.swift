@@ -29,11 +29,10 @@ public class ResourcesController: Controller {
 
       let chars: [String] = Array(stringContents.characters).map { String($0) }
 
-      let rangeEnd = Int(rawRange.components(separatedBy: "-").last!) ?? stringContents.characters.count
+      let range = getRange(of: rawRange, for: stringContents)
 
-      let rangeStart = Int(rawRange.components(separatedBy: "-").first!) ?? stringContents.characters.count - rangeEnd
+      let finalContents = chars[range].joined(separator: "")
 
-      let finalContents = chars[rangeStart..<stringContents.characters.count].joined(separator: "")
 
       let body: [UInt8] = Array(finalContents.utf8)
 
@@ -55,6 +54,17 @@ public class ResourcesController: Controller {
                       "Content-Type": contentType ?? "text/html"
                     ],
                     body: contents[pathName])
+  }
+
+  public func getRange(of rawRange: String, for fileContents: String) -> Range<Int> {
+    let splitRange = rawRange.components(separatedBy: "-")
+
+    let rangeEnd = Int(splitRange.last!) ?? fileContents.characters.count - 1
+
+    let rangeStart = Int(splitRange.first!) ?? fileContents.characters.count - rangeEnd
+
+    return rangeEnd < rangeStart ? rangeStart..<fileContents.characters.count
+                                 : rangeStart..<rangeEnd + 1
   }
 
 }
