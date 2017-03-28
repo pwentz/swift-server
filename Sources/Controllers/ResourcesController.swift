@@ -21,17 +21,21 @@ public class ResourcesController: Controller {
     }
 
     guard path != "/partial_content.txt" else {
-      let rangeHeader = request.headers["range"]!
-      let rawRange = rangeHeader.components(separatedBy: "=").last!
-      let rangeStart = Int(rawRange.components(separatedBy: "-").first!) ?? 0
+      let splitRange = request.headers["range"]!.components(separatedBy: "=")
+      let rawRange = splitRange.last!
 
       let stringContents = String(data: Data(contents[pathName]!),
                                   encoding: .utf8)!
 
-      let partialContents = stringContents.substring(from: stringContents.index(stringContents.startIndex,
-                                                                                offsetBy: rangeStart))
+      let chars: [String] = Array(stringContents.characters).map { String($0) }
 
-      let body: [UInt8] = Array(partialContents.utf8)
+      let rangeEnd = Int(rawRange.components(separatedBy: "-").last!) ?? stringContents.characters.count
+
+      let rangeStart = Int(rawRange.components(separatedBy: "-").first!) ?? stringContents.characters.count - rangeEnd
+
+      let finalContents = chars[rangeStart..<stringContents.characters.count].joined(separator: "")
+
+      let body: [UInt8] = Array(finalContents.utf8)
 
       return Response(status: 206,
                       headers: ["Content-Type": "text/plain"],
