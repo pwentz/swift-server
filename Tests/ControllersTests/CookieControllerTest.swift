@@ -9,7 +9,7 @@ class CookieControllerTest: XCTestCase {
 
     let result = Array("\n\nEat".utf8)
 
-    let res = CookieController().process(request)
+    let res = CookieController.process(request)
 
     XCTAssertEqual(res.body!, result)
   }
@@ -23,7 +23,7 @@ class CookieControllerTest: XCTestCase {
       "Set-Cookie" : "type=chocolate"
     ]
 
-    let res = CookieController().process(request)
+    let res = CookieController.process(request)
 
     XCTAssertEqual(res.headers, headers)
   }
@@ -31,7 +31,7 @@ class CookieControllerTest: XCTestCase {
   func testItCanCookieFormatResponseWithCorrectStatus() {
     let rawRequest = "GET /cookie?type=chocolate HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
     let request = Request(for: rawRequest)
-    let res = CookieController().process(request)
+    let res = CookieController.process(request)
 
     XCTAssertEqual(res.statusCode, "200 OK")
   }
@@ -44,7 +44,7 @@ class CookieControllerTest: XCTestCase {
       "Content-Type" : "text/html",
     ]
 
-    let res = CookieController().process(request)
+    let res = CookieController.process(request)
 
     XCTAssertEqual(res.headers, headers)
   }
@@ -55,7 +55,7 @@ class CookieControllerTest: XCTestCase {
 
     let result = Array("\n\nmmmm chocolate".utf8)
 
-    let res = CookieController().process(request)
+    let res = CookieController.process(request)
 
     XCTAssertEqual(res.body!, result)
   }
@@ -63,7 +63,7 @@ class CookieControllerTest: XCTestCase {
   func testItCanResponseWithToDynamicCookieHeader() {
     let rawRequest = "GET /eat_cookie HTTP/1.1\r\nCookie: type=oatmeal\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
     let request = Request(for: rawRequest)
-    let res = CookieController().process(request)
+    let res = CookieController.process(request)
 
     let result = Array("\n\nmmmm oatmeal".utf8)
 
@@ -73,7 +73,7 @@ class CookieControllerTest: XCTestCase {
   func testItCanFormatResponseWithCorrectStatus() {
     let rawRequest = "GET /eat_cookie HTTP/1.1\r\nCookie: type=chocolate\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
     let request = Request(for: rawRequest)
-    let res = CookieController().process(request)
+    let res = CookieController.process(request)
 
     XCTAssertEqual(res.statusCode, "200 OK")
   }

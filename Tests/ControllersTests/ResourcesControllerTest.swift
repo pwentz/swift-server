@@ -10,8 +10,10 @@ class ResourcesControllerTest: XCTestCase {
     let contents = ["file1": Array("this is a text file.".utf8),
                     "file2": Array("this is another text file.".utf8)]
 
+    ResourcesController.contents = [:]
+    ResourcesController.setData(contents: contents)
     let expected = Array("\n\nthis is a text file.".utf8)
-    let response = ResourcesController(contents: contents).process(request)
+    let response = ResourcesController.process(request)
 
     XCTAssertEqual(response.body!, expected)
   }
@@ -26,7 +28,9 @@ class ResourcesControllerTest: XCTestCase {
 
     let expected = Array("\n\n".utf8) + encodedImage
 
-    let response = ResourcesController(contents: contents).process(request)
+    ResourcesController.contents = [:]
+    ResourcesController.setData(contents: contents)
+    let response = ResourcesController.process(request)
 
     XCTAssertEqual(response.body!, expected)
   }
@@ -37,7 +41,10 @@ class ResourcesControllerTest: XCTestCase {
 
     let contents = ["file2": Array("this is another text file.".utf8)]
 
-    let response = ResourcesController(contents: contents).process(request)
+    ResourcesController.contents = [:]
+    ResourcesController.setData(contents: contents)
+
+    let response = ResourcesController.process(request)
 
     XCTAssertEqual(response.statusCode, "404 Not Found")
   }
@@ -49,7 +56,9 @@ class ResourcesControllerTest: XCTestCase {
     let contents = ["file1": Array("this is a text file.".utf8),
                     "file2": Array("this is another text file.".utf8)]
 
-    let response = ResourcesController(contents: contents).process(request)
+    ResourcesController.contents = [:]
+    ResourcesController.setData(contents: contents)
+    let response = ResourcesController.process(request)
 
     XCTAssertEqual(response.statusCode, "405 Method Not Allowed")
   }
@@ -61,7 +70,9 @@ class ResourcesControllerTest: XCTestCase {
     let contents = ["file1": Array("this is a text file.".utf8),
                     "file2": Array("this is another text file.".utf8)]
 
-    let response = ResourcesController(contents: contents).process(request)
+    ResourcesController.contents = [:]
+    ResourcesController.setData(contents: contents)
+    let response = ResourcesController.process(request)
 
     XCTAssertEqual(response.statusCode, "405 Method Not Allowed")
   }
@@ -74,7 +85,9 @@ class ResourcesControllerTest: XCTestCase {
     let contents = ["image.jpeg": encodedImage,
                     "file2": Array("this is another text file.".utf8)]
 
-    let response = ResourcesController(contents: contents).process(request)
+    ResourcesController.contents = [:]
+    ResourcesController.setData(contents: contents)
+    let response = ResourcesController.process(request)
 
     XCTAssertEqual(response.headers["Content-Type"]!, "image/jpeg")
   }
@@ -87,7 +100,9 @@ class ResourcesControllerTest: XCTestCase {
     let contents = ["image.png": encodedImage,
                     "file2": Array("this is another text file.".utf8)]
 
-    let response = ResourcesController(contents: contents).process(request)
+    ResourcesController.contents = [:]
+    ResourcesController.setData(contents: contents)
+    let response = ResourcesController.process(request)
 
     XCTAssertEqual(response.headers["Content-Type"]!, "image/png")
   }
@@ -100,7 +115,9 @@ class ResourcesControllerTest: XCTestCase {
     let contents = ["image.gif": encodedImage,
                     "file2": Array("this is another text file.".utf8)]
 
-    let response = ResourcesController(contents: contents).process(request)
+    ResourcesController.contents = [:]
+    ResourcesController.setData(contents: contents)
+    let response = ResourcesController.process(request)
 
     XCTAssertEqual(response.headers["Content-Type"]!, "image/gif")
   }
@@ -112,7 +129,9 @@ class ResourcesControllerTest: XCTestCase {
     let contents = ["stuff.txt": Array("this is a text file.".utf8),
                     "file2": Array("this is another text file.".utf8)]
 
-    let response = ResourcesController(contents: contents).process(request)
+    ResourcesController.contents = [:]
+    ResourcesController.setData(contents: contents)
+    let response = ResourcesController.process(request)
 
     XCTAssertEqual(response.headers["Content-Type"]!, "text/plain")
   }
@@ -124,58 +143,75 @@ class ResourcesControllerTest: XCTestCase {
     let contents = ["stuff.txt": Array("this is a text file.".utf8),
                     "file2": Array("this is another text file.".utf8)]
 
-    let response = ResourcesController(contents: contents).process(request)
+    ResourcesController.contents = [:]
+    ResourcesController.setData(contents: contents)
+    let response = ResourcesController.process(request)
 
     XCTAssertEqual(response.headers["Content-Type"]!, "text/html")
   }
 
-  func testItCanRespondWithA206WithPartialContent() {
-    let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate\r\nRange:bytes=4-"
+  func testItCanReturnDefaultStatusOnGet() {
+    let rawRequest = "GET /patch-content.txt HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
     let request = Request(for: rawRequest)
 
-    let contents = ["partial_content.txt": Array("This is a file that contains text to read part of in order to fulfill a 206.".utf8)]
+    let contents: [String: [UInt8]] = ["patch-content.txt": Array("default content".utf8)]
 
-    let response = ResourcesController(contents: contents).process(request)
+    ResourcesController.contents = [:]
+    ResourcesController.setData(contents: contents)
 
-    XCTAssertEqual(response.statusCode, "206 Partial Content")
+    let response = ResourcesController.process(request)
+
+    XCTAssertEqual(response.statusCode, "200 OK")
   }
 
-  func testItCanRespondWithPartialContentsGivenRangeStart() {
-    let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\nRange:bytes=4-\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
+  func testItCanReturnDefaultContentOnGet() {
+    let rawRequest = "GET /patch-content.txt HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
     let request = Request(for: rawRequest)
 
-    let contents = ["partial_content.txt": Array("This is a file that contains text to read part of in order to fulfill a 206.".utf8)]
+    let contents: [String: [UInt8]] = ["patch-content.txt": Array("default content".utf8)]
 
-    let response = ResourcesController(contents: contents).process(request)
+    ResourcesController.contents = [:]
+    ResourcesController.setData(contents: contents)
 
-    let expected = Array("\n\n is a file that contains text to read part of in order to fulfill a 206.".utf8)
+    let response = ResourcesController.process(request)
+
+    let expected = Array("\n\ndefault content".utf8)
 
     XCTAssertEqual(response.body!, expected)
   }
 
-  func testItCanRespondWithPartialContentsGivenRangeEnd() {
-    let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\nRange:bytes=-6\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
+  func testItCanReturn204WhenSentPatch() {
+    let rawRequest = "PATCH /patch-content.txt HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nIf-Match: dc50a0d27dda2eee9f65644cd7e4c9cf11de8bec\r\nContent-Length: 15\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate\r\npatched content"
     let request = Request(for: rawRequest)
 
-    let contents = ["partial_content.txt": Array("This is a file that contains text to read part of in order to fulfill a 206.".utf8)]
+    let contents: [String: [UInt8]] = ["patch-content.txt": Array("default content".utf8)]
 
-    let response = ResourcesController(contents: contents).process(request)
+    ResourcesController.contents = [:]
+    ResourcesController.setData(contents: contents)
 
-    let expected = Array("\n\na 206.".utf8)
+    let response = ResourcesController.process(request)
+
+    XCTAssertEqual(response.statusCode, "204 No Content")
+  }
+
+  func testItCanModifyDefaultContent() {
+    let rawPatchRequest = "PATCH /patch-content.txt HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nIf-Match: dc50a0d27dda2eee9f65644cd7e4c9cf11de8bec\r\nContent-Length: 15\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate\r\npatched content"
+    let rawGetRequest = "GET /patch-content.txt HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
+    let patchRequest = Request(for: rawPatchRequest)
+    let getRequest = Request(for: rawGetRequest)
+
+    let contents: [String: [UInt8]] = ["patch-content.txt": Array("default content".utf8)]
+
+    ResourcesController.contents = [:]
+    ResourcesController.setData(contents: contents)
+
+    let _ = ResourcesController.process(patchRequest)
+
+    let response = ResourcesController.process(getRequest)
+
+    let expected = Array("\n\npatched content".utf8)
 
     XCTAssertEqual(response.body!, expected)
   }
 
-  func testItCanRespondWithPartialContentsGivenRangeStartAndEnd() {
-    let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\nRange:bytes=0-4\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = Request(for: rawRequest)
-
-    let contents = ["partial_content.txt": Array("This is a file that contains text to read part of in order to fulfill a 206.".utf8)]
-
-    let response = ResourcesController(contents: contents).process(request)
-
-    let expected = Array("\n\nThis ".utf8)
-
-    XCTAssertEqual(response.body!, expected)
-  }
 }

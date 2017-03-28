@@ -5,6 +5,7 @@ public class Request {
   public let path: String
   public let params: Params?
   public let body: String?
+  public let pathName: String
 
   public let headers: [String: String]
 
@@ -27,6 +28,7 @@ public class Request {
     let parsedPath = fullPath.components(separatedBy: "?")
 
     path = parsedPath.first ?? fullPath
+    pathName = path.substring(from: path.index(after: path.startIndex))
 
     params = parsedPath.index(where: { $0.contains("=") }).map { _ in Params(for: fullPath) }
 

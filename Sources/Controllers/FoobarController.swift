@@ -3,10 +3,8 @@ import Responses
 
 public class FoobarController: Controller {
 
-  public func process(_ request: Request) -> Response {
-    return Response(status: 404,
-                    headers: [:],
-                    body: nil)
+  public static func process(_ request: Request) -> HTTPResponse {
+    return EmptyResponse(status: 404)
   }
 
 }

@@ -4,7 +4,7 @@ import Responses
 
 class ParametersController: Controller {
 
-  public func process(_ request: Request) -> Response {
+  public static func process(_ request: Request) -> HTTPResponse {
 
     let body = request.params.map { params in
       Array(

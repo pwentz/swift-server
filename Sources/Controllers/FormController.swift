@@ -1,15 +1,10 @@
 import Requests
 import Responses
 
-public class FormController: Controller {
+public class FormController: PersistentDataController {
   static var formData: String = ""
-  let form: String
 
-  public init() {
-    self.form = FormController.formData
-  }
-
-  static public func updateForm(_ request: Request) {
+  public static func update(_ request: Request) {
     if let body = request.body {
       formData = body
     }
@@ -18,10 +13,11 @@ public class FormController: Controller {
     }
   }
 
-  public func process(_ request: Request) -> Response {
-    FormController.updateForm(request)
+  public static func process(_ request: Request) -> HTTPResponse {
+    update(request)
 
-    let body = form.isEmpty || request.verb != "GET" ? nil : Array(form.utf8)
+    let body = formData.isEmpty || request.verb != "GET" ? nil
+                                                         : Array(formData.utf8)
 
     return Response(
       status: 200,
@@ -29,4 +25,5 @@ public class FormController: Controller {
       body: body
     )
   }
+
 }

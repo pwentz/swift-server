@@ -22,9 +22,7 @@ public class Router {
       let data = try client.recv()
       let request = try Request(for: data.toString())
 
-      let controller = try ControllerFactory.getController(request)
-
-      let response = controller.process(request)
+      let response = try ControllerFactory.process(request)
 
       try client.send(data: response.formatted)
 

@@ -7,7 +7,7 @@ class LogsControllerTest: XCTestCase {
     let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let request = Request(for: rawRequest)
 
-    let res = LogsController().process(request)
+    let res = LogsController.process(request)
 
     XCTAssertEqual(res.statusCode, "401 Unauthorized")
   }
@@ -16,7 +16,7 @@ class LogsControllerTest: XCTestCase {
     let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\nAuthorization: Basic someencodedstuff==\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let request = Request(for: rawRequest)
 
-    let res = LogsController().process(request)
+    let res = LogsController.process(request)
 
     XCTAssertEqual(res.statusCode, "401 Unauthorized")
   }
@@ -25,7 +25,7 @@ class LogsControllerTest: XCTestCase {
     let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\nAuthorization: Basic YWRtaW46aHVudGVyMg==\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let request = Request(for: rawRequest)
 
-    let res = LogsController().process(request)
+    let res = LogsController.process(request)
 
     XCTAssertEqual(res.statusCode, "200 OK")
   }
@@ -37,9 +37,9 @@ class LogsControllerTest: XCTestCase {
 
     let expected = Array("\n\nPUT /these HTTP/1.1\nGET /logs HTTP/1.1".utf8)
 
-    LogsController.updateLogs(request)
+    LogsController.update(request)
 
-    let res = LogsController().process(request)
+    let res = LogsController.process(request)
 
     XCTAssertEqual(res.body!, expected)
   }
@@ -48,8 +48,8 @@ class LogsControllerTest: XCTestCase {
     let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\nAuthorization: Basic someCode==\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let request = Request(for: rawRequest)
 
-    LogsController.updateLogs(request)
-    let res = LogsController().process(request)
+    LogsController.update(request)
+    let res = LogsController.process(request)
 
     XCTAssert(res.body == nil)
   }

@@ -7,7 +7,7 @@ class ParametersControllerTest: XCTestCase {
     let rawRequest = "GET /parameters HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
     let request = Request(for: rawRequest)
 
-    let res = ParametersController().process(request)
+    let res = ParametersController.process(request)
 
     XCTAssert(res.body == nil)
   }
@@ -18,7 +18,7 @@ class ParametersControllerTest: XCTestCase {
 
     let expected = Array("\n\nvariable_1 = Operators".utf8)
 
-    let res = ParametersController().process(request)
+    let res = ParametersController.process(request)
 
     XCTAssertEqual(res.body!, expected)
   }
@@ -29,7 +29,7 @@ class ParametersControllerTest: XCTestCase {
 
     let expected = Array("\n\nvariable_1 = Operators <, >, =".utf8)
 
-    let res = ParametersController().process(request)
+    let res = ParametersController.process(request)
 
     XCTAssertEqual(res.body!, expected)
   }
@@ -40,7 +40,7 @@ class ParametersControllerTest: XCTestCase {
 
     let expected = Array("\n\nvariable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?".utf8)
 
-    let res = ParametersController().process(request)
+    let res = ParametersController.process(request)
 
     XCTAssertEqual(res.body!, expected)
   }
@@ -51,7 +51,7 @@ class ParametersControllerTest: XCTestCase {
 
     let expected = Array("\n\nvariable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?\nvariable_2 = stuff".utf8)
 
-    let res = ParametersController().process(request)
+    let res = ParametersController.process(request)
 
     XCTAssertEqual(res.body!, expected)
   }
@@ -62,7 +62,7 @@ class ParametersControllerTest: XCTestCase {
 
     let expected = Array("\n\nvariable_1 = Operators%229032%kansjd%029932030%owow".utf8)
 
-    let res = ParametersController().process(request)
+    let res = ParametersController.process(request)
 
     XCTAssertEqual(res.body!, expected)
   }

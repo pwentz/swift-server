@@ -3,7 +3,7 @@ import Responses
 
 public class RedirectController: Controller {
 
-  public func process(_ request: Request) -> Response {
+  public static func process(_ request: Request) -> HTTPResponse {
     let headers: [String: String] = ["Location": "/"]
 
     return Response(
@@ -12,4 +12,5 @@ public class RedirectController: Controller {
       body: nil
     )
   }
+
 }

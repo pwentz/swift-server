@@ -1,14 +1,15 @@
 import Responses
 import Requests
+import Util
 
-public class RootController: Controller {
-  let contents: [String: [UInt8]]
+public class RootController: FileDataController {
+  public static var contents: [String: [UInt8]] = [:]
 
-  public init(contents: [String: [UInt8]]) {
+  public static func setData(contents: [String: [UInt8]]) {
     self.contents = contents
   }
 
-  public func process(_ request: Request) -> Response {
+  public static func process(_ request: Request) -> HTTPResponse {
     let fileLinks = contents.keys.map { file in
       "<a href=\"/\(file)\">\(file)</a>"
     }.joined(separator: "<br>")

@@ -7,7 +7,7 @@ class MethodOptionsControllerTest: XCTestCase {
     let rawRequest = "OPTIONS /method_options HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let request = Request(for: rawRequest)
 
-    let response = MethodOptionsController().process(request)
+    let response = MethodOptionsController.process(request)
 
     XCTAssertEqual(response.statusCode, "200 OK")
   }
@@ -16,7 +16,7 @@ class MethodOptionsControllerTest: XCTestCase {
     let rawRequest = "OPTIONS /method_options HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let request = Request(for: rawRequest)
 
-    let response = MethodOptionsController().process(request)
+    let response = MethodOptionsController.process(request)
 
     let expected = "GET,HEAD,POST,OPTIONS,PUT"
 
@@ -27,7 +27,7 @@ class MethodOptionsControllerTest: XCTestCase {
     let rawRequest = "OPTIONS /method_options2 HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let request = Request(for: rawRequest)
 
-    let response = MethodOptionsController().process(request)
+    let response = MethodOptionsController.process(request)
 
     XCTAssertEqual(response.statusCode, "200 OK")
   }
@@ -36,7 +36,7 @@ class MethodOptionsControllerTest: XCTestCase {
     let rawRequest = "OPTIONS /method_options2 HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let request = Request(for: rawRequest)
 
-    let response = MethodOptionsController().process(request)
+    let response = MethodOptionsController.process(request)
 
     let expected = "GET,OPTIONS"
 

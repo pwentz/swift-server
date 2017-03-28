@@ -7,7 +7,7 @@ class RedirectControllerTest: XCTestCase {
     let rawRequest = "GET /redirect HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
     let request = Request(for: rawRequest)
 
-    let response = RedirectController().process(request)
+    let response = RedirectController.process(request)
 
     XCTAssertEqual(response.statusCode, "302 Found")
   }
@@ -16,7 +16,7 @@ class RedirectControllerTest: XCTestCase {
     let rawRequest = "GET /redirect HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
     let request = Request(for: rawRequest)
 
-    let response = RedirectController().process(request)
+    let response = RedirectController.process(request)
 
     XCTAssertEqual(response.headers["Location"]!, "/")
   }

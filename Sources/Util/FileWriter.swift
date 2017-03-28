@@ -15,4 +15,5 @@ public class FileWriter {
 
     try content.write(to: logsFileUrl, atomically: true, encoding: .utf8)
   }
+
 }

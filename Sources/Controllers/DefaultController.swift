@@ -3,10 +3,8 @@ import Responses
 
 public class DefaultController: Controller {
 
-  public func process(_ request: Request) -> Response {
-    return Response(status: 200,
-                    headers: ["Content-Type": "text/html"],
-                    body: nil)
+  public static func process(_ request: Request) -> HTTPResponse {
+    return EmptyResponse(status: 200)
   }
 
 }

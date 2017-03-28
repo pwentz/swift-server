@@ -3,7 +3,7 @@ import Responses
 
 public class CookieController: Controller {
 
-  public func process(_ request: Request) -> Response {
+  public static func process(_ request: Request) -> HTTPResponse {
     let status = 200
 
     var body: String = ""
