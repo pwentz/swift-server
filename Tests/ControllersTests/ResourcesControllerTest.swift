@@ -152,4 +152,17 @@ class ResourcesControllerTest: XCTestCase {
 
     XCTAssertEqual(response.body!, expected)
   }
+
+  func testItCanRespondWithPartialContentsGivenRangeEnd() {
+    let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\nRange:bytes=-6\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
+    let request = Request(for: rawRequest)
+
+    let contents = ["partial_content.txt": Array("This is a file that contains text to read part of in order to fulfill a 206.".utf8)]
+
+    let response = ResourcesController(contents: contents).process(request)
+
+    let expected = Array("\n\na 206.".utf8)
+
+    XCTAssertEqual(response.body!, expected)
+  }
 }
