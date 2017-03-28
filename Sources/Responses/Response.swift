@@ -1,3 +1,4 @@
+import Foundation
 public class Response {
   public let statusCode: String
   public let headers: [String: String]
