@@ -11,14 +11,32 @@ public class ResourcesController: Controller {
   }
 
   public func process(_ request: Request) -> Response {
+    let path = request.path
+    let pathName = path.substring(from: path.index(after: path.startIndex))
+
     guard request.verb == "GET" else {
       return Response(status: 405,
                       headers: [:],
                       body: nil)
     }
 
-    let path = request.path
-    let pathName = path.substring(from: path.index(after: path.startIndex))
+    guard path != "/partial_content.txt" else {
+      let rangeHeader = request.headers["range"]!
+      let rawRange = rangeHeader.components(separatedBy: "=").last!
+      let rangeStart = Int(rawRange.components(separatedBy: "-").first!) ?? 0
+
+      let stringContents = String(data: Data(contents[pathName]!),
+                                  encoding: .utf8)!
+
+      let partialContents = stringContents.substring(from: stringContents.index(stringContents.startIndex,
+                                                                                offsetBy: rangeStart))
+
+      let body: [UInt8] = Array(partialContents.utf8)
+
+      return Response(status: 206,
+                      headers: ["Content-Type": "text/plain"],
+                      body: body)
+    }
 
     let status = contents[pathName].map { _ in 200 }
 
