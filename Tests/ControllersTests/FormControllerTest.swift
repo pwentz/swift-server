@@ -1,4 +1,5 @@
 import XCTest
+import Util
 @testable import Requests
 @testable import Controllers
 
@@ -7,7 +8,9 @@ class FormControllerTest: XCTestCase {
     let rawRequest = "GET /form HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
     let request = Request(for: rawRequest)
 
-    let response = FormController().process(request)
+    let contents: ControllerData = ControllerData(["form": Array("".utf8)])
+
+    let response = FormController(contents: contents).process(request)
 
     XCTAssert(response.body == nil)
   }
@@ -18,8 +21,10 @@ class FormControllerTest: XCTestCase {
     let postRequest = Request(for: rawPostRequest)
     let getRequest = Request(for: rawGetRequest)
 
-    let _ = FormController().process(postRequest)
-    let response = FormController().process(getRequest)
+    let contents: ControllerData = ControllerData(["form": Array("".utf8)])
+
+    let _ = FormController(contents: contents).process(postRequest)
+    let response = FormController(contents: contents).process(getRequest)
 
     let expected = Array("\n\ndata=fatcat".utf8)
 
@@ -34,9 +39,11 @@ class FormControllerTest: XCTestCase {
     let putRequest = Request(for: rawPutRequest)
     let getRequest = Request(for: rawGetRequest)
 
-    let _ = FormController().process(postRequest)
-    let _ = FormController().process(putRequest)
-    let response = FormController().process(getRequest)
+    let contents: ControllerData = ControllerData(["form": Array("".utf8)])
+
+    let _ = FormController(contents: contents).process(postRequest)
+    let _ = FormController(contents: contents).process(putRequest)
+    let response = FormController(contents: contents).process(getRequest)
 
     let expected = Array("\n\ndata=hamilton".utf8)
 
@@ -51,9 +58,11 @@ class FormControllerTest: XCTestCase {
     let deleteRequest = Request(for: rawDeleteRequest)
     let getRequest = Request(for: rawGetRequest)
 
-    let _ = FormController().process(postRequest)
-    let _ = FormController().process(deleteRequest)
-    let response = FormController().process(getRequest)
+    let contents: ControllerData = ControllerData(["form": Array("".utf8)])
+
+    let _ = FormController(contents: contents).process(postRequest)
+    let _ = FormController(contents: contents).process(deleteRequest)
+    let response = FormController(contents: contents).process(getRequest)
 
     XCTAssert(response.body == nil)
   }

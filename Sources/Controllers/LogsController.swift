@@ -3,25 +3,27 @@ import Responses
 import Util
 
 public class LogsController: Controller {
-  static var aggregateLogs: [String] = []
-  public let logs: [String]
+  public let contents: ControllerData
 
-  public init() {
-    self.logs = LogsController.aggregateLogs
+  public init(contents: ControllerData) {
+    self.contents = contents
   }
 
-  static public func updateLogs(_ request: Request) {
-    aggregateLogs.append("\(request.verb) \(request.path) HTTP/1.1")
+  public func updateLogs(_ request: Request) {
+    let existingLogs = contents.get("logs")
+    contents.update("logs", withVal: existingLogs + "\n\(request.verb) \(request.path) HTTP/1.1")
   }
 
   public func process(_ request: Request) -> Response {
-    let auth = request.headers["authorization"].map { $0.components(separatedBy: " ").last ?? "" }
+    let pathName = request.path.substring(from: request.path.index(after: request.path.startIndex))
 
-    let combinedLogs = logs.joined(separator: "\n")
+    updateLogs(request)
+
+    let auth = request.headers["authorization"].map { $0.components(separatedBy: " ").last ?? "" }
 
     let status = getBase64(of: authCredentials).map { auth == $0 ? 200 : 401 } ?? 401
 
-    let body: [UInt8]? = status == 200 ? Array(combinedLogs.utf8) : nil
+    let body: [UInt8]? = status == 200 ? contents.getBinary(pathName) : nil
 
     let headers = ["WWW-Authenticate": "Basic realm=\"simple\""]
 

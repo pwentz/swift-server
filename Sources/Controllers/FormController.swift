@@ -1,32 +1,27 @@
 import Requests
 import Responses
+import Util
 
 public class FormController: Controller {
-  static var formData: String = ""
-  let form: String
+  let contents: ControllerData
 
-  public init() {
-    self.form = FormController.formData
-  }
-
-  static public func updateForm(_ request: Request) {
-    if let body = request.body {
-      formData = body
-    }
-    else if request.verb == "DELETE" {
-      formData = ""
-    }
+  public init(contents: ControllerData) {
+    self.contents = contents
   }
 
   public func process(_ request: Request) -> Response {
-    FormController.updateForm(request)
+    guard request.verb == "GET" else {
+      contents.update(request.pathName, withVal: request.body ?? "")
 
-    let body = form.isEmpty || request.verb != "GET" ? nil : Array(form.utf8)
+      return Response(status: 200, headers: [:], body: nil)
+    }
+
+    let form = contents.get(request.pathName)
 
     return Response(
       status: 200,
       headers: [:],
-      body: body
+      body: form.isEmpty ? nil : Array(form.utf8)
     )
   }
 }
