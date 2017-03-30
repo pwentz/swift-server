@@ -4,7 +4,7 @@ import Responses
 public class CoffeeController: Controller {
 
   public func process(_ request: Request) -> Response {
-    return Response(status: 418,
+    return Response(status: FourHundred.Teapot,
                     headers: [:],
                     body: Array("I'm a teapot".utf8))
   }

@@ -14,7 +14,7 @@ public class RootController: Controller {
       "<a href=\"/\(file)\">\(file)</a>"
     }.joined(separator: "<br>")
 
-    return Response(status: 200,
+    return Response(status: TwoHundred.Ok,
                     headers: ["Content-Type": "text/html"],
                     body: Array(fileLinks.utf8))
 

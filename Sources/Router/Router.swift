@@ -30,7 +30,7 @@ public class Router {
       let data = try client.recv()
       let request = try Request(for: data.toString())
 
-      let controller = try ControllerFactory.getController(request, with: persistedData)
+      let controller = ControllerFactory.getController(request, with: persistedData)
 
       let response = controller.process(request)
 

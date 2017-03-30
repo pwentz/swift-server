@@ -12,7 +12,7 @@ public class ControllerData {
   }
 
   public func get(_ key: String) -> String {
-    return String(data: Data(contents[key] ?? []), encoding: .utf8)!
+    return String(data: Data(contents[key] ?? []), encoding: .utf8) ?? ""
   }
 
   public func getBinary(_ key: String) -> [UInt8] {
@@ -26,4 +26,5 @@ public class ControllerData {
   public func fileNames() -> [String] {
     return contents.keys.filter { $0 != "form" && $0 != "logs" }
   }
+
 }

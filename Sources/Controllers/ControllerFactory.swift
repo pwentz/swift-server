@@ -3,7 +3,7 @@ import Requests
 
 public class ControllerFactory {
 
-  public static func getController(_ request: Request, with data: ControllerData) throws -> Controller {
+  public static func getController(_ request: Request, with data: ControllerData) -> Controller {
     LogsController(contents: data).updateLogs(request)
 
     let path = request.path

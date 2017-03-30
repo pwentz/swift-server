@@ -13,15 +13,16 @@ public class FormController: Controller {
     guard request.verb == "GET" else {
       contents.update(request.pathName, withVal: request.body ?? "")
 
-      return Response(status: 200, headers: [:], body: nil)
+      return Response(status: TwoHundred.Ok, headers: [:], body: nil)
     }
 
     let form = contents.get(request.pathName)
 
     return Response(
-      status: 200,
+      status: TwoHundred.Ok,
       headers: [:],
       body: form.isEmpty ? nil : Array(form.utf8)
     )
   }
+
 }
