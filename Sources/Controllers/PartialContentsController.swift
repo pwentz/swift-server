@@ -17,11 +17,11 @@ public class PartialContentsController: Controller {
 
     let range = getRange(of: splitRange.last!, length: content.characters.count)
 
-    let finalContents = chars[range].joined(separator: "")
+    let partialContents = chars[range].joined(separator: "")
 
     return Response(status: TwoHundred.PartialContent,
                     headers: ["Content-Type": "text/plain"],
-                    body: Array(finalContents.utf8))
+                    body: Array(partialContents.utf8))
   }
 
 }

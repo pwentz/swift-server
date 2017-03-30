@@ -11,7 +11,7 @@ public class ResourcesController: Controller {
   }
 
   public func process(_ request: Request) -> Response {
-    guard request.verb != "PATCH" else {
+    guard request.verb != .Patch else {
       contents.update(request.pathName, withVal: request.body ?? "")
 
       return Response(status: TwoHundred.NoContent, headers: [:], body: nil)
@@ -23,7 +23,7 @@ public class ResourcesController: Controller {
       ).process(request)
     }
 
-    guard request.verb == "GET" else {
+    guard request.verb == .Get else {
       return Response(status: FourHundred.MethodNotAllowed, headers: [:], body: nil)
     }
 
