@@ -27,11 +27,7 @@ public class CommandLineReader {
   }
 
   public func portArgs() throws -> UInt16? {
-    if let formattedPort = try getArgumentAfter(flag: "-p") {
-      return UInt16(formattedPort)
-    } else {
-      return nil
-    }
+    return try getArgumentAfter(flag: "-p").flatMap { UInt16($0) }
   }
 
 }

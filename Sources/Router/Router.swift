@@ -15,6 +15,14 @@ public class Router {
     try socket.bind()
     try socket.listen()
 
+    let publicDir = try CommandLineReader().publicDirectoryArgs()
+    let contents = try FileReader(at: publicDir ?? "").read()
+
+    let persistedData = ControllerData(contents)
+
+    persistedData.addNew(key: "form", value: "")
+    persistedData.addNew(key: "logs", value: "")
+
     print("Listening on \"\(address.hostname)\" (\(address.addressFamily)) \(address.port)")
 
     while true {
@@ -22,7 +30,7 @@ public class Router {
       let data = try client.recv()
       let request = try Request(for: data.toString())
 
-      let controller = try ControllerFactory.getController(request)
+      let controller = try ControllerFactory.getController(request, with: persistedData)
 
       let response = controller.process(request)
 

@@ -1,15 +1,16 @@
 import Responses
 import Requests
+import Util
 
 public class RootController: Controller {
-  let contents: [String: [UInt8]]
+  let contents: ControllerData
 
-  public init(contents: [String: [UInt8]]) {
+  public init(contents: ControllerData) {
     self.contents = contents
   }
 
   public func process(_ request: Request) -> Response {
-    let fileLinks = contents.keys.map { file in
+    let fileLinks = contents.fileNames().map { file in
       "<a href=\"/\(file)\">\(file)</a>"
     }.joined(separator: "<br>")
 

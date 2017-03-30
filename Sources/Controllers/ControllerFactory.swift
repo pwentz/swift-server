@@ -3,27 +3,23 @@ import Requests
 
 public class ControllerFactory {
 
-  public static func getController(_ request: Request) throws -> Controller {
-    let publicDir = try CommandLineReader().publicDirectoryArgs()
-    let contents = try FileReader(at: publicDir ?? "").read()
-    LogsController.updateLogs(request)
+  public static func getController(_ request: Request, with data: ControllerData) throws -> Controller {
+    LogsController(contents: data).updateLogs(request)
+
     let path = request.path
 
     switch path {
     case "/logs":
-      return LogsController()
+      return LogsController(contents: data)
 
     case let path where path.contains("cookie"):
       return CookieController()
 
     case "/":
-      return RootController(contents: contents)
+      return RootController(contents: data)
 
-    case "/patch-content.txt":
-      return PatchedContentController(contents: contents)
-
-    case let path where contents.keys.contains { file in path == "/\(file)" }:
-      return ResourcesController(contents: contents)
+    case let path where data.fileNames().contains { file in path == "/\(file)" }:
+      return ResourcesController(contents: data)
 
     case "/foobar":
       return FoobarController()
@@ -35,7 +31,7 @@ public class ControllerFactory {
       return ParametersController()
 
     case "/form":
-      return FormController()
+      return FormController(contents: data)
 
     case "/redirect":
       return RedirectController()
