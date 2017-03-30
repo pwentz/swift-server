@@ -7,18 +7,14 @@ class ParametersController: Controller {
   public func process(_ request: Request) -> Response {
 
     let body = request.params.map { params in
-      Array(
-        params
-         .toDictionary()
-         .map { $0 + " = " + $1 }
-         .joined(separator: "\n")
-         .utf8
-      )
+      params
+       .toDictionary()
+       .map { $0 + " = " + $1 }
+       .joined(separator: "\n")
     }
 
-    return Response(status: TwoHundred.Ok,
-                    headers: [:],
-                    body: body)
+    return HTTPResponse(status: TwoHundred.Ok,
+                        body: body)
   }
 
 }

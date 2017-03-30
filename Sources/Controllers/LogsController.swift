@@ -17,22 +17,21 @@ public class LogsController: Controller {
 
   public func process(_ request: Request) -> Response {
     let headers = [ "WWW-Authenticate": "Basic realm=\"simple\""]
-    let providedAuth = getBase64(of: authCredentials)!
 
-    let auth = request.headers["authorization"].flatMap {
+    let providedCredentials = request.headers["authorization"].flatMap {
       $0.components(separatedBy: " ").last
     } ?? ""
 
-    guard providedAuth == auth else {
-      return Response(status: FourHundred.Unauthorized, headers: headers, body: nil)
+    guard authCredentials == providedCredentials else {
+      return HTTPResponse(status: FourHundred.Unauthorized, headers: headers)
     }
 
     updateLogs(request)
 
-    return Response(
+    return HTTPResponse(
       status: TwoHundred.Ok,
       headers: headers,
-      body: contents.getBinary(request.pathName)
+      body: contents.get(request.pathName)
     )
   }
 

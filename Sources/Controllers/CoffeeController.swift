@@ -4,9 +4,8 @@ import Responses
 public class CoffeeController: Controller {
 
   public func process(_ request: Request) -> Response {
-    return Response(status: FourHundred.Teapot,
-                    headers: [:],
-                    body: Array("I'm a teapot".utf8))
+    return HTTPResponse(status: FourHundred.Teapot,
+                        body: "I'm a teapot")
   }
 
 }

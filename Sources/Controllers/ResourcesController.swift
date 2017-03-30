@@ -14,17 +14,18 @@ public class ResourcesController: Controller {
     guard request.verb != .Patch else {
       contents.update(request.pathName, withVal: request.body ?? "")
 
-      return Response(status: TwoHundred.NoContent, headers: [:], body: nil)
+      return HTTPResponse(status: TwoHundred.NoContent)
     }
 
-    guard request.headers["range"] == nil else {
+    if let rangeHeader = request.headers["range"] {
       return PartialContentsController(
-        content: contents.get(request.pathName)
+        content: contents.get(request.pathName),
+        range: rangeHeader
       ).process(request)
     }
 
     guard request.verb == .Get else {
-      return Response(status: FourHundred.MethodNotAllowed, headers: [:], body: nil)
+      return HTTPResponse(status: FourHundred.MethodNotAllowed)
     }
 
     let contentType = request.path.range(of: ".").map { extStart -> String in
@@ -33,11 +34,11 @@ public class ResourcesController: Controller {
       return isAnImage(ext) ? "image/\(ext)" : "text/plain"
     }
 
-    return Response(status: TwoHundred.Ok,
-                    headers: [
-                      "Content-Type": contentType ?? "text/html"
-                    ],
-                    body: contents.getBinary(request.pathName))
+    return HTTPResponse(status: TwoHundred.Ok,
+                        headers: [
+                          "Content-Type": contentType ?? "text/html"
+                        ],
+                        bodyBytes: contents.getBinary(request.pathName))
   }
 
 

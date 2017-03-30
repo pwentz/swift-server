@@ -18,9 +18,9 @@ public class CookieController: Controller {
       body = "mmmm \(cookieValue)"
     }
 
-    return Response(status: TwoHundred.Ok,
-                    headers: headers,
-                    body: Array(body.utf8))
+    return HTTPResponse(status: TwoHundred.Ok,
+                        headers: headers,
+                        body: body)
   }
 
 }
