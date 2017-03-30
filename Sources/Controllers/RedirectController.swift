@@ -7,9 +7,10 @@ public class RedirectController: Controller {
     let headers: [String: String] = ["Location": "/"]
 
     return Response(
-      status: 302,
+      status: ThreeHundred.Found,
       headers: headers,
       body: nil
     )
   }
+
 }

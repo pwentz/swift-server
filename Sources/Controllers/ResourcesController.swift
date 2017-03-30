@@ -14,7 +14,7 @@ public class ResourcesController: Controller {
     guard request.verb != "PATCH" else {
       contents.update(request.pathName, withVal: request.body ?? "")
 
-      return Response(status: 204, headers: [:], body: nil)
+      return Response(status: TwoHundred.NoContent, headers: [:], body: nil)
     }
 
     guard request.headers["range"] == nil else {
@@ -24,7 +24,7 @@ public class ResourcesController: Controller {
     }
 
     guard request.verb == "GET" else {
-      return Response(status: 405, headers: [:], body: nil)
+      return Response(status: FourHundred.MethodNotAllowed, headers: [:], body: nil)
     }
 
     let contentType = request.path.range(of: ".").map { extStart -> String in
@@ -33,7 +33,7 @@ public class ResourcesController: Controller {
       return isAnImage(ext) ? "image/\(ext)" : "text/plain"
     }
 
-    return Response(status: 200,
+    return Response(status: TwoHundred.Ok,
                     headers: [
                       "Content-Type": contentType ?? "text/html"
                     ],

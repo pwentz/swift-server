@@ -4,8 +4,6 @@ import Responses
 public class CookieController: Controller {
 
   public func process(_ request: Request) -> Response {
-    let status = 200
-
     var body: String = ""
     var headers: [String: String] = ["Content-Type": "text/html"]
 
@@ -20,7 +18,7 @@ public class CookieController: Controller {
       body = "mmmm \(cookieValue)"
     }
 
-    return Response(status: status,
+    return Response(status: TwoHundred.Ok,
                     headers: headers,
                     body: Array(body.utf8))
   }

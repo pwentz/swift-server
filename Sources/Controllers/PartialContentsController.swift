@@ -19,8 +19,9 @@ public class PartialContentsController: Controller {
 
     let finalContents = chars[range].joined(separator: "")
 
-    return Response(status: 206,
+    return Response(status: TwoHundred.PartialContent,
                     headers: ["Content-Type": "text/plain"],
                     body: Array(finalContents.utf8))
   }
+
 }

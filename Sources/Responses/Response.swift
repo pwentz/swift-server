@@ -4,8 +4,8 @@ public class Response {
   public let headers: [String: String]
   public let body: [UInt8]?
 
-  public init(status: Int, headers: [String: String], body: [UInt8]?) {
-    self.statusCode = statusCodes[status] ?? "404 Not Found"
+  public init(status: StatusCode, headers: [String: String], body: [UInt8]?) {
+    self.statusCode = status.description
 
     self.headers = headers
     self.body = body.map { Array("\n\n".utf8) + $0 }

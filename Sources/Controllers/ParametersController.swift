@@ -16,7 +16,7 @@ class ParametersController: Controller {
       )
     }
 
-    return Response(status: 200,
+    return Response(status: TwoHundred.Ok,
                     headers: [:],
                     body: body)
   }

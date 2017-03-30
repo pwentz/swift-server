@@ -32,7 +32,9 @@ public class Request {
 
     params = parsedPath.index(where: { $0.contains("=") }).map { _ in Params(for: fullPath) }
 
-    body = parsedRequest.last!.contains(":") ? nil : parsedRequest.last!
+    let requestTail = parsedRequest.last!
+
+    body = requestTail.contains(":") ? nil : requestTail
   }
 
 }
