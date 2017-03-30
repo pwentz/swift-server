@@ -8,9 +8,8 @@ class MethodOptionsController: Controller {
                                                   : "GET,HEAD,POST,OPTIONS,PUT"
     let headers = ["Allow": allowedVerbs]
 
-    return Response(status: TwoHundred.Ok,
-                    headers: headers,
-                    body: nil)
+    return HTTPResponse(status: TwoHundred.Ok,
+                        headers: headers)
   }
 
 }

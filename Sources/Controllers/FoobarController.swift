@@ -4,9 +4,7 @@ import Responses
 public class FoobarController: Controller {
 
   public func process(_ request: Request) -> Response {
-    return Response(status: FourHundred.NotFound,
-                    headers: [:],
-                    body: nil)
+    return HTTPResponse(status: FourHundred.NotFound)
   }
 
 }

@@ -1,16 +1,19 @@
 import Foundation
-public class Response {
-  public let statusCode: String
-  public let headers: [String: String]
-  public let body: [UInt8]?
 
-  public init(status: StatusCode, headers: [String: String], body: [UInt8]?) {
-    self.statusCode = status.description
+public protocol Response {
+  var statusCode: String { get }
+  var headers: [String: String] { get }
+  var body: [UInt8]? { get }
+  var formatted: [UInt8] { get }
 
-    self.headers = headers
-    self.body = body.map { Array("\n\n".utf8) + $0 }
-  }
+  init(status: StatusCode, headers: [String: String], body: String?)
 
+  init(status: StatusCode, headers: [String: String], bodyBytes: [UInt8]?)
+
+  func toString() -> String
+}
+
+extension Response {
   public var formatted: [UInt8] {
     let joinedHeaders = headers.map { $0 + ":" + $1 }.joined(separator: "\r\n")
     let statusLine = "HTTP/1.1 \(statusCode)\r\n"

@@ -6,28 +6,28 @@ class ResponseTest: XCTestCase {
 
   func testItCanCompleteAStatusCode() {
     let headers = ["Content-Type": "ABCD"]
-    let body = Array("BODY".utf8)
+    let body = "BODY"
 
-    let response = Response(status: ok, headers: headers, body: body)
+    let response = HTTPResponse(status: ok, headers: headers, body: body)
 
     XCTAssertEqual(response.statusCode, "200 OK")
   }
 
   func testItCanCompleteOtherStatusCodes() {
     let headers = ["Content-Type": "ABCD"]
-    let body = Array("BODY".utf8)
+    let body = "BODY"
 
-    let response = Response(status: FourHundred.Teapot, headers: headers, body: body)
+    let response = HTTPResponse(status: FourHundred.Teapot, headers: headers, body: body)
 
     XCTAssertEqual(response.statusCode, "418 I'm a teapot")
   }
 
   func testItCanFormatItsBody() {
     let headers = ["Content-Type": "ABCD"]
-    let body = Array("BODY".utf8)
+    let body = "BODY"
 
-    let response = Response(status: ok, headers: headers, body: body)
-    let expected: [UInt8] = Array("\n\n".utf8) + body
+    let response = HTTPResponse(status: ok, headers: headers, body: body)
+    let expected: [UInt8] = Array("\n\n\(body)".utf8)
 
     XCTAssertEqual(response.body!, expected)
   }
@@ -36,9 +36,9 @@ class ResponseTest: XCTestCase {
     let headers = ["Content-Type": "text/html",
                    "WWW-Authenticate" : "Basic realm=\"simple\""]
 
-    let body = Array("BODY".utf8)
+    let body = "BODY"
 
-    let response = Response(status: ok, headers: headers, body: body)
+    let response = HTTPResponse(status: ok, headers: headers, body: body)
 
     XCTAssertEqual(response.headers, headers)
   }
@@ -48,13 +48,13 @@ class ResponseTest: XCTestCase {
                    "WWW-Authenticate" : "Basic realm=\"simple\""]
 
     let rawHeaders = "Content-Type:text/html\r\nWWW-Authenticate:Basic realm=\"simple\""
-    let body = Array("BODY".utf8)
+    let body = "BODY"
     let formattedStatus: [UInt8] = Array("HTTP/1.1 200 OK\r\n".utf8)
     let formattedHeaders: [UInt8] = Array(rawHeaders.utf8)
-    let formattedBody: [UInt8] = Array("\n\n".utf8) + body
+    let formattedBody: [UInt8] = Array("\n\n\(body)".utf8)
     let formattedResponse = formattedStatus + formattedHeaders + formattedBody
 
-    let response = Response(status: ok, headers: headers, body: body)
+    let response = HTTPResponse(status: ok, headers: headers, body: body)
 
     XCTAssertEqual(response.formatted, formattedResponse)
   }
