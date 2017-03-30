@@ -6,14 +6,14 @@ class RequestTest: XCTestCase {
         let rawRequest = "GET /log HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
         let request = Request(for: rawRequest)
 
-        XCTAssertEqual(request.verb, "GET")
+        XCTAssertEqual(request.verb, .Get)
     }
 
     func testItTakesRawRequestAndExtractsVerbPOST() {
         let rawRequest = "POST /log HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
         let request = Request(for: rawRequest)
 
-        XCTAssertEqual(request.verb, "POST")
+        XCTAssertEqual(request.verb, .Post)
     }
 
     func testItTakesRawRequestAndExtractsPathLog() {
@@ -58,11 +58,10 @@ class RequestTest: XCTestCase {
         XCTAssertEqual(request.headers, expectedResult)
     }
 
-    func testItCanTranslateEmptyHeaderValues() {
+    func testItIgnoresEmptyHeaders() {
         let rawRequest = "POST /form HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
         let request = Request(for: rawRequest)
         let expectedResult = [
-          "host": "",
           "connection": "Keep-Alive",
           "user-agent": "chrome",
           "accept-encoding": "gzip,deflate"
@@ -135,5 +134,12 @@ class RequestTest: XCTestCase {
       let request = Request(for: rawRequest)
 
       XCTAssertEqual(request.pathName, "form")
+    }
+
+    func testItCanHandleInvalidRequests() {
+      let rawRequest = "HAMSTER /somewhere"
+      let request = Request(for: rawRequest)
+
+      XCTAssertEqual(request.verb, .Invalid)
     }
 }

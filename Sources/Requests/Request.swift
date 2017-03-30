@@ -1,27 +1,26 @@
 import Foundation
 
+public enum HTTPRequestMethod: String {
+  case Get, Post, Put, Delete, Patch, Options, Head, Invalid
+}
+
 public class Request {
-  public let verb: String
+  public let verb: HTTPRequestMethod
   public let path: String
   public let pathName: String
   public let params: Params?
   public let body: String?
+  private let crlf: String = "\r\n"
 
-  public let headers: [String: String]
+  public var headers: [String: String] = [:]
 
   public init(for rawRequest: String) {
-    let parsedRequest = rawRequest.components(separatedBy: "\r\n").filter { !$0.isEmpty }
+    let parsedRequest = rawRequest.components(separatedBy: crlf)
 
-    headers = parsedRequest.dropFirst().map { RequestHeader(for: $0) }.reduce([:]) {
-       var mutable = $0
-       mutable[$1.key] = $1.value
-       return mutable
-    }
+    let mainHeaderParsed = parsedRequest.first?.components(separatedBy: " ") ?? [rawRequest]
+    let givenVerb = mainHeaderParsed[mainHeaderParsed.startIndex]
 
-    let mainHeader = parsedRequest.first ?? ""
-    let mainHeaderParsed = mainHeader.components(separatedBy: " ")
-
-    verb = mainHeaderParsed.first ?? ""
+    verb = HTTPRequestMethod(rawValue: givenVerb.capitalized).map { $0 } ?? .Invalid
 
     let fullPath = mainHeaderParsed[mainHeaderParsed.index(after: mainHeaderParsed.startIndex)]
 
@@ -32,9 +31,21 @@ public class Request {
 
     params = parsedPath.index(where: { $0.contains("=") }).map { _ in Params(for: fullPath) }
 
-    let requestTail = parsedRequest.last!
+    let requestTail = parsedRequest[parsedRequest.index(before: parsedRequest.endIndex)]
 
     body = requestTail.contains(":") ? nil : requestTail
+
+    headers = parsedRequest
+               .dropFirst()
+               .map { RequestHeader(for: $0) }
+               .filter { !$0.key.isEmpty && !$0.value.isEmpty }
+               .reduce([:], toDictionary)
+  }
+
+  private func toDictionary(result: [String: String], header: RequestHeader) -> [String: String] {
+    var mutable = result
+    mutable[header.key] = header.value
+    return mutable
   }
 
 }

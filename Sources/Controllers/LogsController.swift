@@ -11,7 +11,8 @@ public class LogsController: Controller {
 
   public func updateLogs(_ request: Request) {
     let existingLogs = contents.get("logs")
-    contents.update("logs", withVal: existingLogs + "\n\(request.verb) \(request.path) HTTP/1.1")
+    let verb = request.verb.rawValue.uppercased()
+    contents.update("logs", withVal: existingLogs + "\n\(verb) \(request.path) HTTP/1.1")
   }
 
   public func process(_ request: Request) -> Response {

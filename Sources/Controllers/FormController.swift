@@ -10,7 +10,7 @@ public class FormController: Controller {
   }
 
   public func process(_ request: Request) -> Response {
-    guard request.verb == "GET" else {
+    guard request.verb == .Get else {
       contents.update(request.pathName, withVal: request.body ?? "")
 
       return Response(status: TwoHundred.Ok, headers: [:], body: nil)
