@@ -7,8 +7,8 @@ public struct HTTPRequest: Request {
   public let params: Params?
   public let body: String?
   public let crlf: String = "\r\n"
-  public let parameterDivide: String = "?"
-  public let parameterKeyValueSeparator: String = "="
+  private let parameterDivide: String = "?"
+  private let parameterKeyValueSeparator: String = "="
 
   public var headers: [String: String] = [:]
 

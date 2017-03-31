@@ -22,6 +22,7 @@ public class Router {
 
     persistedData.addNew(key: "form", value: "")
     persistedData.addNew(key: "logs", value: "")
+    persistedData.addNew(key: "cookie", value: "")
 
     print("Listening on \"\(address.hostname)\" (\(address.addressFamily)) \(address.port)")
 
@@ -37,7 +38,7 @@ public class Router {
       try client.send(data: response.formatted)
 
       let fileContents = "REQUEST: \(try data.toString())\r\n" +
-                         "RESPONSE: \(response.toString())"
+                         "RESPONSE: \(String(response: response))"
 
       try FileWriter(at: logsPath, with: fileContents)
                     .write(to: formatTimestamp(prefix: "SUCCESS"))
