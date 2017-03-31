@@ -10,7 +10,7 @@ public class CookieController: Controller {
     if let params = request.params {
       body = "Eat"
 
-      headers["Set-Cookie"] = params.toString()
+      String(parameters: params).map { headers["Set-Cookie"] = $0 }
     }
 
     if let cookie = request.headers["cookie"] {

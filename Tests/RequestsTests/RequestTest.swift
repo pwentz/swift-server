@@ -84,18 +84,18 @@ class RequestTest: XCTestCase {
         XCTAssertNil(request.params)
     }
 
-    func testItCanRecognizeBlankParamVals() {
+    func testItDoesntCreateParamsWithBlankValues() {
         let rawRequest = "GET /cookie?sometihgnaksjnd= HTTP/1.1\r\nHost:yahoo.com\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
         let request = HTTPRequest(for: rawRequest)
 
-        XCTAssertEqual(request.params!.toDictionary(), ["sometihgnaksjnd": ""])
+        XCTAssertNil(request.params)
     }
 
     func testItCanRecognizeBlankParamKey() {
         let rawRequest = "GET /cookie?=sometihgnaksjnd HTTP/1.1\r\nHost:yahoo.com\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
         let request = HTTPRequest(for: rawRequest)
 
-        XCTAssertEqual(request.params!.toDictionary(), ["": "sometihgnaksjnd"])
+        XCTAssertNil(request.params)
     }
 
     func testItHasParams() {

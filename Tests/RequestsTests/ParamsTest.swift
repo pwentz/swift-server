@@ -3,157 +3,203 @@ import XCTest
 
 class ParamsTest: XCTestCase {
   func testItCanBeAString() {
-    let fullPath = "/some_path?my=params"
+    let fullPath = "my=params"
 
-    let params = Params(for: fullPath)
+    let params = HTTPParameters(for: fullPath)
 
-    XCTAssertEqual(params.toString(), "my=params")
+    XCTAssertEqual(String(parameters: params)!, "my=params")
   }
 
   func testItCanBeADynamicString() {
-    let fullPath = "/some_path?type=oatmeal"
+    let fullPath = "type=oatmeal"
 
-    let params = Params(for: fullPath)
+    let params = HTTPParameters(for: fullPath)
 
-    XCTAssertEqual(params.toString(), "type=oatmeal")
+    XCTAssertEqual(String(parameters: params)!, "type=oatmeal")
   }
 
   func testItHasKeys() {
-    let fullPath = "/some_path?type=oatmeal"
+    let fullPath = "type=oatmeal"
 
-    let params = Params(for: fullPath)
+    let params = HTTPParameters(for: fullPath)
 
-    XCTAssertEqual(params.keys(), ["type"])
+    XCTAssertEqual(params.keys, ["type"])
   }
 
   func testItHasDynamicKeys() {
-    let fullPath = "/some_path?my=params"
+    let fullPath = "my=params"
 
-    let params = Params(for: fullPath)
+    let params = HTTPParameters(for: fullPath)
 
-    XCTAssertEqual(params.keys(), ["my"])
+    XCTAssertEqual(params.keys, ["my"])
   }
 
   func testItHasValues() {
-    let fullPath = "/some_path?type=oatmeal"
+    let fullPath = "type=oatmeal"
 
-    let params = Params(for: fullPath)
+    let params = HTTPParameters(for: fullPath)
 
-    XCTAssertEqual(params.values(), ["oatmeal"])
+    XCTAssertEqual(params.values, ["oatmeal"])
   }
 
   func testItHasDynamicValues() {
-    let fullPath = "/some_path?type=chocolate"
+    let fullPath = "type=chocolate"
 
-    let params = Params(for: fullPath)
+    let params = HTTPParameters(for: fullPath)
 
-    XCTAssertEqual(params.values(), ["chocolate"])
+    XCTAssertEqual(params.values, ["chocolate"])
   }
 
   func testItCanHandleBlankParamsToString() {
-    let fullPath = "/some_path?type="
+    let fullPath = "type="
 
-    let params = Params(for: fullPath)
+    let params = HTTPParameters(for: fullPath)
 
-    XCTAssertEqual(params.toString(), "type=")
+    XCTAssertNil(String(parameters: params))
+  }
+
+  func testItCanHandleNestedBlankParamValuesToString() {
+    let fullPath = "type=chocolate&wow="
+
+    let params = HTTPParameters(for: fullPath)
+
+    XCTAssertEqual(String(parameters: params)!, "type=chocolate")
+  }
+
+  func testItCanHandleNestedBlankParamKeysToString() {
+    let fullPath = "type=chocolate&=wow"
+
+    let params = HTTPParameters(for: fullPath)
+
+    XCTAssertEqual(String(parameters: params)!, "type=chocolate")
   }
 
   func testItCanHandleBlankParamsKeys() {
-    let fullPath = "/some_path?type="
+    let fullPath = "=stuff"
 
-    let params = Params(for: fullPath)
+    let params = HTTPParameters(for: fullPath)
 
-    XCTAssertEqual(params.keys(), ["type"])
+    XCTAssertEqual(params.keys, [])
   }
 
   func testItCanHandleBlankParamsValues() {
-    let fullPath = "/some_path?type="
+    let fullPath = "type="
 
-    let params = Params(for: fullPath)
+    let params = HTTPParameters(for: fullPath)
 
-    XCTAssertEqual(params.values(), [""])
+    XCTAssertEqual(params.values, [])
+  }
+
+  func testItCanHandleInvalidParamsToDictionary() {
+    let fullPath = "type="
+
+    let params = HTTPParameters(for: fullPath)
+
+    XCTAssertEqual(params.toDictionary(), [:])
+  }
+
+  func testItCanHandleNestedInvalidParamsToDict() {
+    let path = "type=chocolate&stuff="
+    let params = HTTPParameters(for: path)
+
+    XCTAssertEqual(params.toDictionary(), ["type": "chocolate"])
+  }
+
+  func testItCanHandleNestedInvalidParamsKeys() {
+    let path = "type=chocolate&stuff="
+    let params = HTTPParameters(for: path)
+
+    XCTAssertEqual(params.keys, ["type"])
+  }
+
+  func testItCanHandleNestedInvalidParamsVals() {
+    let path = "type=chocolate&=stuff"
+    let params = HTTPParameters(for: path)
+
+    XCTAssertEqual(params.values, ["chocolate"])
   }
 
   func testItCanConvertToDictionary() {
-    let fullPath = "/some_path?type=oatmeal"
+    let fullPath = "type=oatmeal"
 
-    let params = Params(for: fullPath)
+    let params = HTTPParameters(for: fullPath)
 
     XCTAssertEqual(params.toDictionary(), ["type": "oatmeal"])
   }
 
   func testItCanDynamicallyConvertToDictionary() {
-    let fullPath = "/some_path?my=params"
+    let fullPath = "my=params"
 
-    let params = Params(for: fullPath)
+    let params = HTTPParameters(for: fullPath)
 
     XCTAssertEqual(params.toDictionary(), ["my": "params"])
   }
 
   func testItCanHandleMultipleParamsToString() {
-    let fullPath = "/some_path?my=params&cool=stuff"
+    let fullPath = "my=params&cool=stuff"
 
-    let params = Params(for: fullPath)
+    let params = HTTPParameters(for: fullPath)
 
-    XCTAssertEqual(params.toString(), "my=params\ncool=stuff")
+    XCTAssertEqual(String(parameters: params)!, "my=params\ncool=stuff")
   }
 
   func testItCanHandleMultipleParamsKeys() {
-    let fullPath = "/some_path?my=params&cool=stuff"
+    let fullPath = "my=params&cool=stuff"
 
-    let params = Params(for: fullPath)
+    let params = HTTPParameters(for: fullPath)
 
-    XCTAssertEqual(params.keys(), ["my", "cool"])
+    XCTAssertEqual(params.keys, ["my", "cool"])
   }
 
   func testItCanHandleMultipleParamsVals() {
-    let fullPath = "/some_path?my=params&cool=stuff"
+    let fullPath = "my=params&cool=stuff"
 
-    let params = Params(for: fullPath)
+    let params = HTTPParameters(for: fullPath)
 
-    XCTAssertEqual(params.values(), ["params", "stuff"])
+    XCTAssertEqual(params.values, ["params", "stuff"])
   }
 
   func testItCanHandleMultipleParamsToDict() {
-    let fullPath = "/some_path?my=params&cool=stuff"
+    let fullPath = "my=params&cool=stuff"
 
-    let params = Params(for: fullPath)
+    let params = HTTPParameters(for: fullPath)
 
     XCTAssertEqual(params.toDictionary(), ["my": "params", "cool": "stuff"])
   }
 
   func testItCanHandleEncodedParamsToString() {
-    let fullPath = "/parameters?variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F&variable_2=stuff"
+    let fullPath = "variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F&variable_2=stuff"
 
-    let params = Params(for: fullPath)
+    let params = HTTPParameters(for: fullPath)
     let expected = "variable_1=Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?\nvariable_2=stuff"
 
-    XCTAssertEqual(params.toString(), expected)
+    XCTAssertEqual(String(parameters: params)!, expected)
   }
 
   func testItCanHandleEncodedParamsKeys() {
-    let fullPath = "/parameters?variable_1=Operators%20%3C%2C%20%3E%2C%20%3D&variable_2=stuff"
+    let fullPath = "variable_1=Operators%20%3C%2C%20%3E%2C%20%3D&variable_2=stuff"
 
-    let params = Params(for: fullPath)
+    let params = HTTPParameters(for: fullPath)
 
-    XCTAssertEqual(params.keys(), ["variable_1", "variable_2"])
+    XCTAssertEqual(params.keys, ["variable_1", "variable_2"])
   }
 
   func testItCanHandleEncodedParamsVals() {
-    let fullPath = "/parameters?variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F&variable_2=stuff"
+    let fullPath = "variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F&variable_2=stuff"
 
-    let params = Params(for: fullPath)
+    let params = HTTPParameters(for: fullPath)
     let expected = ["Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?", "stuff"]
 
-    XCTAssertEqual(params.values(), expected)
+    XCTAssertEqual(params.values, expected)
   }
 
   func testItCanHandleEncodedParamsToDict() {
-    let fullPath = "/parameters?variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F&variable_2=stuff"
+    let fullPath = "variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F&variable_2=stuff"
 
-    let params = Params(for: fullPath)
+    let params = HTTPParameters(for: fullPath)
     let expected = ["variable_1": "Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?", "variable_2": "stuff"]
 
     XCTAssertEqual(params.toDictionary(), expected)
   }
+
 }
