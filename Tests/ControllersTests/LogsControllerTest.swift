@@ -6,7 +6,7 @@ import Util
 class LogsControllerTest: XCTestCase {
   func testItBlocksAnyRequestWithoutAuthParams() {
     let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = Request(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)
 
     let contents = ControllerData(["logs": Array("".utf8)])
 
@@ -17,7 +17,7 @@ class LogsControllerTest: XCTestCase {
 
   func testItBlocksAnyRequestWithoutMatchingAuthParams() {
     let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\nAuthorization: Basic someencodedstuff==\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = Request(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)
 
     let contents = ControllerData(["logs": Array("".utf8)])
 
@@ -28,7 +28,7 @@ class LogsControllerTest: XCTestCase {
 
   func testItApprovesRequestsWithMatchingAuthParams() {
     let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\nAuthorization: Basic YWRtaW46aHVudGVyMg==\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = Request(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)
 
     let contents = ControllerData(["logs": Array("".utf8)])
 
@@ -39,7 +39,7 @@ class LogsControllerTest: XCTestCase {
 
   func testItCanReturnBodyWithCombinedLogs() {
     let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\nAuthorization: Basic YWRtaW46aHVudGVyMg==\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = Request(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)
 
     let contents = ControllerData(["logs": Array("PUT /these HTTP/1.1".utf8)])
 
@@ -52,7 +52,7 @@ class LogsControllerTest: XCTestCase {
 
   func testItGivesNoBodyIfAuthDoesntMatch() {
     let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\nAuthorization: Basic someCode==\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = Request(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)
 
     let contents = ControllerData(["logs": Array("".utf8)])
 

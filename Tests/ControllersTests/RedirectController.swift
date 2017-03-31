@@ -5,7 +5,7 @@ import XCTest
 class RedirectControllerTest: XCTestCase {
   func testItHas302StatusCode() {
     let rawRequest = "GET /redirect HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
-    let request = Request(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)
 
     let response = RedirectController().process(request)
 
@@ -14,7 +14,7 @@ class RedirectControllerTest: XCTestCase {
 
   func testItHasALocationHeader() {
     let rawRequest = "GET /redirect HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
-    let request = Request(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)
 
     let response = RedirectController().process(request)
 

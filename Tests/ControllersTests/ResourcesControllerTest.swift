@@ -6,7 +6,7 @@ import Util
 class ResourcesControllerTest: XCTestCase {
   func testItCanProcessARequestWithTextFiles() {
     let rawRequest = "GET /file1 HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = Request(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)
 
     let contents = ControllerData(
       ["file1": Array("this is a text file.".utf8),
@@ -21,7 +21,7 @@ class ResourcesControllerTest: XCTestCase {
 
   func testItCanProcessAnImageRequest() {
     let rawRequest = "GET /image.jpeg HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = Request(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)
     let encodedImage = Array("someEncodedStuff".utf8)
 
     let contents = ControllerData(
@@ -38,7 +38,7 @@ class ResourcesControllerTest: XCTestCase {
 
   func testItReturnsA405IfVerbIsAPutRequest() {
     let rawRequest = "PUT /file1 HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = Request(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)
 
     let contents = ControllerData(
       ["file1": Array("this is a text file.".utf8),
@@ -52,7 +52,7 @@ class ResourcesControllerTest: XCTestCase {
 
   func testItReturnsA405IfVerbIsAPostRequest() {
     let rawRequest = "POST /file1 HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = Request(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)
 
     let contents = ControllerData(
       ["file1": Array("this is a text file.".utf8),
@@ -66,7 +66,7 @@ class ResourcesControllerTest: XCTestCase {
 
   func testItCanFitContentTypeForJPEG() {
     let rawRequest = "GET /image.jpeg HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = Request(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)
     let encodedImage = Array("someEncodedStuff".utf8)
 
     let contents = ControllerData(
@@ -81,7 +81,7 @@ class ResourcesControllerTest: XCTestCase {
 
   func testItCanFitContentTypeForPNG() {
     let rawRequest = "GET /image.png HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = Request(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)
     let encodedImage = Array("someEncodedStuff".utf8)
 
     let contents = ControllerData(
@@ -96,7 +96,7 @@ class ResourcesControllerTest: XCTestCase {
 
   func testItCanFitContentTypeForGIF() {
     let rawRequest = "GET /image.gif HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = Request(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)
     let encodedImage = Array("someEncodedStuff".utf8)
 
     let contents = ControllerData(
@@ -111,7 +111,7 @@ class ResourcesControllerTest: XCTestCase {
 
   func testItCanFitContentTypeForTextWhenTXTExtensionIsPresent() {
     let rawRequest = "GET /stuff.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = Request(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)
 
     let contents = ControllerData(
       ["stuff.txt": Array("this is a text file.".utf8),
@@ -125,7 +125,7 @@ class ResourcesControllerTest: XCTestCase {
 
   func testItFitsDefaultContentTypeWhenNoExtensionPresent() {
     let rawRequest = "GET /file2 HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = Request(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)
 
     let contents = ControllerData(
       ["stuff.txt": Array("this is a text file.".utf8),
@@ -139,20 +139,18 @@ class ResourcesControllerTest: XCTestCase {
 
   func testItCanReturnDefaultStatusOnGet() {
     let rawRequest = "GET /patch-content.txt HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
-    let request = Request(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)
 
     let contents = ControllerData(["patch-content.txt": Array("default content".utf8)])
 
     let response = ResourcesController(contents: contents).process(request)
-
-    let expected = Array("\n\ndefault content".utf8)
 
     XCTAssertEqual(response.statusCode, "200 OK")
   }
 
   func testItCanReturnDefaultContentOnGet() {
     let rawRequest = "GET /patch-content.txt HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
-    let request = Request(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)
 
     let contents = ControllerData(["patch-content.txt": Array("default content".utf8)])
 
@@ -165,7 +163,7 @@ class ResourcesControllerTest: XCTestCase {
 
   func testItCanReturn204WhenSentPatch() {
     let rawRequest = "PATCH /patch-content.txt HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nIf-Match: dc50a0d27dda2eee9f65644cd7e4c9cf11de8bec\r\nContent-Length: 15\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate\r\npatched content"
-    let request = Request(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)
 
     let contents = ControllerData(["patch-content.txt": Array("default content".utf8)])
 
@@ -177,8 +175,8 @@ class ResourcesControllerTest: XCTestCase {
   func testItCanModifyDefaultContent() {
     let rawPatchRequest = "PATCH /patch-content.txt HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nIf-Match: dc50a0d27dda2eee9f65644cd7e4c9cf11de8bec\r\nContent-Length: 15\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate\r\npatched content"
     let rawGetRequest = "GET /patch-content.txt HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
-    let patchRequest = Request(for: rawPatchRequest)
-    let getRequest = Request(for: rawGetRequest)
+    let patchRequest = HTTPRequest(for: rawPatchRequest)
+    let getRequest = HTTPRequest(for: rawGetRequest)
 
     let contents = ControllerData(["patch-content.txt": Array("default content".utf8)])
 
