@@ -14,20 +14,21 @@ public struct HTTPRequest: Request {
 
   public init(for rawRequest: String) {
     let parsedRequest = rawRequest.components(separatedBy: crlf)
+    let requestTail = parsedRequest[parsedRequest.index(before: parsedRequest.endIndex)]
 
     let mainHeaderParsed = parsedRequest.first?.components(separatedBy: " ") ?? [rawRequest]
     let givenVerb = mainHeaderParsed[mainHeaderParsed.startIndex]
-
-    verb = HTTPRequestMethod(rawValue: givenVerb.capitalized).map { $0 } ?? .Invalid
 
     let fullPath = mainHeaderParsed[mainHeaderParsed.index(after: mainHeaderParsed.startIndex)]
 
     let parsedPath = fullPath.components(separatedBy: parameterDivide)
 
+    let separator = parameterKeyValueSeparator
+
+    verb = HTTPRequestMethod(rawValue: givenVerb.capitalized).map { $0 } ?? .Invalid
+
     path = parsedPath.first ?? fullPath
     pathName = path.substring(from: path.index(after: path.startIndex))
-
-    let separator = parameterKeyValueSeparator
 
     params = parsedPath.index(where: { $0.contains(separator) }).flatMap { index -> HTTPParameters? in
       let dividedParams = parsedPath[index].components(separatedBy: separator).filter { !$0.isEmpty }
@@ -37,8 +38,6 @@ public struct HTTPRequest: Request {
 
       return HTTPParameters(for: parsedPath[index])
     }
-
-    let requestTail = parsedRequest[parsedRequest.index(before: parsedRequest.endIndex)]
 
     body = requestTail.contains(":") ? nil : requestTail
 
