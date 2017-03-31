@@ -28,7 +28,7 @@ public class Router {
     while true {
       let client = try socket.accept()
       let data = try client.recv()
-      let request = try Request(for: data.toString())
+      let request = try HTTPRequest(for: data.toString())
 
       let controller = ControllerFactory.getController(request, with: persistedData)
 
