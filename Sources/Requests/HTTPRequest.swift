@@ -8,6 +8,7 @@ public struct HTTPRequest: Request {
   public let body: String?
   public let crlf: String = "\r\n"
   public let parameterDivide: String = "?"
+  public let parameterKeyValueSeparator: String = "="
 
   public var headers: [String: String] = [:]
 
@@ -26,7 +27,16 @@ public struct HTTPRequest: Request {
     path = parsedPath.first ?? fullPath
     pathName = path.substring(from: path.index(after: path.startIndex))
 
-    params = parsedPath.index(where: { $0.contains("=") }).map { _ in Params(for: fullPath) }
+    let separator = parameterKeyValueSeparator
+
+    params = parsedPath.index(where: { $0.contains(separator) }).flatMap { index -> HTTPParameters? in
+      let dividedParams = parsedPath[index].components(separatedBy: separator).filter { !$0.isEmpty }
+      if dividedParams.count < 2 {
+        return nil
+      }
+
+      return HTTPParameters(for: parsedPath[index])
+    }
 
     let requestTail = parsedRequest[parsedRequest.index(before: parsedRequest.endIndex)]
 

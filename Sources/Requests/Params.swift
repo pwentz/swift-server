@@ -1,46 +1,30 @@
-import Foundation
+public protocol Params {
+  var keyValueSeparator: String { get }
+  var multipleSeparator: String { get }
+  var keys: [String] { get }
+  var values: [String] { get }
 
-public class Params {
-  public let path: String
+  func toDictionary() -> [String: String]
+}
 
-  public init(for path: String) {
-    self.path = path
-  }
 
-  public func toString() -> String {
-    let formattedParams = getParams().replacingOccurrences(of: "&", with: "\n")
+public protocol Parameterizable {
+  init?(parameters: Params)
+}
 
-    return decode(formattedParams)
-  }
 
-  public func toDictionary() -> [String: String] {
-    var matchedParams: [String: String] = [:]
+extension String: Parameterizable {
+  public init?(parameters: Params) {
+    var result = ""
 
-    for (index, paramKey) in keys().enumerated() {
-      matchedParams[paramKey] = values()[index]
+    if parameters.keys.isEmpty && parameters.values.isEmpty {
+      return nil
     }
 
-    return matchedParams
-  }
-
-  public func keys() -> [String] {
-    return getParams().components(separatedBy: "&").map {
-      decode($0.components(separatedBy: "=").first ?? "")
+    for (index, paramKey) in parameters.keys.enumerated() {
+      result += (paramKey + parameters.keyValueSeparator + parameters.values[index] + "\n")
     }
-  }
 
-  public func values() -> [String] {
-    return getParams().components(separatedBy: "&").map {
-      decode($0.components(separatedBy: "=").last ?? "")
-    }
+    self.init(result.trimmingCharacters(in: .newlines))
   }
-
-  private func getParams() -> String {
-    return path.components(separatedBy: "?").last ?? ""
-  }
-
-  private func decode(_ rawParams: String) -> String {
-    return rawParams.removingPercentEncoding ?? rawParams
-  }
-
 }
