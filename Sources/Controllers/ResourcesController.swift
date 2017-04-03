@@ -17,15 +17,15 @@ public class ResourcesController: Controller {
       return HTTPResponse(status: TwoHundred.NoContent)
     }
 
+    guard request.verb == .Get else {
+      return HTTPResponse(status: FourHundred.MethodNotAllowed)
+    }
+
     if let rangeHeader = request.headers["range"] {
       return PartialContentsController(
         content: contents.get(request.pathName),
         range: rangeHeader
       ).process(request)
-    }
-
-    guard request.verb == .Get else {
-      return HTTPResponse(status: FourHundred.MethodNotAllowed)
     }
 
     let contentType = request.path.range(of: ".").map { extStart -> String in

@@ -27,7 +27,3 @@ public func getRange(of rawRange: String, length contentLength: Int) -> Range<In
   return rangeEnd < rangeStart ? rangeStart..<contentLength
                                : rangeStart..<rangeEnd + 1
 }
-
-public let logsPath = "/Users/patrickwentz/8th-light/projects/swift/server/Sources/Server/Debug"
-public let defaultPublicDirPath = "/Users/patrickwentz/cob_spec/public"
-public let authCredentials = "YWRtaW46aHVudGVyMg=="

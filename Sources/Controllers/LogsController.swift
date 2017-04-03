@@ -1,5 +1,6 @@
 import Requests
 import Responses
+import Shared
 import Util
 
 public class LogsController: Controller {
@@ -12,7 +13,7 @@ public class LogsController: Controller {
   public func updateLogs(_ request: Request) {
     let existingLogs = contents.get("logs")
     let verb = request.verb.rawValue.uppercased()
-    contents.update("logs", withVal: existingLogs + "\n\(verb) \(request.path) HTTP/1.1")
+    contents.update("logs", withVal: existingLogs + "\n\(verb) \(request.path) \(request.transferProtocol)")
   }
 
   public func process(_ request: Request) -> Response {
