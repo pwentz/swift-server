@@ -3,9 +3,10 @@ import Foundation
 struct RequestHeader {
   let key: String
   let value: String
+  let keyValueDivider: String = ":"
 
   init(for rawHeader: String) {
-    let separatorIndex = rawHeader.range(of: ":")
+    let separatorIndex = rawHeader.range(of: keyValueDivider)
 
     key = separatorIndex.map {
       rawHeader.substring(to: $0.lowerBound)

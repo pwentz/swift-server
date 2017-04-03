@@ -7,6 +7,8 @@ public protocol Response {
   var formatted: [UInt8] { get }
   var crlf: String { get }
   var headerDivide: String { get }
+  var bodyDivide: String { get }
+  var transferProtocol: String { get }
 
   init(status: StatusCode, headers: [String: String], body: String?)
 
@@ -18,7 +20,7 @@ extension Response {
 
   public var formatted: [UInt8] {
     let joinedHeaders = headers.map { $0 + headerDivide + $1 }.joined(separator: crlf)
-    let statusLine = "HTTP/1.1 \(statusCode + crlf)"
+    let statusLine = "\(transferProtocol) \(statusCode + crlf)"
     let formattedBody = body ?? []
 
     return Array(statusLine.utf8) + Array(joinedHeaders.utf8) + formattedBody

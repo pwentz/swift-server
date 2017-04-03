@@ -4,17 +4,23 @@ public struct HTTPResponse: Response {
   public let body: [UInt8]?
   public let crlf: String = "\r\n"
   public let headerDivide: String = ":"
+  public let transferProtocol: String = "HTTP/1.1"
+  public let bodyDivide: String = "\n\n"
 
   public init(status: StatusCode, headers: [String: String], bodyBytes: [UInt8]?) {
     self.statusCode = status.description
     self.headers = headers
-    self.body = bodyBytes.map { Array("\n\n".utf8) + $0 }
+
+    let divide = bodyDivide
+    self.body = bodyBytes.map { Array(divide.utf8) + $0 }
   }
 
   public init(status: StatusCode, headers: [String: String] = [:], body: String? = nil) {
     self.statusCode = status.description
     self.headers = headers
-    self.body = body.map { Array("\n\n\($0)".utf8) }
+
+    let divide = bodyDivide
+    self.body = body.map { Array((divide + $0).utf8) }
   }
 
 }

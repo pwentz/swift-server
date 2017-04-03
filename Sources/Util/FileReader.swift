@@ -1,4 +1,5 @@
 import Foundation
+import Shared
 import Errors
 
 public class FileReader {

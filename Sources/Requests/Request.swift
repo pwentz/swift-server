@@ -7,4 +7,5 @@ public protocol Request {
   var crlf: String { get }
   var headers: [String: String] { get }
   var headerDivide: String { get }
+  var transferProtocol: String { get }
 }

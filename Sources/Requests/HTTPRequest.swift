@@ -8,6 +8,7 @@ public struct HTTPRequest: Request {
   public let body: String?
   public let crlf: String = "\r\n"
   public let headerDivide: String = ":"
+  public let transferProtocol: String = "HTTP/1.1"
   private let parameterDivide: String = "?"
   private let parameterKeyValueSeparator: String = "="
 
