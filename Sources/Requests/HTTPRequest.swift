@@ -7,6 +7,8 @@ public struct HTTPRequest: Request {
   public let params: Params?
   public let body: String?
   public let crlf: String = "\r\n"
+  public let headerDivide: String = ":"
+  public let transferProtocol: String = "HTTP/1.1"
   private let parameterDivide: String = "?"
   private let parameterKeyValueSeparator: String = "="
 
@@ -39,7 +41,7 @@ public struct HTTPRequest: Request {
       return HTTPParameters(for: parsedPath[index])
     }
 
-    body = requestTail.contains(":") ? nil : requestTail
+    body = requestTail.contains(headerDivide) ? nil : requestTail
 
     headers = parsedRequest
                .dropFirst()

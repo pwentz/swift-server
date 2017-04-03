@@ -7,20 +7,24 @@ let package = Package(
         .Target(name: "Router"),
         .Target(name: "Util"),
         .Target(name: "Errors"),
+        .Target(name: "Shared")
       ]),
       Target(name: "Controllers", dependencies: [
         .Target(name: "Util"),
         .Target(name: "Requests"),
-        .Target(name: "Responses")
+        .Target(name: "Responses"),
+        .Target(name: "Shared")
       ]),
       Target(name: "Router", dependencies: [
         .Target(name: "Controllers"),
         .Target(name: "Requests"),
         .Target(name: "Responses"),
-        .Target(name: "Util")
+        .Target(name: "Util"),
+        .Target(name: "Shared")
       ]),
       Target(name: "Util", dependencies: [
-        .Target(name: "Errors")
+        .Target(name: "Errors"),
+        .Target(name: "Shared")
       ])
     ],
     dependencies: [
