@@ -1,5 +1,6 @@
 import Requests
 import Responses
+import Util
 
 public class CookieController: Controller {
 

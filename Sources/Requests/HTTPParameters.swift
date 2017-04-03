@@ -21,8 +21,7 @@ public class HTTPParameters: Params {
 
       if index % 2 == 0 {
         keys.append(decode(param))
-      }
-      else {
+      } else {
         values.append(decode(param))
       }
     }

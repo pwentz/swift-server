@@ -2,6 +2,8 @@ public class HTTPResponse: Response {
   public let statusCode: String
   public let headers: [String: String]
   public let body: [UInt8]?
+  public let crlf: String = "\r\n"
+  public let headerDivide: String = ":"
 
   public required init(status: StatusCode, headers: [String: String], bodyBytes: [UInt8]?) {
     self.statusCode = status.description
