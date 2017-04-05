@@ -2,6 +2,7 @@ import Router
 import Util
 import Errors
 import Shared
+import FileIO
 
 let reader = CommandLineReader()
 

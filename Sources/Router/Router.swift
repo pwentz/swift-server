@@ -5,20 +5,27 @@ import Responses
 import Controllers
 import Util
 import Shared
+import FileIO
 
 public class Router {
 
   public init() {}
 
   public func listen(port: UInt16) throws {
+    let fileManager = FileManager.default
     let address = InternetAddress.localhost(port: port)
     let socket = try TCPInternetSocket(address: address)
 
     try socket.bind()
     try socket.listen()
 
-    let publicDir = try CommandLineReader().publicDirectoryArgs()
-    let contents = try FileReader(at: publicDir ?? "").read()
+    let publicDir = try CommandLineReader().publicDirectoryArgs() ?? ""
+    let fileNames = try FileReader(fileManager).getFileNames(at: publicDir)
+    var contents: [String: Data] = [:]
+
+    for file in fileNames {
+      contents[file] = try Data(contentsOf: URL(fileURLWithPath: publicDir + "/" + file))
+    }
 
     let persistedData = ControllerData(contents)
 
