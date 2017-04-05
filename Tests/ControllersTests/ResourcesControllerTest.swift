@@ -9,8 +9,8 @@ class ResourcesControllerTest: XCTestCase {
     let request = HTTPRequest(for: rawRequest)
 
     let contents = ControllerData(
-      ["file1": Array("this is a text file.".utf8),
-       "file2": Array("this is another text file.".utf8)]
+      ["file1": Data(value: "this is a text file."),
+       "file2": Data(value: "this is another text file.")]
     )
 
     let expected = Array("\n\nthis is a text file.".utf8)
@@ -22,11 +22,11 @@ class ResourcesControllerTest: XCTestCase {
   func testItCanProcessAnImageRequest() {
     let rawRequest = "GET /image.jpeg HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let request = HTTPRequest(for: rawRequest)
-    let encodedImage = Array("someEncodedStuff".utf8)
+    let encodedImage = Data(value: "someEncodedStuff")
 
     let contents = ControllerData(
       ["image.jpeg": encodedImage,
-       "file2": Array("this is another text file.".utf8)]
+       "file2": Data(value: "this is another text file.")]
     )
 
     let expected = Array("\n\n".utf8) + encodedImage
@@ -41,8 +41,8 @@ class ResourcesControllerTest: XCTestCase {
     let request = HTTPRequest(for: rawRequest)
 
     let contents = ControllerData(
-      ["file1": Array("this is a text file.".utf8),
-       "file2": Array("this is another text file.".utf8)]
+      ["file1": Data(value: "this is a text file."),
+       "file2": Data(value: "this is another text file.")]
     )
 
     let response = ResourcesController(contents: contents).process(request)
@@ -55,8 +55,8 @@ class ResourcesControllerTest: XCTestCase {
     let request = HTTPRequest(for: rawRequest)
 
     let contents = ControllerData(
-      ["file1": Array("this is a text file.".utf8),
-       "file2": Array("this is another text file.".utf8)]
+      ["file1": Data(value: "this is a text file."),
+       "file2": Data(value: "this is another text file.")]
     )
 
     let response = ResourcesController(contents: contents).process(request)
@@ -67,11 +67,11 @@ class ResourcesControllerTest: XCTestCase {
   func testItCanFitContentTypeForJPEG() {
     let rawRequest = "GET /image.jpeg HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let request = HTTPRequest(for: rawRequest)
-    let encodedImage = Array("someEncodedStuff".utf8)
+    let encodedImage = Data(value: "someEncodedStuff")
 
     let contents = ControllerData(
       ["image.jpeg": encodedImage,
-       "file2": Array("this is another text file.".utf8)]
+       "file2": Data(value: "this is another text file.")]
     )
 
     let response = ResourcesController(contents: contents).process(request)
@@ -82,11 +82,11 @@ class ResourcesControllerTest: XCTestCase {
   func testItCanFitContentTypeForPNG() {
     let rawRequest = "GET /image.png HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let request = HTTPRequest(for: rawRequest)
-    let encodedImage = Array("someEncodedStuff".utf8)
+    let encodedImage = Data(value: "someEncodedStuff")
 
     let contents = ControllerData(
       ["image.png": encodedImage,
-       "file2": Array("this is another text file.".utf8)]
+       "file2": Data(value: "this is another text file.")]
     )
 
     let response = ResourcesController(contents: contents).process(request)
@@ -97,11 +97,11 @@ class ResourcesControllerTest: XCTestCase {
   func testItCanFitContentTypeForGIF() {
     let rawRequest = "GET /image.gif HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let request = HTTPRequest(for: rawRequest)
-    let encodedImage = Array("someEncodedStuff".utf8)
+    let encodedImage = Data(value: "someEncodedStuff")
 
     let contents = ControllerData(
       ["image.gif": encodedImage,
-       "file2": Array("this is another text file.".utf8)]
+       "file2": Data(value: "this is another text file.")]
     )
 
     let response = ResourcesController(contents: contents).process(request)
@@ -114,8 +114,8 @@ class ResourcesControllerTest: XCTestCase {
     let request = HTTPRequest(for: rawRequest)
 
     let contents = ControllerData(
-      ["stuff.txt": Array("this is a text file.".utf8),
-       "file2": Array("this is another text file.".utf8)]
+      ["stuff.txt": Data(value: "this is a text file."),
+       "file2": Data(value: "this is another text file.")]
     )
 
     let response = ResourcesController(contents: contents).process(request)
@@ -128,8 +128,8 @@ class ResourcesControllerTest: XCTestCase {
     let request = HTTPRequest(for: rawRequest)
 
     let contents = ControllerData(
-      ["stuff.txt": Array("this is a text file.".utf8),
-       "file2": Array("this is another text file.".utf8)]
+      ["stuff.txt": Data(value: "this is a text file."),
+       "file2": Data(value: "this is another text file.")]
     )
 
     let response = ResourcesController(contents: contents).process(request)
@@ -141,7 +141,7 @@ class ResourcesControllerTest: XCTestCase {
     let rawRequest = "GET /patch-content.txt HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
     let request = HTTPRequest(for: rawRequest)
 
-    let contents = ControllerData(["patch-content.txt": Array("default content".utf8)])
+    let contents = ControllerData(["patch-content.txt": Data(value: "default content")])
 
     let response = ResourcesController(contents: contents).process(request)
 
@@ -152,7 +152,7 @@ class ResourcesControllerTest: XCTestCase {
     let rawRequest = "GET /patch-content.txt HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
     let request = HTTPRequest(for: rawRequest)
 
-    let contents = ControllerData(["patch-content.txt": Array("default content".utf8)])
+    let contents = ControllerData(["patch-content.txt": Data(value: "default content")])
 
     let response = ResourcesController(contents: contents).process(request)
 
@@ -165,7 +165,7 @@ class ResourcesControllerTest: XCTestCase {
     let rawRequest = "PATCH /patch-content.txt HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nIf-Match: dc50a0d27dda2eee9f65644cd7e4c9cf11de8bec\r\nContent-Length: 15\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate\r\npatched content"
     let request = HTTPRequest(for: rawRequest)
 
-    let contents = ControllerData(["patch-content.txt": Array("default content".utf8)])
+    let contents = ControllerData(["patch-content.txt": Data(value: "default content")])
 
     let response = ResourcesController(contents: contents).process(request)
 
@@ -178,7 +178,7 @@ class ResourcesControllerTest: XCTestCase {
     let patchRequest = HTTPRequest(for: rawPatchRequest)
     let getRequest = HTTPRequest(for: rawGetRequest)
 
-    let contents = ControllerData(["patch-content.txt": Array("default content".utf8)])
+    let contents = ControllerData(["patch-content.txt": Data(value: "default content")])
 
     let _ = ResourcesController(contents: contents).process(patchRequest)
 

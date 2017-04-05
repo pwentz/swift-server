@@ -7,20 +7,12 @@ public struct HTTPResponse: Response {
   public let transferProtocol: String = "HTTP/1.1"
   public let bodyDivide: String = "\n\n"
 
-  public init(status: StatusCode, headers: [String: String], bodyBytes: [UInt8]?) {
+  public init(status: StatusCode, headers: [String: String] = [:], body: BytesRepresentable? = nil) {
     self.statusCode = status.description
     self.headers = headers
 
     let divide = bodyDivide
-    self.body = bodyBytes.map { Array(divide.utf8) + $0 }
-  }
-
-  public init(status: StatusCode, headers: [String: String] = [:], body: String? = nil) {
-    self.statusCode = status.description
-    self.headers = headers
-
-    let divide = bodyDivide
-    self.body = body.map { Array((divide + $0).utf8) }
+    self.body = body.map { Array(divide.utf8) + $0.toBytes }
   }
 
 }

@@ -8,7 +8,7 @@ class FormControllerTest: XCTestCase {
     let rawRequest = "GET /form HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
     let request = HTTPRequest(for: rawRequest)
 
-    let contents: ControllerData = ControllerData(["form": Array("".utf8)])
+    let contents: ControllerData = ControllerData(["form": Data(value: "")])
 
     let response = FormController(contents: contents).process(request)
 
@@ -21,7 +21,7 @@ class FormControllerTest: XCTestCase {
     let postRequest = HTTPRequest(for: rawPostRequest)
     let getRequest = HTTPRequest(for: rawGetRequest)
 
-    let contents: ControllerData = ControllerData(["form": Array("".utf8)])
+    let contents: ControllerData = ControllerData(["form": Data(value: "")])
 
     let _ = FormController(contents: contents).process(postRequest)
     let response = FormController(contents: contents).process(getRequest)
@@ -39,7 +39,7 @@ class FormControllerTest: XCTestCase {
     let putRequest = HTTPRequest(for: rawPutRequest)
     let getRequest = HTTPRequest(for: rawGetRequest)
 
-    let contents: ControllerData = ControllerData(["form": Array("".utf8)])
+    let contents: ControllerData = ControllerData(["form": Data(value: "")])
 
     let _ = FormController(contents: contents).process(postRequest)
     let _ = FormController(contents: contents).process(putRequest)
@@ -58,7 +58,7 @@ class FormControllerTest: XCTestCase {
     let deleteRequest = HTTPRequest(for: rawDeleteRequest)
     let getRequest = HTTPRequest(for: rawGetRequest)
 
-    let contents: ControllerData = ControllerData(["form": Array("".utf8)])
+    let contents: ControllerData = ControllerData(["form": Data(value: "")])
 
     let _ = FormController(contents: contents).process(postRequest)
     let _ = FormController(contents: contents).process(deleteRequest)
