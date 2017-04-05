@@ -43,7 +43,12 @@ public class Router {
 
       if !data.isEmpty {
         let request = try HTTPRequest(for: data.toString())
-        let newOperation = RespondOperation(request: request, persistedData: persistedData, client: client)
+        let controller = ControllerFactory.getController(request, with: persistedData)
+
+        let response = controller.process(request)
+
+        let newOperation = RespondOperation(response: response, client: client)
+
         opQueue.addOperation(newOperation)
       }
 
