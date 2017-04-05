@@ -1,3 +1,4 @@
+import Foundation
 import Router
 import Util
 import Errors
@@ -13,8 +14,9 @@ do {
   try Router().listen(port: givenPort ?? defaultPort)
 } catch {
   let fileName = formatTimestamp(prefix: "FAILURE")
-  try FileWriter(at: logsPath, with: "ERROR: \(error)\r\nARGS: \(reader.joinedArgs)")
-                .write(to: fileName)
+  let urlPath = URL(fileURLWithPath: logsPath + fileName).appendingPathExtension("txt")
+  try FileWriter<URL>(at: urlPath, with: "ERROR: \(error)\r\nARGS: \(reader.joinedArgs)")
+                     .write()
 
   print(" ‼️  :", error)
   throw error

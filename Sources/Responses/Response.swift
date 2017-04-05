@@ -1,20 +1,3 @@
-import Foundation
-
-public protocol BytesRepresentable {
-  var toBytes: [UInt8] { get }
-}
-
-extension String: BytesRepresentable {
-  public var toBytes: [UInt8] {
-    return Array(self.utf8)
-  }
-}
-
-extension Data: BytesRepresentable {
-  public var toBytes: [UInt8] {
-    return [UInt8](self)
-  }
-}
 
 public protocol Response {
   var statusCode: String { get }
