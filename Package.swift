@@ -7,7 +7,8 @@ let package = Package(
         .Target(name: "Router"),
         .Target(name: "Util"),
         .Target(name: "Errors"),
-        .Target(name: "Shared")
+        .Target(name: "Shared"),
+        .Target(name: "FileIO")
       ]),
       Target(name: "Controllers", dependencies: [
         .Target(name: "Util"),
@@ -20,7 +21,8 @@ let package = Package(
         .Target(name: "Requests"),
         .Target(name: "Responses"),
         .Target(name: "Util"),
-        .Target(name: "Shared")
+        .Target(name: "Shared"),
+        .Target(name: "FileIO")
       ]),
       Target(name: "Util", dependencies: [
         .Target(name: "Errors"),
