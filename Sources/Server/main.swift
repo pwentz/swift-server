@@ -7,7 +7,7 @@ import Shared
 import FileIO
 
 let defaultPort: UInt16 = 5000
-let reader = CommandLineReader()
+let reader = CommandLineReader(args: CommandLine.arguments)
 var contents: [String: Data] = [:]
 
 do {
