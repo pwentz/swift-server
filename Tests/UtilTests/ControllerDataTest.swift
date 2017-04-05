@@ -3,14 +3,14 @@ import XCTest
 
 class ControllerDataTest: XCTestCase {
   func testItHasAGetter() {
-    let contents: [String: [UInt8]] = ["file1": Array("I'm a text file".utf8)]
+    let contents: [String: Data] = ["file1": Data(value: "I'm a text file")]
     let data = ControllerData(contents)
 
     XCTAssertEqual(data.get("file1"), "I'm a text file")
   }
 
   func testItCanMutateValues() {
-    let contents: [String: [UInt8]] = ["file1": Array("I'm a text file".utf8)]
+    let contents: [String: Data] = ["file1": Data(value: "I'm a text file")]
     let data = ControllerData(contents)
 
     data.update("file1", withVal: "I'm a modified text file")
@@ -19,7 +19,7 @@ class ControllerDataTest: XCTestCase {
   }
 
   func testMutationsPersistToReferences() {
-    let contents: [String: [UInt8]] = ["file1": Array("I'm a text file".utf8)]
+    let contents: [String: Data] = ["file1": Data(value: "I'm a text file")]
     let data = ControllerData(contents)
 
     let referenceToData: [ControllerData] = [data]

@@ -15,15 +15,15 @@ class RespondOperation: Operation {
   }
 
   override var isExecuting: Bool {
-    return executing
+    return currentlyExecuting
   }
 
   override var isFinished: Bool {
-    return finished
+    return currentlyFinished
   }
 
-  var executing: Bool = false
-  var finished: Bool = false
+  var currentlyExecuting: Bool = false
+  var currentlyFinished: Bool = false
 
   let request: Request
   let persistedData: ControllerData
@@ -37,7 +37,7 @@ class RespondOperation: Operation {
 
   override func start() {
     do {
-      self.executing = true
+      currentlyExecuting = true
 
       let controller = ControllerFactory.getController(request, with: persistedData)
 
@@ -53,8 +53,8 @@ class RespondOperation: Operation {
 
       // print(fileContents)
 
-      self.finished = true
-      self.executing = false
+      currentlyFinished = true
+      currentlyExecuting = false
 
       try client.close()
     } catch {}

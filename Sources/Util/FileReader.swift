@@ -13,7 +13,7 @@ public class FileReader {
     self.path = path
   }
 
-  public func read() throws -> [String: [UInt8]] {
+  public func read() throws -> [String: Data] {
     return try getFileNames().reduce([:]) { (result, file) throws in
 
       let fileData = try Data(
@@ -21,7 +21,7 @@ public class FileReader {
       )
 
       var mutableResult = result
-      mutableResult[file] = [UInt8](fileData)
+      mutableResult[file] = fileData
       return mutableResult
     }
   }

@@ -1,5 +1,21 @@
 import Foundation
 
+public protocol BytesRepresentable {
+  var toBytes: [UInt8] { get }
+}
+
+extension String: BytesRepresentable {
+  public var toBytes: [UInt8] {
+    return Array(self.utf8)
+  }
+}
+
+extension Data: BytesRepresentable {
+  public var toBytes: [UInt8] {
+    return [UInt8](self)
+  }
+}
+
 public protocol Response {
   var statusCode: String { get }
   var headers: [String: String] { get }
@@ -10,9 +26,7 @@ public protocol Response {
   var bodyDivide: String { get }
   var transferProtocol: String { get }
 
-  init(status: StatusCode, headers: [String: String], body: String?)
-
-  init(status: StatusCode, headers: [String: String], bodyBytes: [UInt8]?)
+  init(status: StatusCode, headers: [String: String], body: BytesRepresentable?)
 }
 
 

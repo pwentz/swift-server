@@ -38,7 +38,7 @@ public class ResourcesController: Controller {
                         headers: [
                           "Content-Type": contentType ?? "text/html"
                         ],
-                        bodyBytes: contents.getBinary(request.pathName))
+                        body: contents.getBinary(request.pathName))
   }
 
 
