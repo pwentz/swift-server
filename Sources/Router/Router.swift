@@ -1,4 +1,5 @@
 import SocksCore
+import Foundation
 import Requests
 import Responses
 import Controllers
@@ -27,27 +28,21 @@ public class Router {
 
     print("Listening on \"\(address.hostname)\" (\(address.addressFamily)) \(address.port)")
 
+    let opQueue: OperationQueue = OperationQueue()
+
     while true {
       let client = try socket.accept()
       let data = try client.recv()
-      let request = try HTTPRequest(for: data.toString())
 
-      let controller = ControllerFactory.getController(request, with: persistedData)
+      if !data.isEmpty {
+        let request = try HTTPRequest(for: data.toString())
+        let newOperation = RespondOperation(request: request, persistedData: persistedData, client: client)
+        opQueue.addOperation(newOperation)
+      }
 
-      let response = controller.process(request)
-
-      try client.send(data: response.formatted)
-
-      let fileContents = "REQUEST: \(try data.toString())\r\n" +
-                         "RESPONSE: \(String(response: response))"
-
-      try FileWriter(at: logsPath, with: fileContents)
-                    .write(to: formatTimestamp(prefix: "SUCCESS"))
-
-      print(fileContents)
-
-      try client.close()
+      if opQueue.operationCount == opQueue.maxConcurrentOperationCount {
+        opQueue.waitUntilAllOperationsAreFinished()
+      }
     }
   }
-
 }
