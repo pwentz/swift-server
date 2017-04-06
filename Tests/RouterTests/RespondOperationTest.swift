@@ -2,20 +2,6 @@ import XCTest
 @testable import Router
 import Responses
 
-class MockTCPSocket: Socket {
-  var wasSendCalled: Bool = false
-  var wasCloseCalled: Bool = false
-
-  func send(data: [UInt8]) throws {
-    wasSendCalled = true
-  }
-
-  func close() throws {
-    wasCloseCalled = true
-  }
-}
-
-
 class RespondOperationTest: XCTestCase {
   func itDoesNotSendOnInit() {
     let response = HTTPResponse(status: TwoHundred.Ok)

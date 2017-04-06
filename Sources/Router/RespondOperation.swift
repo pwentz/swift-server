@@ -4,35 +4,35 @@ import Responses
 import Foundation
 import Util
 
-class RespondOperation: Operation {
-  override var isAsynchronous: Bool {
+public class RespondOperation: Operation {
+  public override var isAsynchronous: Bool {
     return true
   }
 
-  override var isConcurrent: Bool {
+  public override var isConcurrent: Bool {
     return true
   }
 
-  override var isExecuting: Bool {
+  public override var isExecuting: Bool {
     return currentlyExecuting
   }
 
-  override var isFinished: Bool {
+  public override var isFinished: Bool {
     return currentlyFinished
   }
 
-  var currentlyExecuting: Bool = false
-  var currentlyFinished: Bool = false
+  private var currentlyExecuting: Bool = false
+  private var currentlyFinished: Bool = false
 
-  let response: Response
-  let client: Socket
+  private let response: Response
+  private let client: Socket
 
-  init(response: Response, client: Socket) {
+  public init(response: Response, client: Socket) {
     self.response = response
     self.client = client
   }
 
-  override func start() {
+  public override func start() {
     do {
       currentlyExecuting = true
 

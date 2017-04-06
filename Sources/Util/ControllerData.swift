@@ -1,16 +1,18 @@
 import Foundation
 
-public extension Data {
-  init(value: String) {
-    self.init(bytes: Array(value.utf8))
-  }
-}
-
 public class ControllerData {
-  public var contents: [String: Data]
+  private var contents: [String: Data]
+  private let nonFiles: [String]
 
-  public init(_ contents: [String: Data]) {
+  public init(_ fileContents: [String: Data], nonFiles: [String] = []) {
+    var contents = fileContents
+
+    nonFiles.forEach {
+      contents[$0] = Data(value: "")
+    }
+
     self.contents = contents
+    self.nonFiles = nonFiles
   }
 
   public func update(_ key: String, withVal value: String) {
@@ -30,7 +32,13 @@ public class ControllerData {
   }
 
   public func fileNames() -> [String] {
-    return contents.keys.filter { $0 != "form" && $0 != "logs" }
+    return contents.keys.filter { !nonFiles.contains($0) }
   }
 
+}
+
+public extension Data {
+  init(value: String) {
+    self.init(bytes: Array(value.utf8))
+  }
 }
