@@ -25,13 +25,11 @@ class RespondOperation: Operation {
   var currentlyExecuting: Bool = false
   var currentlyFinished: Bool = false
 
-  let request: Request
-  let persistedData: ControllerData
-  let client: TCPInternetSocket
+  let response: Response
+  let client: Socket
 
-  init(request: Request, persistedData: ControllerData, client: TCPInternetSocket) {
-    self.request = request
-    self.persistedData = persistedData
+  init(response: Response, client: Socket) {
+    self.response = response
     self.client = client
   }
 
@@ -39,19 +37,7 @@ class RespondOperation: Operation {
     do {
       currentlyExecuting = true
 
-      let controller = ControllerFactory.getController(request, with: persistedData)
-
-      let response = controller.process(request)
-
       try client.send(data: response.formatted)
-
-      // let fileContents = "REQUEST: \(try data.toString())\r\n" +
-      //                    "RESPONSE: \(String(response: response))"
-
-      // try FileWriter(at: logsPath, with: fileContents)
-      //               .write(to: formatTimestamp(prefix: "SUCCESS"))
-
-      // print(fileContents)
 
       currentlyFinished = true
       currentlyExecuting = false
