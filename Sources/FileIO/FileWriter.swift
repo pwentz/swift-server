@@ -1,19 +1,16 @@
 import Foundation
 
-public class FileWriter {
-  let path: String
-  let content: String
+public class FileWriter<WritableLocation> {
+  let content: Writable
+  let destination: WritableLocation
 
-  public init(at path: String, with content: String) throws {
-    self.path = path
+  public init(at destination: WritableLocation, with content: Writable) throws {
     self.content = content
+    self.destination = destination
   }
 
-  public func write(to fileName: String, fileExtension: String = "txt") throws {
-    let logsFileUrl = URL(fileURLWithPath: path + "/" + fileName)
-                         .appendingPathExtension(fileExtension)
-
-    try content.write(to: logsFileUrl, atomically: true, encoding: .utf8)
+  public func write() throws {
+    try content.write(to: destination)
   }
 
 }
