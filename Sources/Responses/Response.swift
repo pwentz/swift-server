@@ -1,4 +1,3 @@
-
 public protocol Response {
   var statusCode: String { get }
   var headers: [String: String] { get }

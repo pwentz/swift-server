@@ -1,6 +1,5 @@
 import Requests
 import Controllers
-import SocksCore
 import Responses
 import Foundation
 import Util
@@ -45,4 +44,5 @@ class RespondOperation: Operation {
       try client.close()
     } catch {}
   }
+
 }
