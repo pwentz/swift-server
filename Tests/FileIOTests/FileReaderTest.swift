@@ -1,11 +1,6 @@
 import XCTest
 @testable import FileIO
-
-class MockFileManager: FileIO {
-  func contentsOfDirectory(atPath path: String) throws -> [String] {
-    return ["file1", "file2"]
-  }
-}
+import Errors
 
 class FileReaderTest: XCTestCase {
   func testItCanReadFileNames() {
@@ -19,7 +14,14 @@ class FileReaderTest: XCTestCase {
     XCTAssertEqual(result, ["file1", "file2"])
   }
 
-  func testItCanThrow() {
-    // implement me!
+  func testItThrowsIfPathIsNotCobSpecPath() throws {
+    let path = "/some/random/path"
+    let fileManager = MockFileManager()
+
+    let fileReader = FileReader(fileManager)
+
+    XCTAssertThrowsError(try fileReader.getFileNames(at: path)) { error in
+      XCTAssertEqual(error as! ServerStartError, ServerStartError.InvalidPublicDirectoryGiven)
+    }
   }
 }
