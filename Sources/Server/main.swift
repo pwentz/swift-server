@@ -25,7 +25,7 @@ do {
 
   let persistedData = ControllerData(contents, nonFiles: ["form", "logs", "cookie"])
 
-  let router = Router(socket: socket, data: persistedData, threadQueue: OperationQueue(), port: port)
+  let router = Router(socket: socket, data: persistedData, threadQueue: DispatchQueue.global(qos: .userInteractive), port: port)
 
   try router.listen()
 
