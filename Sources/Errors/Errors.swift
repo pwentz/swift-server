@@ -4,10 +4,6 @@ public enum ServerStartError: Error {
   case MissingArgumentFor(flag: String)
 }
 
-public enum BadRequestError: Error {
-  case InvalidRequest(for: String)
-}
-
 extension ServerStartError: Equatable {
   public static func ==(lhs: ServerStartError, rhs: ServerStartError) -> Bool {
     switch (lhs, rhs) {

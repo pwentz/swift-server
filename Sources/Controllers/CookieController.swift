@@ -15,7 +15,8 @@ public class CookieController: Controller {
     }
 
     if let cookie = request.headers["cookie"] {
-      let cookieValue = cookie.components(separatedBy: "=").last ?? ""
+      let separatedCookie = cookie.components(separatedBy: "=")
+      let cookieValue = separatedCookie[separatedCookie.index(before: separatedCookie.endIndex)]
       body = "mmmm \(cookieValue)"
     }
 

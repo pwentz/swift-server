@@ -12,7 +12,7 @@ class ControllerFactoryTest: XCTestCase {
     let contents: [String: Data] = ["file1": Data(value: "I'm a text file"), "logs": Data(value: "")]
     let data = ControllerData(contents)
 
-    let controller = ControllerFactory.getController(request, with: data)
+    let _ = ControllerFactory.getController(request, with: data)
 
     XCTAssertEqual(data.get("logs"), "\nGET /dandkajjnw HTTP/1.1")
   }

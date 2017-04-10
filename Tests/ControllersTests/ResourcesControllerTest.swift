@@ -189,6 +189,17 @@ class ResourcesControllerTest: XCTestCase {
     XCTAssertEqual(response.body!, expected)
   }
 
+  func testItPatchesAnEmptyStringIfNoRequestBodyExists() {
+    let rawPatchRequest = "PATCH /patch-content.txt HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nIf-Match: dc50a0d27dda2eee9f65644cd7e4c9cf11de8bec\r\nContent-Length: 15\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
+    let patchRequest = HTTPRequest(for: rawPatchRequest)
+
+    let contents = ControllerData(["patch-content.txt": Data(value: "default content")])
+
+    let _ = ResourcesController(contents: contents).process(patchRequest)
+
+    XCTAssertEqual(contents.get("patch-content.txt")!, "")
+  }
+
   func testItCanHandlePartialContentRequests() {
     let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate\r\nRange:bytes=4-"
     let request = HTTPRequest(for: rawRequest)
@@ -199,5 +210,17 @@ class ResourcesControllerTest: XCTestCase {
     let response = ResourcesController(contents: contents).process(request)
 
     XCTAssertEqual(response.statusCode, "206 Partial Content")
+  }
+
+  func testItCanHandlePartialContentRequestsIfPartialContentDoesNotExist() {
+    let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate\r\nRange:bytes=4-"
+    let request = HTTPRequest(for: rawRequest)
+
+    let partialContent = "This is a file that contains"
+    let contents = ControllerData(["some_other_content.txt": Data(value: partialContent)])
+
+    let response = ResourcesController(contents: contents).process(request)
+
+    XCTAssertEqual(response.statusCode, "404 Not Found")
   }
 }
