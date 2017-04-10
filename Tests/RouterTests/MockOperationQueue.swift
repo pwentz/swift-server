@@ -5,6 +5,7 @@ class MockOperationQueue: ThreadQueue {
 
   func async(_ closure: @escaping () throws -> Void) {
     wasAsyncMethodCalled = true
+    try! closure()
   }
 
 }

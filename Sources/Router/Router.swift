@@ -27,16 +27,19 @@ public class Router {
 
     if !data.isEmpty {
       let request = try HTTPRequest(for: data.toString())
-      try dispatch(request, client: client)
+      let controller = ControllerFactory.getController(request, with: persistedData)
+      let response = controller.process(request)
+
+      dispatch(getDispatchCallback(response, client: client))
     }
   }
 
-  private func dispatch(_ request: Request, client: Socket) throws {
-    let controller = ControllerFactory.getController(request, with: persistedData)
+  internal func dispatch(_ callback: @escaping () throws -> Void) {
+    threadQueue.async(callback)
+  }
 
-    let response = controller.process(request)
-
-    threadQueue.async { _ throws in
+  internal func getDispatchCallback(_ response: Response, client: Socket) -> () throws -> Void {
+    return {
       try client.send(data: response.formatted)
       try client.close()
     }
