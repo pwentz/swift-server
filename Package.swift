@@ -27,6 +27,10 @@ let package = Package(
       Target(name: "Util", dependencies: [
         .Target(name: "Errors"),
         .Target(name: "Shared")
+      ]),
+      Target(name: "FileIO", dependencies: [
+        .Target(name: "Shared"),
+        .Target(name: "Errors")
       ])
     ],
     dependencies: [
