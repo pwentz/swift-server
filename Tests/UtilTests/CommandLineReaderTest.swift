@@ -3,6 +3,16 @@ import XCTest
 import Errors
 
 class CommandLineReaderTest: XCTestCase {
+  func testItCanJoinArgs() {
+    let args = ["/path/to/somewhere", "-p", "5000"]
+
+    let reader = CommandLineReader(args: args)
+
+    let expected = "/path/to/somewhere\r\n-p\r\n5000"
+
+    XCTAssertEqual(reader.join("\r\n"), expected)
+  }
+
   func testItCanGrabPortArgument() {
     let args = ["/path/to/somewhere", "-p", "5000", "-d", "some/other/path"]
 
