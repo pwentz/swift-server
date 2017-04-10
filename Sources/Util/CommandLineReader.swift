@@ -4,12 +4,12 @@ import Errors
 public class CommandLineReader {
   private let args: [String]
 
-  public var joinedArgs: String {
-    return args.joined(separator: "\r\n")
-  }
-
   public init(args: [String]) {
     self.args = args
+  }
+
+  public func join(_ separator: String) -> String {
+    return args.joined(separator: separator)
   }
 
   public func publicDirectoryArgs() throws -> String? {
