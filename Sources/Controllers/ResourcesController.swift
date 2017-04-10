@@ -23,7 +23,7 @@ public class ResourcesController: Controller {
 
     if let rangeHeader = request.headers["range"] {
       return PartialContentsController(
-        content: contents.get(request.pathName),
+        content: contents.get(request.pathName) ?? "",
         range: rangeHeader
       ).process(request)
     }

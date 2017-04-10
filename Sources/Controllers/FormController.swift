@@ -16,11 +16,9 @@ public class FormController: Controller {
       return HTTPResponse(status: TwoHundred.Ok)
     }
 
-    let form = contents.get(request.pathName)
-
     return HTTPResponse(
       status: TwoHundred.Ok,
-      body: form.isEmpty ? nil : form
+      body: contents.get(request.pathName).flatMap { $0.isEmpty ? nil : $0 }
     )
   }
 

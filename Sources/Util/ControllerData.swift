@@ -19,16 +19,12 @@ public class ControllerData {
     contents.updateValue(Data(value: value), forKey: key)
   }
 
-  public func get(_ key: String) -> String {
-    return String(data: contents[key] ?? Data(), encoding: .utf8) ?? ""
+  public func get(_ key: String) -> String? {
+    return contents[key].flatMap { String(data: $0, encoding: .utf8) }
   }
 
-  public func getBinary(_ key: String) -> Data {
-    return contents[key] ?? Data()
-  }
-
-  public func addNew(key: String, value: String) {
-    contents[key] = Data(value: value)
+  public func getBinary(_ key: String) -> Data? {
+    return contents[key]
   }
 
   public func fileNames() -> [String] {
