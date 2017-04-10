@@ -1,21 +1,32 @@
 import Foundation
 
 public class DateHelper {
-  private let today = Date()
-  private let calendar = Calendar.current
-  private let formatter = DateFormatter()
+  private let today: Date
+  private let calendar: Calendarizable
+  private var formatter: DateFormattable
 
-  public init() {}
+  public init(today: Date, calendar: Calendarizable, formatter: DateFormattable) {
+    self.today = today
+    self.calendar = calendar
+    self.formatter = formatter
+  }
 
-  public func time(separator: String) -> String {
-    let hour = calendar.component(.hour, from: today)
-    let minutes = calendar.component(.minute, from: today)
-    let seconds = calendar.component(.second, from: today)
+  public func formatTimestamp(prefix: String, dateSeparator: String = "-") -> String {
+    let currentTime = time(separator: ":")
+    let today = date(separator: dateSeparator)
+
+    return "\(prefix)-\(currentTime)--\(today)"
+  }
+
+  private func time(separator: String) -> String {
+    let hour = calendar.currentHour(from: today)
+    let minutes = calendar.currentMinute(from: today)
+    let seconds = calendar.currentSecond(from: today)
 
     return "\(hour)" + separator + "\(minutes)" + separator + "\(seconds)"
   }
 
-  public func date(separator: String) -> String {
+  private func date(separator: String) -> String {
     formatter.dateFormat = "MM\(separator)dd\(separator)yyyy"
 
     return formatter.string(from: today)

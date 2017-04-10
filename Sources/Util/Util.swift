@@ -1,14 +1,6 @@
 import Foundation
 import Errors
 
-public func formatTimestamp(prefix: String) -> String {
-  let dateHelper = DateHelper()
-  let currentTime = dateHelper.time(separator: ":")
-  let today = dateHelper.date(separator: "-")
-
-  return "\(prefix)-\(currentTime)--\(today)"
-}
-
 public func isAnImage(_ file: String) -> Bool {
   return file.hasSuffix("jpeg") ||
           file.hasSuffix("gif") ||

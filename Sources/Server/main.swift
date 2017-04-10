@@ -33,7 +33,7 @@ do {
     try router.receive()
   }
 } catch {
-  let fileName = formatTimestamp(prefix: "FAILURE")
+  let fileName = DateHelper(today: Date(), calendar: Calendar.current, formatter: DateFormatter()).formatTimestamp(prefix: "FAILURE")
   let urlPath = URL(fileURLWithPath: logsPath + fileName).appendingPathExtension("txt")
   try FileWriter<URL>(at: urlPath, with: "ERROR: \(error)\r\nARGS: \(reader.joinedArgs)")
                      .write()
