@@ -73,4 +73,13 @@ class ResponseTest: XCTestCase {
 
     XCTAssertEqual(response.formatted, formattedResponse)
   }
+
+  func testItCanBeRepresentedByAString() {
+    let headers = ["Content-Type": "ABCD"]
+
+    let response = HTTPResponse(status: ok, headers: headers)
+    let expected = "HTTP/1.1 200 OK\r\nContent-Type:ABCD"
+
+    XCTAssertEqual(String(response: response), expected)
+  }
 }

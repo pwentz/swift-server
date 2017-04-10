@@ -15,35 +15,35 @@ public struct HTTPRequest: Request {
   public var headers: [String: String] = [:]
 
   public init(for rawRequest: String) {
-    let parsedRequest = rawRequest.components(separatedBy: crlf)
-    let requestTail = parsedRequest[parsedRequest.index(before: parsedRequest.endIndex)]
+    let splitRequest = rawRequest.components(separatedBy: crlf)
+    let requestTail = splitRequest[splitRequest.index(before: splitRequest.endIndex)]
 
-    let mainHeaderParsed = parsedRequest.first?.components(separatedBy: " ") ?? [rawRequest]
-    let givenVerb = mainHeaderParsed[mainHeaderParsed.startIndex]
+    let splitMainHeader = splitRequest.first?.components(separatedBy: " ") ?? [rawRequest]
+    let givenVerb = splitMainHeader[splitMainHeader.startIndex]
 
-    let fullPath = mainHeaderParsed[mainHeaderParsed.index(after: mainHeaderParsed.startIndex)]
+    let fullPath = splitMainHeader[splitMainHeader.index(after: splitMainHeader.startIndex)]
 
-    let parsedPath = fullPath.components(separatedBy: parameterDivide)
+    let splitPath = fullPath.components(separatedBy: parameterDivide)
 
     let separator = parameterKeyValueSeparator
 
     verb = HTTPRequestMethod(rawValue: givenVerb.capitalized).map { $0 } ?? .Invalid
 
-    path = parsedPath.first ?? fullPath
+    path = splitPath.first ?? fullPath
     pathName = path.substring(from: path.index(after: path.startIndex))
 
-    params = parsedPath.index(where: { $0.contains(separator) }).flatMap { index -> HTTPParameters? in
-      let dividedParams = parsedPath[index].components(separatedBy: separator).filter { !$0.isEmpty }
+    params = splitPath.index(where: { $0.contains(separator) }).flatMap { index -> HTTPParameters? in
+      let dividedParams = splitPath[index].components(separatedBy: separator).filter { !$0.isEmpty }
       if dividedParams.count < 2 {
         return nil
       }
 
-      return HTTPParameters(for: parsedPath[index])
+      return HTTPParameters(for: splitPath[index])
     }
 
     body = requestTail.contains(headerDivide) ? nil : requestTail
 
-    headers = parsedRequest
+    headers = splitRequest
                .dropFirst()
                .map { RequestHeader(for: $0) }
                .filter { !$0.key.isEmpty && !$0.value.isEmpty }
