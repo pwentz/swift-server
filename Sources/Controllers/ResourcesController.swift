@@ -22,10 +22,12 @@ public class ResourcesController: Controller {
     }
 
     if let rangeHeader = request.headers["range"] {
-      return PartialContentsController(
-        content: contents.get(request.pathName) ?? "",
-        range: rangeHeader
-      ).process(request)
+      return contents.get(request.pathName).map { requestResource in
+        PartialContentsController(
+          content: requestResource,
+          range: rangeHeader
+        ).process(request)
+      } ?? HTTPResponse(status: FourHundred.NotFound)
     }
 
     let contentType = request.path.range(of: ".").map { extStart -> String in
