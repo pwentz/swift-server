@@ -11,7 +11,7 @@ public class LogsController: Controller {
   }
 
   public func updateLogs(_ request: Request) {
-    let existingLogs = contents.get("logs")
+    let existingLogs = contents.get("logs")  ?? ""
     let verb = request.verb.rawValue.uppercased()
     contents.update("logs", withVal: existingLogs + "\n\(verb) \(request.path) \(request.transferProtocol)")
   }
