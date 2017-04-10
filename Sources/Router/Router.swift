@@ -29,10 +29,6 @@ public class Router {
       let request = try HTTPRequest(for: data.toString())
       try dispatch(request, client: client)
     }
-
-    if threadQueue.operationCount == threadQueue.maxConcurrentOperationCount {
-      threadQueue.waitUntilAllOperationsAreFinished()
-    }
   }
 
   private func dispatch(_ request: Request, client: Socket) throws {
@@ -40,9 +36,10 @@ public class Router {
 
     let response = controller.process(request)
 
-    let newOperation = RespondOperation(response: response, client: client)
-
-    threadQueue.add(operation: newOperation)
+    threadQueue.async { _ throws in
+      try client.send(data: response.formatted)
+      try client.close()
+    }
   }
 
 }

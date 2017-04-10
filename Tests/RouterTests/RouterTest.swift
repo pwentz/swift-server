@@ -53,7 +53,7 @@ class RouterTest: XCTestCase {
     XCTAssert(mockSock.wasRecvCalled)
   }
 
-  func testItAddsAnOperationToResponseQueueIfDataIsNotEmpty() throws {
+  func testItRunsDispatchAsyncMethodIfDataIsNotEmpty() throws {
     let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let port: UInt16 = 5000
 
@@ -65,10 +65,10 @@ class RouterTest: XCTestCase {
 
     try router.receive()
 
-    XCTAssertEqual(mockQueue.operationCount, 1)
+    XCTAssert(mockQueue.wasAsyncMethodCalled)
   }
 
-  func testItDoesNotAddAnOperationIfDataIsEmpty() throws {
+  func testItDoesNotCallDispatchAsyncIfDataIsEmpty() throws {
     let port: UInt16 = 5000
 
     let fileContents = ["file1": Data(value: "I'm a text file")]
@@ -79,25 +79,6 @@ class RouterTest: XCTestCase {
 
     try router.receive()
 
-    XCTAssertEqual(mockQueue.operationCount, 0)
+    XCTAssert(mockQueue.wasAsyncMethodCalled == false)
   }
-
-  func testItTellsQueueToWaitIfOperationLimitIsHit() throws {
-    let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let port: UInt16 = 5000
-
-    let fileContents = ["file1": Data(value: "I'm a text file")]
-    let controllerData = ControllerData(fileContents)
-    let mockSock = MockTCPSocket(rawRequest)
-    let mockQueue = MockOperationQueue()
-
-    mockQueue.maxConcurrentOperationCount = 1
-
-    let router = Router(socket: mockSock, data: controllerData, threadQueue: mockQueue, port: port)
-
-    try router.receive()
-
-    XCTAssert(mockQueue.wasWaitMethodCalled)
-  }
-
 }
