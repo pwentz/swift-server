@@ -1,6 +1,7 @@
 import Foundation
 
 extension Calendar: Calendarizable {
+
   public func currentHour(from today: Date) -> Int {
     return self.component(.hour, from: today)
   }
@@ -12,4 +13,5 @@ extension Calendar: Calendarizable {
   public func currentSecond(from today: Date) -> Int {
     return self.component(.second, from: today)
   }
+
 }

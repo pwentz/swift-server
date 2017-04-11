@@ -1,5 +1,6 @@
 extension ServerStartError: Equatable {
-  public static func ==(lhs: ServerStartError, rhs: ServerStartError) -> Bool {
+
+  public static func == (lhs: ServerStartError, rhs: ServerStartError) -> Bool {
     switch (lhs, rhs) {
     case (.InvalidPublicDirectoryGiven, .InvalidPublicDirectoryGiven):
       return true
@@ -11,4 +12,5 @@ extension ServerStartError: Equatable {
       return false
     }
   }
+
 }
