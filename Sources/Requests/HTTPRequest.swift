@@ -18,7 +18,7 @@ public struct HTTPRequest: Request {
     let splitRequest = rawRequest.components(separatedBy: crlf)
     let requestTail = splitRequest[splitRequest.index(before: splitRequest.endIndex)]
 
-    let splitMainHeader = splitRequest.first?.components(separatedBy: " ") ?? [rawRequest]
+    let splitMainHeader = splitRequest[splitRequest.startIndex].components(separatedBy: " ")
     let givenVerb = splitMainHeader[splitMainHeader.startIndex]
 
     let fullPath = splitMainHeader[splitMainHeader.index(after: splitMainHeader.startIndex)]
@@ -29,7 +29,7 @@ public struct HTTPRequest: Request {
 
     verb = HTTPRequestMethod(rawValue: givenVerb.capitalized).map { $0 } ?? .Invalid
 
-    path = splitPath.first ?? fullPath
+    path = fullPath.range(of: parameterDivide).map { fullPath.substring(to: $0.lowerBound) } ?? fullPath
     pathName = path.substring(from: path.index(after: path.startIndex))
 
     params = splitPath.index(where: { $0.contains(separator) }).flatMap { index -> HTTPParameters? in

@@ -70,7 +70,7 @@ class RouterTest: XCTestCase {
   }
 
   func testItCallsSendOnSocketWhenDataPassed() throws {
-    let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
+    let rawRequest = "GET /logs HTTP/1.1"
 
     let fileContents = ["file1": Data(value: "I'm a text file")]
     let controllerData = ControllerData(fileContents)
@@ -79,22 +79,26 @@ class RouterTest: XCTestCase {
     let router = Router(socket: mockSock, data: controllerData, threadQueue: mockQueue, port: 5000)
     let response = HTTPResponse(status: TwoHundred.Ok)
 
-    let dispatchExpectation = expectation(description: "Router#dispatch calls async method with given callback")
     let dispatchCallback = router.getDispatchCallback(response, client: mockSock)
 
-    router.dispatch() { _ throws in
-      try dispatchCallback()
+    router.dispatch(dispatchCallback)
+    XCTAssert(mockSock.wasSendCalled)
+  }
 
-      XCTAssert(mockSock.wasSendCalled)
-      XCTAssert(mockSock.wasCloseCalled)
-      dispatchExpectation.fulfill()
-    }
+  func testItCallsCloseOnSocketWhenDataPassed() throws {
+    let rawRequest = "GET /logs HTTP/1.1"
 
-    waitForExpectations(timeout: 0) { error in
-      if let error = error {
-        XCTFail("ERROR: \(error)")
-      }
-    }
+    let fileContents = ["file1": Data(value: "I'm a text file")]
+    let controllerData = ControllerData(fileContents)
+    let mockSock = MockTCPSocket(rawRequest)
+    let mockQueue = MockOperationQueue()
+    let router = Router(socket: mockSock, data: controllerData, threadQueue: mockQueue, port: 5000)
+    let response = HTTPResponse(status: TwoHundred.Ok)
+
+    let dispatchCallback = router.getDispatchCallback(response, client: mockSock)
+
+    router.dispatch(dispatchCallback)
+    XCTAssert(mockSock.wasCloseCalled)
   }
 
   func testItDoesNotCallDispatchAsyncIfDataIsEmpty() throws {
