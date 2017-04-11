@@ -1,6 +1,6 @@
 import Foundation
 
-public class FileWriter<WritableLocation> {
+public class Writer<WritableLocation> {
   let content: Writable
   let destination: WritableLocation
 
