@@ -17,7 +17,7 @@ do {
   let socket = try TCPInternetSocket(address: address)
 
   let publicDir = try reader.publicDirectoryArgs() ?? ""
-  let fileNames = try FileReader(FileManager.default).getFileNames(at: publicDir)
+  let fileNames = try DirectoryReader(FileManager.default).getFileNames(at: publicDir)
 
   for file in fileNames {
     contents[file] = try Data(contentsOf: URL(fileURLWithPath: publicDir + "/" + file))
@@ -35,8 +35,8 @@ do {
 } catch {
   let fileName = DateHelper(today: Date(), calendar: Calendar.current, formatter: DateFormatter()).formatTimestamp(prefix: "FAILURE")
   let urlPath = URL(fileURLWithPath: logsPath + "/" + fileName).appendingPathExtension("txt")
-  try FileWriter<URL>(at: urlPath, with: "ERROR: \(error)\r\nARGS: \(reader.join("\r\n"))")
-                     .write()
+  try Writer<URL>(at: urlPath, with: "ERROR: \(error)\r\nARGS: \(reader.join("\r\n"))")
+                 .write()
 
   throw error
 }

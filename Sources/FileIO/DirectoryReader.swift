@@ -2,7 +2,7 @@ import Foundation
 import Shared
 import Errors
 
-public class FileReader {
+public class DirectoryReader {
   let fileManager: FileIO
 
   public init(_ fileManager: FileIO) {

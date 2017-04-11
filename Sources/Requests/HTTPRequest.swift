@@ -32,13 +32,13 @@ public struct HTTPRequest: Request {
     path = fullPath.range(of: parameterDivide).map { fullPath.substring(to: $0.lowerBound) } ?? fullPath
     pathName = path.substring(from: path.index(after: path.startIndex))
 
-    params = splitPath.index(where: { $0.contains(separator) }).flatMap { index -> HTTPParameters? in
-      let dividedParams = splitPath[index].components(separatedBy: separator).filter { !$0.isEmpty }
+    params = splitPath.first(where: { $0.contains(separator) }).flatMap { params -> HTTPParameters? in
+      let dividedParams = params.components(separatedBy: separator).filter { !$0.isEmpty }
       if dividedParams.count < 2 {
         return nil
       }
 
-      return HTTPParameters(for: splitPath[index])
+      return HTTPParameters(for: params)
     }
 
     body = requestTail.contains(headerDivide) ? nil : requestTail

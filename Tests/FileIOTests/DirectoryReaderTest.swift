@@ -7,7 +7,7 @@ class FileReaderTest: XCTestCase {
     let path = "/Users/patrickwentz/cob_spec/public"
     let fileManager = MockFileManager()
 
-    let fileReader = FileReader(fileManager)
+    let fileReader = DirectoryReader(fileManager)
 
     let result = try! fileReader.getFileNames(at: path)
 
@@ -18,7 +18,7 @@ class FileReaderTest: XCTestCase {
     let path = "/some/random/path"
     let fileManager = MockFileManager()
 
-    let fileReader = FileReader(fileManager)
+    let fileReader = DirectoryReader(fileManager)
 
     XCTAssertThrowsError(try fileReader.getFileNames(at: path)) { error in
       XCTAssertEqual(error as! ServerStartError, ServerStartError.InvalidPublicDirectoryGiven)
