@@ -31,6 +31,10 @@ let package = Package(
       Target(name: "FileIO", dependencies: [
         .Target(name: "Shared"),
         .Target(name: "Errors")
+      ]),
+      Target(name: "Responders", dependencies: [
+        .Target(name: "Requests"),
+        .Target(name: "Routes")
       ])
     ],
     dependencies: [
