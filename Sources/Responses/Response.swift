@@ -9,6 +9,10 @@ public protocol Response {
   var transferProtocol: String { get }
 
   init(status: StatusCode, headers: [String: String], body: BytesRepresentable?)
+
+  mutating func appendToBody(_ newContent: String)
+  mutating func appendToHeaders(with newHeaders: [String: String])
+  mutating func updateStatus(with newStatus: StatusCode)
 }
 
 
