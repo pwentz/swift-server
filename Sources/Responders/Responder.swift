@@ -13,12 +13,19 @@ class Responder {
 
   public func respond(to request: Request) -> Response {
     let route = routes[request.path]!
-    var newResponse = HTTPResponse(status: TwoHundred.Ok)
-    logs.append("\(request.verb.rawValue.uppercased()) \(request.path) HTTP/1.1")
+    let givenAuth = request.headers["authorization"]?.components(separatedBy: " ").last
 
-    if let routeAuth = route.auth {
-      return handleAuthRequest(for: request, routeAuth: routeAuth)
+    guard givenAuth == route.auth else {
+      return HTTPResponse(status: FourHundred.Unauthorized)
     }
+
+    guard route.allowedMethods.contains(request.verb) else {
+      return HTTPResponse(status: FourHundred.MethodNotAllowed)
+    }
+
+    var newResponse = HTTPResponse(status: TwoHundred.Ok)
+
+    logs.append("\(request.verb.rawValue.uppercased()) \(request.path) HTTP/1.1")
 
     if let cookieHeader = request.headers["cookie"] {
       newResponse.appendToBody("mmmm \(getCookieValue(from: cookieHeader))")
@@ -30,6 +37,11 @@ class Responder {
 
     if route.includeLogs {
       newResponse.appendToBody(logs.joined(separator: "\n"))
+    }
+
+    if request.verb == .Options {
+      let allowedMethods = route.allowedMethods.map { $0.rawValue.uppercased() }.joined(separator: ",")
+      newResponse.appendToHeaders(with: ["Allow": allowedMethods])
     }
 
     return newResponse
@@ -44,14 +56,4 @@ class Responder {
     return CookieResponder(for: request).formatResponse(response)
   }
 
-  private func handleAuthRequest(for request: Request, routeAuth: String) -> Response {
-    let givenAuth = request.headers["authorization"]?.components(separatedBy: " ").last
-
-    if givenAuth == routeAuth {
-      return HTTPResponse(status: TwoHundred.Ok)
-    }
-    else {
-      return HTTPResponse(status: FourHundred.Unauthorized)
-    }
-  }
 }
