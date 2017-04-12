@@ -13,21 +13,31 @@ class Responder {
 
   public func respond(to request: Request) -> Response {
     let route = routes[request.path]!
-    let currentResponse = HTTPResponse(status: TwoHundred.Ok)
+    var newResponse = HTTPResponse(status: TwoHundred.Ok)
     logs.append("\(request.verb.rawValue.uppercased()) \(request.path) HTTP/1.1")
 
     if let routeAuth = route.auth {
       return handleAuthRequest(for: request, routeAuth: routeAuth)
     }
-    else if route.setCookie {
-      return handleCookieRequest(for: request, currentResponse)
+
+    if let cookieHeader = request.headers["cookie"] {
+      newResponse.appendToBody("mmmm \(getCookieValue(from: cookieHeader))")
     }
-    else if route.includeLogs {
-      return HTTPResponse(status: TwoHundred.Ok, body: logs.joined(separator: "\n"))
+
+    if route.setCookie {
+      newResponse = handleCookieRequest(for: request, newResponse) as! HTTPResponse
     }
-    else {
-      return HTTPResponse(status: TwoHundred.Ok)
+
+    if route.includeLogs {
+      newResponse.appendToBody(logs.joined(separator: "\n"))
     }
+
+    return newResponse
+  }
+
+  private func getCookieValue(from cookieHeader: String) -> String {
+    let separatedCookie = cookieHeader.components(separatedBy: "=")
+    return separatedCookie[separatedCookie.index(before: separatedCookie.endIndex)]
   }
 
   private func handleCookieRequest(for request: Request, _ response: Response) -> Response {

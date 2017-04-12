@@ -65,57 +65,20 @@ class ResponderTest: XCTestCase {
       XCTAssertEqual(response.statusCode, "200 OK")
     }
 
-  // Set Cookie
-    func testItReturnsA200ResponseWhenPassedCookie() {
-      let rawRequest = "GET /cookie?type=chocolate HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
+  // Cookie Header
+    func testItCanRespondWithCorrectBodyGivenCookieHeader() {
+      let rawRequest = "GET /eat_cookie HTTP/1.1\r\nCookie: type=chocolate\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)
 
-      let route = Route(auth: nil, setCookie: true, includeLogs: false)
-      let routes = ["/cookie": route]
+      let route = Route(auth: nil, setCookie: false, includeLogs: false)
+      let routes = ["/eat_cookie": route]
 
-      let res = Responder(routes: routes).respond(to: request)
+      let responder = Responder(routes: routes)
 
-      XCTAssertEqual(res.statusCode, "200 OK")
-    }
+      let response = responder.respond(to: request)
+      let result = Array("\n\nmmmm chocolate".utf8)
 
-    func testItReturnsAResponseWithEatWhenSetCookieFlagIsTrue() {
-      let rawRequest = "GET /cookie?type=chocolate HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
-      let request = HTTPRequest(for: rawRequest)
-
-      let route = Route(auth: nil, setCookie: true, includeLogs: false)
-      let routes = ["/cookie": route]
-
-      let res = Responder(routes: routes).respond(to: request)
-
-      let result = Array("\n\nEat".utf8)
-
-      XCTAssertEqual(res.body!, result)
-    }
-
-    func testItReturnsAResponseWithSetCookieHeadersWhenSetCookieFlagIsTrue() {
-      let rawRequest = "GET /cookie?type=chocolate HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
-      let request = HTTPRequest(for: rawRequest)
-
-      let route = Route(auth: nil, setCookie: true, includeLogs: false)
-      let routes = ["/cookie": route]
-
-      let res = Responder(routes: routes).respond(to: request)
-
-      let result = Array("\n\nEat".utf8)
-
-      XCTAssertEqual(res.headers["Set-Cookie"]!, "type=chocolate")
-    }
-
-    func testItReturnsABadRequestResponseIfSetCookieIsTrueButNoCookieProvided() {
-      let rawRequest = "GET /cookie HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
-      let request = HTTPRequest(for: rawRequest)
-
-      let route = Route(auth: nil, setCookie: true, includeLogs: false)
-      let routes = ["/cookie": route]
-
-      let res = Responder(routes: routes).respond(to: request)
-
-      XCTAssertEqual(res.statusCode, "400 Bad Request")
+      XCTAssertEqual(response.body!, result)
     }
 
   // Set Cookie AND Auth
@@ -159,5 +122,32 @@ class ResponderTest: XCTestCase {
       let expected = Array("\n\nGET /someRoute HTTP/1.1\nGET /someRoute HTTP/1.1".utf8)
 
       XCTAssertEqual(response.body!, expected)
+    }
+
+  // Include logs AND cookie
+    func testItCanSetCookieAndIncludeLogs() {
+      let rawRequest = "GET /cookie?type=chocolate HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
+      let request = HTTPRequest(for: rawRequest)
+
+      let route = Route(auth: nil, setCookie: true, includeLogs: true)
+      let routes = ["/cookie": route]
+
+      let res = Responder(routes: routes).respond(to: request)
+      let expected = Array("\n\nEat\n\nGET /cookie HTTP/1.1".utf8)
+
+      XCTAssertEqual(res.body!, expected)
+    }
+
+    func testItCanGetCookieAndIncludeLogs() {
+      let rawRequest = "GET /eat_cookie HTTP/1.1\r\nCookie: type=chocolate\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
+      let request = HTTPRequest(for: rawRequest)
+
+      let route = Route(auth: nil, setCookie: false, includeLogs: true)
+      let routes = ["/eat_cookie": route]
+
+      let res = Responder(routes: routes).respond(to: request)
+      let expected = Array("\n\nmmmm chocolate\n\nGET /eat_cookie HTTP/1.1".utf8)
+
+      XCTAssertEqual(res.body!, expected)
     }
 }
