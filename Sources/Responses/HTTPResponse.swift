@@ -1,7 +1,17 @@
+import Util
+
 public struct HTTPResponse: Response {
   public var statusCode: String
   public var headers: [String: String]
-  public var body: [UInt8]?
+  public var body: [UInt8]? {
+    didSet {
+      if let contentType = self.headers["Content-Type"] {
+        if isAnImage(contentType) {
+          self.body = oldValue
+        }
+      }
+    }
+  }
   public let crlf: String = "\r\n"
   public let headerDivide: String = ":"
   public let transferProtocol: String = "HTTP/1.1"
