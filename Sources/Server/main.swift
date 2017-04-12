@@ -35,8 +35,7 @@ do {
 } catch {
   let fileName = DateHelper(today: Date(), calendar: Calendar.current, formatter: DateFormatter()).formatTimestamp(prefix: "FAILURE")
   let urlPath = URL(fileURLWithPath: logsPath + "/" + fileName).appendingPathExtension("txt")
-  try Writer<URL>(at: urlPath, with: "ERROR: \(error)\r\nARGS: \(reader.join("\r\n"))")
-                 .write()
+  try urlPath.write(writableContent: "ERROR: \(error)\r\nARGS: \(reader.join("\r\n"))")
 
   throw error
 }
