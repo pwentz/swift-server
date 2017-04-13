@@ -2,6 +2,7 @@ import XCTest
 @testable import Responders
 import Util
 import Requests
+import Responses
 import Routes
 
 class ResponderTest: XCTestCase {
@@ -551,5 +552,22 @@ class ResponderTest: XCTestCase {
       let response = Responder(routes: routes).respond(to: request)
 
       XCTAssertEqual(response.statusCode, "404 Not Found")
+    }
+
+
+  // Custom Response
+
+    func testItReturnsCustomResponseWhenRouteHasCustomResponse() {
+      let rawRequest = "GET /coffee HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
+      let request = HTTPRequest(for: rawRequest)
+      let customResponse = HTTPResponse(status: FourHundred.Teapot, body: "I'm a teapot")
+
+      let route = Route(allowedMethods: [.Get], customResponse: customResponse)
+      let routes = ["/coffee": route]
+
+      let response = Responder(routes: routes).respond(to: request)
+
+      XCTAssertEqual(response.statusCode, "418 I'm a teapot")
+      XCTAssertEqual(response.body!, "\n\nI'm a teapot".toBytes)
     }
 }

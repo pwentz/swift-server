@@ -21,6 +21,10 @@ class Responder {
       return HTTPResponse(status: FourHundred.NotFound)
     }
 
+    if let customResponse = route.customResponse {
+      return customResponse
+    }
+
     let givenAuth = request.headers["authorization"]?.components(separatedBy: " ").last
 
     guard givenAuth == route.auth else {
