@@ -31,6 +31,20 @@ class Responder {
       return HTTPResponse(status: FourHundred.MethodNotAllowed)
     }
 
+    if let redirectPath = route.redirectPath {
+      if let redirectRoute = routes[redirectPath] {
+        if redirectRoute.allowedMethods.contains(request.verb) {
+          return HTTPResponse(status: ThreeHundred.Found, headers: ["Location": redirectPath])
+        }
+        else {
+          return HTTPResponse(status: FourHundred.MethodNotAllowed)
+        }
+      }
+      else {
+        return HTTPResponse(status: FourHundred.NotFound)
+      }
+    }
+
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     if request.verb == .Get {

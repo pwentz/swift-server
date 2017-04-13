@@ -496,4 +496,60 @@ class ResponderTest: XCTestCase {
 
       XCTAssert(response.body == nil)
     }
+
+  // Redirect
+    func testItCanRedirectWith302Status() {
+      let rawRequest = "GET /redirect HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
+      let request = HTTPRequest(for: rawRequest)
+
+      let route = Route(allowedMethods: [.Get], redirectPath: "/")
+      let redirectedRoute = Route(allowedMethods: [.Get])
+
+      let routes = ["/redirect": route, "/": redirectedRoute]
+
+      let response = Responder(routes: routes).respond(to: request)
+
+      XCTAssertEqual(response.statusCode, "302 Found")
+    }
+
+    func testItCanRedirectWithLocationHeader() {
+      let rawRequest = "GET /redirect HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
+      let request = HTTPRequest(for: rawRequest)
+
+      let route = Route(allowedMethods: [.Get], redirectPath: "/")
+      let redirectedRoute = Route(allowedMethods: [.Get])
+
+      let routes = ["/redirect": route, "/": redirectedRoute]
+
+      let response = Responder(routes: routes).respond(to: request)
+
+      XCTAssertEqual(response.headers["Location"]!, "/")
+    }
+
+    func testItGivesAMethodNotAllowedStatusIfRedirectedRouteIsNotSupported() {
+      let rawRequest = "GET /redirect HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
+      let request = HTTPRequest(for: rawRequest)
+
+      let route = Route(allowedMethods: [.Get], redirectPath: "/")
+      let redirectedRoute = Route(allowedMethods: [.Post])
+
+      let routes = ["/redirect": route, "/": redirectedRoute]
+
+      let response = Responder(routes: routes).respond(to: request)
+
+      XCTAssertEqual(response.statusCode, "405 Method Not Allowed")
+    }
+
+    func testItGivesA404IfRedirectedRouteDoesNotExist() {
+      let rawRequest = "GET /redirect HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
+      let request = HTTPRequest(for: rawRequest)
+
+      let route = Route(allowedMethods: [.Get], redirectPath: "/someRoute")
+
+      let routes = ["/redirect": route]
+
+      let response = Responder(routes: routes).respond(to: request)
+
+      XCTAssertEqual(response.statusCode, "404 Not Found")
+    }
 }
