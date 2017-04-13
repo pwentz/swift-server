@@ -8,7 +8,7 @@ class CookieResponderTest: XCTestCase {
     let rawRequest = "GET /cookie?type=chocolate HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
     let request = HTTPRequest(for: rawRequest)
     var response = HTTPResponse(status: TwoHundred.Ok)
-    let cookiePrefix: String? = "Eat"
+    let cookiePrefix = "Eat"
 
     CookieResponder(for: request, prefix: cookiePrefix).execute(on: &response)
 
@@ -19,7 +19,7 @@ class CookieResponderTest: XCTestCase {
     let rawRequest = "GET /cookie?type=chocolate HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
     let request = HTTPRequest(for: rawRequest)
     var response = HTTPResponse(status: TwoHundred.Ok)
-    let cookiePrefix: String? = "Eat"
+    let cookiePrefix = "Eat"
 
     CookieResponder(for: request, prefix: cookiePrefix).execute(on: &response)
 
@@ -30,7 +30,7 @@ class CookieResponderTest: XCTestCase {
     let rawRequest = "GET /eat_cookie HTTP/1.1\r\nCookie: type=chocolate\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
     let request = HTTPRequest(for: rawRequest)
     var response = HTTPResponse(status: TwoHundred.Ok)
-    let cookiePrefix: String? = "wow"
+    let cookiePrefix = "wow"
 
     CookieResponder(for: request, prefix: cookiePrefix).execute(on: &response)
 
@@ -41,18 +41,7 @@ class CookieResponderTest: XCTestCase {
     let rawRequest = "GET /eat_cookie HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
     let request = HTTPRequest(for: rawRequest)
     var response = HTTPResponse(status: TwoHundred.Ok)
-    let cookiePrefix: String? = "wow"
-
-    CookieResponder(for: request, prefix: cookiePrefix).execute(on: &response)
-
-    XCTAssertNil(response.body)
-  }
-
-  func testItWillNotAppendIfNoSpecifiedPrefix() {
-    let rawRequest = "GET /cookie?type=chocolate HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
-    let request = HTTPRequest(for: rawRequest)
-    var response = HTTPResponse(status: TwoHundred.Ok)
-    let cookiePrefix: String? = nil
+    let cookiePrefix = "wow"
 
     CookieResponder(for: request, prefix: cookiePrefix).execute(on: &response)
 

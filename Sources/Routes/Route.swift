@@ -7,7 +7,7 @@ public class Route {
   public let allowedMethods: [HTTPRequestMethod]
   public let includeDirectoryLinks: Bool
 
-  public init(auth: String?, cookiePrefix: String? = nil, includeLogs: Bool = false, allowedMethods: [HTTPRequestMethod], includeDirectoryLinks: Bool = false) {
+  public init(auth: String? = nil, cookiePrefix: String? = nil, includeLogs: Bool = false, allowedMethods: [HTTPRequestMethod], includeDirectoryLinks: Bool = false) {
     self.auth = auth
     self.cookiePrefix = cookiePrefix
     self.includeLogs = includeLogs

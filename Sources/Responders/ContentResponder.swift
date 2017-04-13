@@ -2,7 +2,7 @@ import Responses
 import Requests
 import Util
 
-class ContentResponder {
+class ContentResponder: RouteResponder {
   let request: Request
   let data: ControllerData
 

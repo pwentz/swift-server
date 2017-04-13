@@ -9,13 +9,16 @@ class Responder {
   let data: ControllerData
   var logs: [String] = []
 
-  public init(routes: [String: Route], data: ControllerData) {
+  public init(routes: [String: Route], data: ControllerData = ControllerData([:])) {
     self.routes = routes
     self.data = data
   }
 
   public func respond(to request: Request) -> Response {
-    let route = routes[request.path]!
+    guard let route = routes[request.path] else {
+      return HTTPResponse(status: FourHundred.NotFound)
+    }
+
     let givenAuth = request.headers["authorization"]?.components(separatedBy: " ").last
 
     guard givenAuth == route.auth else {
@@ -29,7 +32,12 @@ class Responder {
     logs.append("\(request.verb.rawValue.uppercased()) \(request.path) HTTP/1.1")
 
     if request.verb == .Get {
-      return GetResponder(route: route, data: data).respond(to: request, logs: logs)
+      var response = HTTPResponse(status: TwoHundred.Ok)
+      let responders = gatherGetResponders(request: request, route: route)
+
+      GetResponder(responders: responders).execute(on: &response)
+
+      return response
     }
 
     if request.verb == .Options {
@@ -38,6 +46,25 @@ class Responder {
     }
 
     return HTTPResponse(status: TwoHundred.Ok)
+  }
+
+  private func gatherGetResponders(request: Request, route: Route) -> [RouteResponder] {
+    var responders: [RouteResponder] = []
+
+    responders.append(ContentResponder(for: request, data: data))
+
+    if let cookiePrefix = route.cookiePrefix {
+      responders.append(CookieResponder(for: request, prefix: cookiePrefix))
+    }
+    else {
+      responders.append(ParamsResponder(for: request))
+    }
+
+    responders.append(LogsResponder(for: request, logs: route.includeLogs ? logs : nil))
+    responders.append(DirectoryLinksResponder(for: request, files: route.includeDirectoryLinks ? data.fileNames() : nil))
+    responders.append(PartialResponder(for: request))
+
+    return responders
   }
 
 }
