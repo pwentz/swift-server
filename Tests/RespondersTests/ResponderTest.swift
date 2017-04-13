@@ -349,7 +349,7 @@ class ResponderTest: XCTestCase {
          "file2": Data(value: "I'm a different text file")]
       )
 
-      let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get], includeDirectoryLinks: true)
+      let route = Route(allowedMethods: [.Get], includeDirectoryLinks: true)
 
       let routes = ["/": route]
       let response = Responder(routes: routes, data: contents).respond(to: request)
@@ -372,5 +372,128 @@ class ResponderTest: XCTestCase {
       let expected = "\n\nvariable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?\nvariable_2 = stuff"
 
       XCTAssertEqual(response.body!, expected.toBytes)
+    }
+
+  // Patch file resources
+    func testItCanReturnA204WhenSentAPatch() {
+      let rawRequest = "PATCH /patch-content.txt HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nIf-Match: dc50a0d27dda2eee9f65644cd7e4c9cf11de8bec\r\nContent-Length: 15\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate\r\npatched content"
+      let request = HTTPRequest(for: rawRequest)
+      let contents = ControllerData(["patch-content.txt": Data(value: "default content")])
+
+      let route = Route(allowedMethods: [.Patch])
+
+      let routes = ["/patch-content.txt": route]
+
+      let response = Responder(routes: routes, data: contents).respond(to: request)
+
+      XCTAssertEqual(response.statusCode, "204 No Content")
+    }
+
+    func testItCanModifyDefaultContent() {
+      let rawPatchRequest = "PATCH /patch-content.txt HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nIf-Match: dc50a0d27dda2eee9f65644cd7e4c9cf11de8bec\r\nContent-Length: 15\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate\r\npatched content"
+      let rawGetRequest = "GET /patch-content.txt HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
+      let patchRequest = HTTPRequest(for: rawPatchRequest)
+      let getRequest = HTTPRequest(for: rawGetRequest)
+
+      let route = Route(allowedMethods: [.Patch, .Get])
+      let routes = ["/patch-content.txt": route]
+
+      let contents = ControllerData(["patch-content.txt": Data(value: "default content")])
+
+      let responder = Responder(routes: routes, data: contents)
+
+      let _ = responder.respond(to: patchRequest)
+
+      let response = responder.respond(to: getRequest)
+
+      let expected = "\n\npatched content"
+
+      XCTAssertEqual(response.body!, expected.toBytes)
+    }
+
+  // Post/Put/Delete/Get non-file resources
+    func testItReturnsEmptyOnInitialGet() {
+      let rawRequest = "GET /form HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
+      let request = HTTPRequest(for: rawRequest)
+
+      let route = Route(allowedMethods: [.Get])
+      let routes = ["/form": route]
+
+      let response = Responder(routes: routes).respond(to: request)
+
+      XCTAssert(response.body == nil)
+    }
+
+    func testItRespondsWith200StatusOnPost() {
+      let rawPostRequest = "POST /form HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate\r\ndata=fatcat"
+      let postRequest = HTTPRequest(for: rawPostRequest)
+      let route = Route(allowedMethods: [.Post])
+
+      let routes = ["/form": route]
+
+      let response = Responder(routes: routes).respond(to: postRequest)
+
+      XCTAssertEqual(response.statusCode, "200 OK")
+    }
+
+    func testItCreatesDataOnPost() {
+      let rawPostRequest = "POST /form HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate\r\ndata=fatcat"
+      let rawGetRequest = "GET /form HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
+      let postRequest = HTTPRequest(for: rawPostRequest)
+      let getRequest = HTTPRequest(for: rawGetRequest)
+
+      let route = Route(allowedMethods: [.Post, .Get])
+
+      let routes = ["/form": route]
+      let responder = Responder(routes: routes)
+
+      let _ = responder.respond(to: postRequest)
+      let response = responder.respond(to: getRequest)
+
+      let expected = "\n\ndata=fatcat"
+
+      XCTAssertEqual(response.body!, expected.toBytes)
+    }
+
+    func testItUpdatesDataOnPut() {
+      let rawPostRequest = "POST /form HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate\r\ndata=fatcat"
+      let rawPutRequest = "PUT /form HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate\r\ndata=hamilton"
+      let rawGetRequest = "GET /form HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
+      let postRequest = HTTPRequest(for: rawPostRequest)
+      let putRequest = HTTPRequest(for: rawPutRequest)
+      let getRequest = HTTPRequest(for: rawGetRequest)
+
+      let route = Route(allowedMethods: [.Post, .Put, .Get])
+      let routes = ["/form": route]
+
+      let responder = Responder(routes: routes)
+
+      let _ = responder.respond(to: postRequest)
+      let _ = responder.respond(to: putRequest)
+      let response = responder.respond(to: getRequest)
+
+      let expected = "\n\ndata=hamilton"
+
+      XCTAssertEqual(response.body!, expected.toBytes)
+    }
+
+    func testItRemovesDataOnDelete() {
+      let rawPostRequest = "POST /form HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate\r\ndata=fatcat"
+      let rawDeleteRequest = "DELETE /form HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
+      let rawGetRequest = "GET /form HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
+      let postRequest = HTTPRequest(for: rawPostRequest)
+      let deleteRequest = HTTPRequest(for: rawDeleteRequest)
+      let getRequest = HTTPRequest(for: rawGetRequest)
+
+      let route = Route(allowedMethods: [.Post, .Delete, .Get])
+      let routes = ["/form": route]
+
+      let responder = Responder(routes: routes)
+
+      let _ = responder.respond(to: postRequest)
+      let _ = responder.respond(to: deleteRequest)
+      let response = responder.respond(to: getRequest)
+
+      XCTAssert(response.body == nil)
     }
 }

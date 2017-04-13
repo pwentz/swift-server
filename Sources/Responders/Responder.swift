@@ -15,6 +15,8 @@ class Responder {
   }
 
   public func respond(to request: Request) -> Response {
+    logs.append("\(request.verb.rawValue.uppercased()) \(request.path) HTTP/1.1")
+
     guard let route = routes[request.path] else {
       return HTTPResponse(status: FourHundred.NotFound)
     }
@@ -29,42 +31,27 @@ class Responder {
       return HTTPResponse(status: FourHundred.MethodNotAllowed)
     }
 
-    logs.append("\(request.verb.rawValue.uppercased()) \(request.path) HTTP/1.1")
+    var response = HTTPResponse(status: TwoHundred.Ok)
 
     if request.verb == .Get {
-      var response = HTTPResponse(status: TwoHundred.Ok)
       let responders = gatherGetResponders(request: request, route: route)
-
       GetResponder(responders: responders).execute(on: &response)
-
-      return response
+    }
+    else {
+      NonGetResponder(for: request, route: route, data: data).execute(on: &response)
     }
 
-    if request.verb == .Options {
-      let allowedMethods = route.allowedMethods.map { $0.rawValue.uppercased() }.joined(separator: ",")
-      return HTTPResponse(status: TwoHundred.Ok, headers: ["Allow": allowedMethods])
-    }
-
-    return HTTPResponse(status: TwoHundred.Ok)
+    return response
   }
 
   private func gatherGetResponders(request: Request, route: Route) -> [RouteResponder] {
-    var responders: [RouteResponder] = []
-
-    responders.append(ContentResponder(for: request, data: data))
-
-    if let cookiePrefix = route.cookiePrefix {
-      responders.append(CookieResponder(for: request, prefix: cookiePrefix))
-    }
-    else {
-      responders.append(ParamsResponder(for: request))
-    }
-
-    responders.append(LogsResponder(for: request, logs: route.includeLogs ? logs : nil))
-    responders.append(DirectoryLinksResponder(for: request, files: route.includeDirectoryLinks ? data.fileNames() : nil))
-    responders.append(PartialResponder(for: request))
-
-    return responders
+    return [
+      ContentResponder(for: request, data: data),
+      route.cookiePrefix.map { CookieResponder(for: request, prefix: $0) } ?? ParamsResponder(for: request),
+      LogsResponder(for: request, logs: route.includeLogs ? logs : nil),
+      DirectoryLinksResponder(for: request, files: route.includeDirectoryLinks ? data.fileNames : nil),
+      PartialResponder(for: request)
+    ]
   }
 
 }

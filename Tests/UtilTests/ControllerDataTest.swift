@@ -31,10 +31,9 @@ class ControllerDataTest: XCTestCase {
 
   func testItCanFilterOutGivenFilenames() {
     let contents: [String: Data] = ["file1": Data(value: "I'm a text file")]
-    let nonFiles = ["logs", "cookie"]
 
-    let data = ControllerData(contents, nonFiles: nonFiles)
+    let data = ControllerData(contents)
 
-    XCTAssertEqual(data.fileNames(), ["file1"])
+    XCTAssertEqual(data.fileNames, ["file1"])
   }
 }

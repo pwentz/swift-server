@@ -12,9 +12,7 @@ class GetResponder: RouteResponder {
   }
 
   public func execute(on response: inout HTTPResponse) {
-    responders.forEach { responder in
-      responder.execute(on: &response)
-    }
+    responders.forEach { $0.execute(on: &response) }
   }
 
 }

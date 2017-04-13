@@ -10,7 +10,7 @@ public class RootController: Controller {
   }
 
   public func process(_ request: Request) -> Response {
-    let fileLinks = contents.fileNames().map { file in
+    let fileLinks = contents.fileNames.map { file in
       "<a href=\"/\(file)\">\(file)</a>"
     }.joined(separator: "<br>")
 

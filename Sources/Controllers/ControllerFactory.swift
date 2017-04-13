@@ -18,7 +18,7 @@ public class ControllerFactory {
     case "/":
       return RootController(contents: data)
 
-    case let path where data.fileNames().contains { path == "/\($0)" }:
+    case let path where data.fileNames.contains { path == "/\($0)" }:
       return ResourcesController(contents: data)
 
     case "/foobar":
