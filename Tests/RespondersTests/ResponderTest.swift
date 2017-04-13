@@ -99,19 +99,6 @@ class ResponderTest: XCTestCase {
       XCTAssertEqual(newResponse.headers["Set-Cookie"]!, "type=chocolate")
     }
 
-    func testItReturnsABadRequestResponseIfSetCookieIsTrueButNoCookieProvided() {
-      let rawRequest = "GET /cookie HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
-      let request = HTTPRequest(for: rawRequest)
-      let data = ControllerData([:])
-
-      let route = Route(auth: nil, setCookie: true, includeLogs: false, allowedMethods: [.Get])
-      let routes = ["/cookie": route]
-
-      let newResponse = Responder(routes: routes, data: data).respond(to: request)
-
-      XCTAssertEqual(newResponse.statusCode, "400 Bad Request")
-    }
-
   // Cookie Header
     func testItCanRespondWithCorrectBodyGivenCookieHeader() {
       let rawRequest = "GET /eat_cookie HTTP/1.1\r\nCookie: type=chocolate\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
@@ -312,6 +299,62 @@ class ResponderTest: XCTestCase {
 
       let response = Responder(routes: routes, data: contents).respond(to: request)
       let expected = "\n\nsome stuff\n\nGET /file1.txt HTTP/1.1".toBytes
+
+      XCTAssertEqual(response.body!, expected)
+    }
+
+  // Partial Contents
+    func testItCanRespondWithA206WithPartialContent() {
+      let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate\r\nRange:bytes=4-"
+      let request = HTTPRequest(for: rawRequest)
+
+      let content = "This is a file that contains text to read part of in order to fulfill a 206."
+
+      let contents = ControllerData(
+        ["partial_content.txt": Data(value: content)]
+      )
+
+      let route = Route(auth: nil, setCookie: false, includeLogs: false, allowedMethods: [.Get])
+      let routes = ["/partial_content.txt": route]
+      let response = Responder(routes: routes, data: contents).respond(to: request)
+
+      XCTAssertEqual(response.statusCode, "206 Partial Content")
+    }
+
+    func testItCanRespondWithPartialContentsGivenRangeStart() {
+      let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate\r\nRange:bytes=4-"
+      let request = HTTPRequest(for: rawRequest)
+
+      let content = "This is a file that contains text to read part of in order to fulfill a 206."
+
+      let contents = ControllerData(
+        ["partial_content.txt": Data(value: content)]
+      )
+
+      let route = Route(auth: nil, setCookie: false, includeLogs: false, allowedMethods: [.Get])
+      let routes = ["/partial_content.txt": route]
+      let response = Responder(routes: routes, data: contents).respond(to: request)
+      let expected = "\n\n is a file that contains text to read part of in order to fulfill a 206.".toBytes
+
+      XCTAssertEqual(response.body!, expected)
+    }
+
+  // File Links
+    func testItCanRespondWhenRouteIncludesLinks() {
+      let rawRequest = "GET / HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
+      let request = HTTPRequest(for: rawRequest)
+
+      let contents = ControllerData(
+        ["file1": Data(value: "I'm a text file"),
+         "file2": Data(value: "I'm a different text file")]
+      )
+
+      let route = Route(auth: nil, setCookie: false, includeLogs: false, allowedMethods: [.Get], includeDirectoryLinks: true)
+
+      let routes = ["/": route]
+      let response = Responder(routes: routes, data: contents).respond(to: request)
+
+      let expected = "\n\n<a href=\"/file2\">file2</a><br><a href=\"/file1\">file1</a>".toBytes
 
       XCTAssertEqual(response.body!, expected)
     }

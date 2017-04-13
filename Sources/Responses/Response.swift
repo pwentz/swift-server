@@ -10,7 +10,8 @@ public protocol Response {
 
   init(status: StatusCode, headers: [String: String], body: BytesRepresentable?)
 
-  mutating func appendToBody(_ newContent: String)
+  mutating func appendToBody(_ newContent: BytesRepresentable)
+  mutating func replaceBody(with newContent: BytesRepresentable)
   mutating func appendToHeaders(with newHeaders: [String: String])
   mutating func updateStatus(with newStatus: StatusCode)
 }
