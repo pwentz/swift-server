@@ -35,24 +35,6 @@ class GetResponder {
       }
     }
 
-    request.headers["range"].map { rangeHeader in
-      let partialContent = newResponse.body.flatMap {
-        String(data: Data(bytes: $0), encoding: .utf8)?.trimmingCharacters(in: .newlines)
-      }.map { currentBody -> String in
-        let splitRange = rangeHeader.components(separatedBy: "=")
-        let rawRange = splitRange[splitRange.index(before: splitRange.endIndex)]
-
-        let chars = Array(currentBody.characters).map { String($0) }
-
-        let range = getRange(of: rawRange, length: currentBody.characters.count)
-
-        return chars[range].joined(separator: "")
-      }
-
-      newResponse.updateStatus(with: TwoHundred.PartialContent)
-      newResponse.replaceBody(with: partialContent ?? "")
-    }
-
     if route.includeDirectoryLinks {
       let fileLinks = data.fileNames().map { file in
         "<a href=\"/\(file)\">\(file)</a>"
@@ -60,6 +42,9 @@ class GetResponder {
 
       newResponse.appendToBody(fileLinks)
     }
+
+    PartialResponder(for: request).execute(on: &newResponse)
+
 
     return newResponse
   }
