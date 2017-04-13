@@ -16,24 +16,11 @@ class GetResponder {
   public func respond(to request: Request, logs: [String]) -> Response {
     var newResponse = HTTPResponse(status: TwoHundred.Ok)
 
-    newResponse.appendToHeaders(with: ["Content-Type": getContentType(for: request)])
+    ContentResponder(for: request, data: data).execute(on: &newResponse)
 
-    data.getBinary(request.pathName).map { newResponse.appendToBody($0) }
+    CookieResponder(for: request, prefix: route.cookiePrefix).execute(on: &newResponse)
 
-    request.headers["cookie"].map { cookieHeader in
-      route.cookiePrefix.map { newResponse.appendToBody("\($0) \(getCookieValue(from: cookieHeader))") }
-    }
-
-    request.params.map { params in
-      String(parameters: params).map { newResponse.appendToHeaders(with: ["Set-Cookie": $0]) }
-      route.cookiePrefix.map { newResponse.appendToBody($0) }
-    }
-
-    if route.includeLogs {
-      if !isAnImage(request.pathName) {
-        newResponse.appendToBody(logs.joined(separator: "\n"))
-      }
-    }
+    LogsResponder(for: request, logs: route.includeLogs ? logs : nil).execute(on: &newResponse)
 
     if route.includeDirectoryLinks {
       let fileLinks = data.fileNames().map { file in
@@ -47,19 +34,6 @@ class GetResponder {
 
 
     return newResponse
-  }
-
-  private func getContentType(for request: Request) -> String {
-    return request.path.range(of: ".").map { extStart -> String in
-      let ext = request.path.substring(from: extStart.upperBound)
-
-      return isAnImage(ext) ? "image/\(ext)" : "text/plain"
-    } ?? "text/html"
-  }
-
-  private func getCookieValue(from cookieHeader: String) -> String {
-    let separatedCookie = cookieHeader.components(separatedBy: "=")
-    return separatedCookie[separatedCookie.index(before: separatedCookie.endIndex)]
   }
 
 }
