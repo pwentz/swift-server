@@ -22,16 +22,9 @@ class GetResponder {
 
     LogsResponder(for: request, logs: route.includeLogs ? logs : nil).execute(on: &newResponse)
 
-    if route.includeDirectoryLinks {
-      let fileLinks = data.fileNames().map { file in
-        "<a href=\"/\(file)\">\(file)</a>"
-      }.joined(separator: "<br>")
-
-      newResponse.appendToBody(fileLinks)
-    }
+    DirectoryLinksResponder(for: request, files: route.includeDirectoryLinks ? data.fileNames() : nil).execute(on: &newResponse)
 
     PartialResponder(for: request).execute(on: &newResponse)
-
 
     return newResponse
   }
