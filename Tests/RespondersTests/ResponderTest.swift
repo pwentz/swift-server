@@ -39,6 +39,22 @@ class ResponderTest: XCTestCase {
       XCTAssertEqual(response.statusCode, "200 OK")
     }
 
+    func testItReturnsAuthenticationHeaderIfAuthMatches() {
+      let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\nAuthorization: Basic XYZ\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
+      let request = HTTPRequest(for: rawRequest)
+      let contents = ControllerData([:])
+
+      let route = Route(auth: "XYZ", includeLogs: false, allowedMethods: [.Get])
+
+      let routes = ["/logs": route]
+
+      let responder = Responder(routes: routes, data: contents)
+
+      let response = responder.respond(to: request)
+
+      XCTAssertEqual(response.headers["WWW-Authenticate"]!, "Basic realm=\"simple\"")
+    }
+
     func testItReturnsA401ResponseIfAuthDoesntExist() {
       let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)

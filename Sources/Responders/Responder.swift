@@ -4,7 +4,7 @@ import Routes
 import Requests
 import Responses
 
-class Responder {
+public class Responder {
   let routes: [String: Route]
   let data: ControllerData
   var logs: [String] = []
@@ -28,7 +28,7 @@ class Responder {
     let givenAuth = request.headers["authorization"]?.components(separatedBy: " ").last
 
     guard givenAuth == route.auth else {
-      return HTTPResponse(status: FourHundred.Unauthorized)
+      return HTTPResponse(status: FourHundred.Unauthorized, headers: ["WWW-Authenticate": "Basic realm=\"simple\""])
     }
 
     guard route.allowedMethods.contains(request.verb) else {
