@@ -11,7 +11,7 @@ class ResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)
       let contents = ControllerData([:])
 
-      let route = Route(auth: "XYZ", setCookie: false, includeLogs: false, allowedMethods: [.Get])
+      let route = Route(auth: "XYZ", includeLogs: false, allowedMethods: [.Get])
 
       let routes = ["/logs": route]
 
@@ -27,7 +27,7 @@ class ResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)
       let contents = ControllerData([:])
 
-      let route = Route(auth: "XYZ", setCookie: false, includeLogs: false, allowedMethods: [.Get])
+      let route = Route(auth: "XYZ", includeLogs: false, allowedMethods: [.Get])
 
       let routes = ["/logs": route]
 
@@ -43,7 +43,7 @@ class ResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)
       let contents = ControllerData([:])
 
-      let route = Route(auth: "XYZ", setCookie: false, includeLogs: false, allowedMethods: [.Get])
+      let route = Route(auth: "XYZ", includeLogs: false, allowedMethods: [.Get])
 
       let routes = ["/logs": route]
 
@@ -59,7 +59,7 @@ class ResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)
       let contents = ControllerData([:])
 
-      let route = Route(auth: nil, setCookie: false, includeLogs: false, allowedMethods: [.Get])
+      let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get])
 
       let routes = ["/logs": route]
 
@@ -76,7 +76,7 @@ class ResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)
       let data = ControllerData([:])
 
-      let route = Route(auth: nil, setCookie: true, includeLogs: false, allowedMethods: [.Get])
+      let route = Route(auth: nil, cookiePrefix: "Eat", includeLogs: false, allowedMethods: [.Get])
       let routes = ["/cookie": route]
 
       let newResponse = Responder(routes: routes, data: data).respond(to: request)
@@ -91,7 +91,7 @@ class ResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)
       let data = ControllerData([:])
 
-      let route = Route(auth: nil, setCookie: true, includeLogs: false, allowedMethods: [.Get])
+      let route = Route(auth: nil, cookiePrefix: "Eat", includeLogs: false, allowedMethods: [.Get])
       let routes = ["/cookie": route]
 
       let newResponse = Responder(routes: routes, data: data).respond(to: request)
@@ -105,7 +105,7 @@ class ResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)
       let contents = ControllerData([:])
 
-      let route = Route(auth: nil, setCookie: false, includeLogs: false, allowedMethods: [.Get])
+      let route = Route(auth: nil, cookiePrefix: "mmmm", includeLogs: false, allowedMethods: [.Get])
       let routes = ["/eat_cookie": route]
 
       let responder = Responder(routes: routes, data: contents)
@@ -122,7 +122,7 @@ class ResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)
       let contents = ControllerData([:])
 
-      let route = Route(auth: "XYZ", setCookie: true, includeLogs: false, allowedMethods: [.Get])
+      let route = Route(auth: "XYZ", cookiePrefix: "Eat", includeLogs: false, allowedMethods: [.Get])
       let routes = ["/cookie": route]
 
       let res = Responder(routes: routes, data: contents).respond(to: request)
@@ -136,7 +136,7 @@ class ResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)
       let contents = ControllerData([:])
 
-      let route = Route(auth: nil, setCookie: false, includeLogs: true, allowedMethods: [.Get])
+      let route = Route(auth: nil, includeLogs: true, allowedMethods: [.Get])
       let routes = ["/someRoute": route]
 
       let res = Responder(routes: routes, data: contents).respond(to: request)
@@ -151,7 +151,7 @@ class ResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)
       let contents = ControllerData([:])
 
-      let route = Route(auth: nil, setCookie: false, includeLogs: true, allowedMethods: [.Get])
+      let route = Route(auth: nil, includeLogs: true, allowedMethods: [.Get])
       let routes = ["/someRoute": route]
       let responder = Responder(routes: routes, data: contents)
 
@@ -168,7 +168,7 @@ class ResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)
       let contents = ControllerData([:])
 
-      let route = Route(auth: nil, setCookie: true, includeLogs: true, allowedMethods: [.Get])
+      let route = Route(auth: nil, cookiePrefix: "Eat", includeLogs: true, allowedMethods: [.Get])
       let routes = ["/cookie": route]
 
       let res = Responder(routes: routes, data: contents).respond(to: request)
@@ -182,7 +182,7 @@ class ResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)
       let contents = ControllerData([:])
 
-      let route = Route(auth: nil, setCookie: false, includeLogs: true, allowedMethods: [.Get])
+      let route = Route(auth: nil, cookiePrefix: "mmmm", includeLogs: true, allowedMethods: [.Get])
       let routes = ["/eat_cookie": route]
 
       let res = Responder(routes: routes, data: contents).respond(to: request)
@@ -196,7 +196,7 @@ class ResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)
       let contents = ControllerData([:])
 
-      let route = Route(auth: "ABC", setCookie: false, includeLogs: true, allowedMethods: [.Get])
+      let route = Route(auth: "ABC", cookiePrefix: "mmmm", includeLogs: true, allowedMethods: [.Get])
       let routes = ["/eat_cookie": route]
 
       let res = Responder(routes: routes, data: contents).respond(to: request)
@@ -211,7 +211,7 @@ class ResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)
       let contents = ControllerData([:])
 
-      let route = Route(auth: nil, setCookie: false, includeLogs: false, allowedMethods: [.Get, .Post, .Options])
+      let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get, .Post, .Options])
       let routes = ["/method_options": route]
 
       let res = Responder(routes: routes, data: contents).respond(to: request)
@@ -224,7 +224,7 @@ class ResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)
       let contents = ControllerData([:])
 
-      let route = Route(auth: nil, setCookie: false, includeLogs: false, allowedMethods: [.Get, .Post])
+      let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get, .Post])
       let routes = ["/someResource": route]
 
       let res = Responder(routes: routes, data: contents).respond(to: request)
@@ -242,7 +242,7 @@ class ResponderTest: XCTestCase {
          "file2": Data(value: "this is another text file.")]
       )
 
-      let route = Route(auth: nil, setCookie: false, includeLogs: false, allowedMethods: [.Get, .Put, .Patch])
+      let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get, .Put, .Patch])
       let routes = ["/file1": route]
 
       let expected = Array("\n\nthis is a text file.".utf8)
@@ -259,7 +259,7 @@ class ResponderTest: XCTestCase {
         ["image.jpeg": Data(value: "some stuff")]
       )
 
-      let route = Route(auth: nil, setCookie: false, includeLogs: false, allowedMethods: [.Get])
+      let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get])
       let routes = ["/image.jpeg": route]
 
       let response = Responder(routes: routes, data: contents).respond(to: request)
@@ -277,7 +277,7 @@ class ResponderTest: XCTestCase {
         ["image.jpeg": Data(value: "some stuff")]
       )
 
-      let route = Route(auth: nil, setCookie: false, includeLogs: true, allowedMethods: [.Get])
+      let route = Route(auth: nil, includeLogs: true, allowedMethods: [.Get])
       let routes = ["/image.jpeg": route]
 
       let response = Responder(routes: routes, data: contents).respond(to: request)
@@ -294,7 +294,7 @@ class ResponderTest: XCTestCase {
         ["file1.txt": Data(value: "some stuff")]
       )
 
-      let route = Route(auth: nil, setCookie: false, includeLogs: true, allowedMethods: [.Get])
+      let route = Route(auth: nil, includeLogs: true, allowedMethods: [.Get])
       let routes = ["/file1.txt": route]
 
       let response = Responder(routes: routes, data: contents).respond(to: request)
@@ -314,7 +314,7 @@ class ResponderTest: XCTestCase {
         ["partial_content.txt": Data(value: content)]
       )
 
-      let route = Route(auth: nil, setCookie: false, includeLogs: false, allowedMethods: [.Get])
+      let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get])
       let routes = ["/partial_content.txt": route]
       let response = Responder(routes: routes, data: contents).respond(to: request)
 
@@ -331,7 +331,7 @@ class ResponderTest: XCTestCase {
         ["partial_content.txt": Data(value: content)]
       )
 
-      let route = Route(auth: nil, setCookie: false, includeLogs: false, allowedMethods: [.Get])
+      let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get])
       let routes = ["/partial_content.txt": route]
       let response = Responder(routes: routes, data: contents).respond(to: request)
       let expected = "\n\n is a file that contains text to read part of in order to fulfill a 206.".toBytes
@@ -349,7 +349,7 @@ class ResponderTest: XCTestCase {
          "file2": Data(value: "I'm a different text file")]
       )
 
-      let route = Route(auth: nil, setCookie: false, includeLogs: false, allowedMethods: [.Get], includeDirectoryLinks: true)
+      let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get], includeDirectoryLinks: true)
 
       let routes = ["/": route]
       let response = Responder(routes: routes, data: contents).respond(to: request)

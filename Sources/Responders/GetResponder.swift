@@ -16,21 +16,17 @@ class GetResponder {
   public func respond(to request: Request, logs: [String]) -> Response {
     var newResponse = HTTPResponse(status: TwoHundred.Ok)
 
-    if let fileData = data.getBinary(request.pathName) {
-      let contentType = getFileContentType(for: request)
-      newResponse.appendToHeaders(with: ["Content-Type": contentType])
-      newResponse.appendToBody(fileData)
+    newResponse.appendToHeaders(with: ["Content-Type": getContentType(for: request)])
+
+    data.getBinary(request.pathName).map { newResponse.appendToBody($0) }
+
+    request.headers["cookie"].map { cookieHeader in
+      route.cookiePrefix.map { newResponse.appendToBody("\($0) \(getCookieValue(from: cookieHeader))") }
     }
 
-    if let cookieHeader = request.headers["cookie"] {
-      newResponse.appendToBody("mmmm \(getCookieValue(from: cookieHeader))")
-    }
-
-    if let params = request.params {
-      if route.setCookie {
-        String(parameters: params).map { newResponse.appendToHeaders(with: ["Set-Cookie": $0]) }
-        newResponse.appendToBody("Eat")
-      }
+    request.params.map { params in
+      String(parameters: params).map { newResponse.appendToHeaders(with: ["Set-Cookie": $0]) }
+      route.cookiePrefix.map { newResponse.appendToBody($0) }
     }
 
     if route.includeLogs {
@@ -39,7 +35,7 @@ class GetResponder {
       }
     }
 
-    if let rangeHeader = request.headers["range"] {
+    request.headers["range"].map { rangeHeader in
       let partialContent = newResponse.body.flatMap {
         String(data: Data(bytes: $0), encoding: .utf8)?.trimmingCharacters(in: .newlines)
       }.map { currentBody -> String in
@@ -68,7 +64,7 @@ class GetResponder {
     return newResponse
   }
 
-  private func getFileContentType(for request: Request) -> String {
+  private func getContentType(for request: Request) -> String {
     return request.path.range(of: ".").map { extStart -> String in
       let ext = request.path.substring(from: extStart.upperBound)
 
