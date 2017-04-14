@@ -13,7 +13,7 @@ class PartialResponderTest: XCTestCase {
     let partialResponder = PartialResponder(for: request)
 
     partialResponder.execute(on: &response)
-    let expected = "\n\n is a file that contains text to read part of in order to fulfill a 206."
+    let expected = "\n\n is a file that contains text to read part of in order to fulfill a 206.\n"
 
     XCTAssertEqual(response.body!, expected.toBytes)
   }
@@ -28,7 +28,7 @@ class PartialResponderTest: XCTestCase {
 
     partialResponder.execute(on: &response)
 
-    let expected = "\n\na 206."
+    let expected = "\n\n 206.\n"
 
     XCTAssertEqual(response.body!, expected.toBytes)
   }

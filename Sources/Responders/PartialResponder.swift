@@ -13,7 +13,7 @@ class PartialResponder: RouteResponder {
     request.headers["range"].map { range in
       let partialContent = response.body
                                    .flatMap(toString)
-                                   .map { rangeOf($0, range: range) }
+                                   .map { rangeOf("\($0)\n", range: range) }
 
       response.updateStatus(with: TwoHundred.PartialContent)
       response.replaceBody(with: partialContent ?? "")
