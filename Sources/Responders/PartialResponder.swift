@@ -32,7 +32,7 @@ class PartialResponder: RouteResponder {
   }
 
   private func toString(_ body: [UInt8]) -> String? {
-    return String(data: Data(bytes: body), encoding: .utf8)?.trimmingCharacters(in: .newlines)
+    return String(bytes: body, encoding: .utf8)?.trimmingCharacters(in: .newlines)
   }
 
   private func calculateRange(of rawRange: String, length contentLength: Int) -> Range<Int> {

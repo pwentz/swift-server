@@ -29,4 +29,8 @@ public class Route {
     self.allowedMethods = allowedMethods
     self.customResponse = customResponse
   }
+
+  public func canRespondTo(_ verb: HTTPRequestMethod) -> Bool {
+    return self.allowedMethods.contains(verb)
+  }
 }

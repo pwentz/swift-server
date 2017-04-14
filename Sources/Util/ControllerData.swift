@@ -29,10 +29,6 @@ public class ControllerData {
     return contents[key]
   }
 
-//   public func fileNames() -> [String] {
-//     return contents.keys.filter { !nonFiles.contains($0) }
-//   }
-
   public func remove(at key: String) {
     contents[key] = nil
   }

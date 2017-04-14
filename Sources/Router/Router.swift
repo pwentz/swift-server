@@ -30,7 +30,7 @@ public class Router {
 
     if !data.isEmpty {
       let request = try HTTPRequest(for: data.toString())
-      let response = responder.map { $0.respond(to: request) } ?? factoryResponse(request)
+      let response = responder?.responses(for: request).flatMap { $0 }.first ?? factoryResponse(request)
 
       dispatch(getDispatchCallback(response, client: client))
     }

@@ -9,44 +9,54 @@ public class Responder {
   let data: ControllerData
   var logs: [String] = []
 
+  private let notFoundResponse = HTTPResponse(status: FourHundred.NotFound)
+  private let unauthorizedResponse = HTTPResponse(status: FourHundred.Unauthorized, headers: ["WWW-Authenticate": "Basic realm=\"simple\""])
+  private let methodNotAllowedResponse = HTTPResponse(status: FourHundred.MethodNotAllowed)
+
   public init(routes: [String: Route], data: ControllerData = ControllerData([:])) {
     self.routes = routes
     self.data = data
   }
 
   public func respond(to request: Request) -> Response {
+    return responses(for: request).flatMap { $0 }.first!
+  }
+
+  public func responses(for request: Request) -> [Response?] {
     logs.append("\(request.verb.rawValue.uppercased()) \(request.path) HTTP/1.1")
 
-    for response in gatherImmediateResponses(request: request, route: routes[request.path]) {
-      if let confirmedResponse = response {
-        return confirmedResponse
-      }
-    }
+    let route = routes[request.path]
 
-    let route: Route! = routes[request.path]
+    var responses = gatherImmediateResponses(request: request, route: route)
+    route.map { responses.append(responseByVerb(request: request, route: $0)) }
 
-    if let redirectPath = route.redirectPath {
-      if let redirectRoute = routes[redirectPath] {
-        if redirectRoute.allowedMethods.contains(request.verb) {
-          return HTTPResponse(status: ThreeHundred.Found, headers: ["Location": redirectPath])
-        }
-        else {
-          return HTTPResponse(status: FourHundred.MethodNotAllowed)
-        }
-      }
-      else {
-        return HTTPResponse(status: FourHundred.NotFound)
-      }
-    }
+    return responses
+  }
 
+  private func responseByVerb(request: Request, route: Route) -> Response {
     var response = HTTPResponse(status: TwoHundred.Ok)
 
-    if request.verb == .Get {
+    switch request.verb {
+    case .Get:
       let responders = gatherGetResponders(request: request, route: route)
       responders.forEach { $0.execute(on: &response) }
-    }
-    else {
-      NonGetResponder(for: request, route: route, data: data).execute(on: &response)
+
+    case .Options:
+      let allowedMethods = route.allowedMethods.map { $0.rawValue.uppercased() }.joined(separator: ",")
+      response.appendToHeaders(with: ["Allow": allowedMethods])
+
+    case .Post, .Put:
+      data.update(request.pathName, withVal: request.body ?? "")
+
+    case .Patch:
+      data.update(request.pathName, withVal: request.body ?? "")
+      response.updateStatus(with: TwoHundred.NoContent)
+
+    case .Delete:
+      data.remove(at: request.pathName)
+
+    default:
+      break
     }
 
     return response
@@ -65,14 +75,25 @@ public class Responder {
   private func gatherImmediateResponses(request: Request, route: Route?) -> [Response?] {
     let givenAuth = request.headers["authorization"]?.components(separatedBy: " ").last
     return [
-      route.map { _ in nil } ?? HTTPResponse(status: FourHundred.NotFound),
-      route.flatMap { $0.customResponse.map { $0 } },
-      route.flatMap { $0.auth != givenAuth ?
-        HTTPResponse(status: FourHundred.Unauthorized, headers: ["WWW-Authenticate": "Basic realm=\"simple\""])
-        : nil
-      },
-      route.flatMap { $0.allowedMethods.contains(request.verb) ? nil : HTTPResponse(status: FourHundred.MethodNotAllowed) }
+      route.map { _ in nil } ?? notFoundResponse,
+      route?.customResponse.map { $0 },
+      route?.auth != givenAuth ? unauthorizedResponse : nil ,
+      (route?.canRespondTo(request.verb)).flatMap { $0 ? nil : methodNotAllowedResponse },
+
+      route?.redirectPath.map { redirectPath in
+        routes[redirectPath].map { redirectRoute in
+
+          redirectRoute.canRespondTo(request.verb) ?
+            foundResponse(location: redirectPath) :
+            methodNotAllowedResponse
+
+        } ?? notFoundResponse
+      }
     ]
+  }
+
+  private func foundResponse(location: String) -> Response {
+    return HTTPResponse(status: ThreeHundred.Found, headers: ["Location": location])
   }
 
 }
