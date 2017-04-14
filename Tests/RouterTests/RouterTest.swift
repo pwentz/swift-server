@@ -1,8 +1,16 @@
 import XCTest
 @testable import Router
+import Responders
+import Requests
 import Responses
 import FileIO
 import Util
+
+class MockResponder: Responder {
+  public func getResponse(to request: Request) -> Response {
+    return HTTPResponse(status: TwoHundred.Ok)
+  }
+}
 
 class RouterTest: XCTestCase {
 
@@ -11,7 +19,7 @@ class RouterTest: XCTestCase {
     let fileContents = ["file1": Data(value: "I'm a text file")]
     let controllerData = ControllerData(fileContents)
     let mockSock = MockTCPSocket()
-    let router = Router(socket: mockSock, data: controllerData, threadQueue: MockOperationQueue(), port: port)
+    let router = Router(socket: mockSock, data: controllerData, threadQueue: MockOperationQueue(), port: port, responder: MockResponder())
 
     try router.listen()
 
@@ -23,7 +31,7 @@ class RouterTest: XCTestCase {
     let fileContents = ["file1": Data(value: "I'm a text file")]
     let controllerData = ControllerData(fileContents)
     let mockSock = MockTCPSocket()
-    let router = Router(socket: mockSock, data: controllerData, threadQueue: MockOperationQueue(), port: port)
+    let router = Router(socket: mockSock, data: controllerData, threadQueue: MockOperationQueue(), port: port, responder: MockResponder())
 
     try router.listen()
 
@@ -35,7 +43,7 @@ class RouterTest: XCTestCase {
     let fileContents = ["file1": Data(value: "I'm a text file")]
     let controllerData = ControllerData(fileContents)
     let mockSock = MockTCPSocket()
-    let router = Router(socket: mockSock, data: controllerData, threadQueue: MockOperationQueue(), port: port)
+    let router = Router(socket: mockSock, data: controllerData, threadQueue: MockOperationQueue(), port: port, responder: MockResponder())
 
     try router.receive()
 
@@ -47,7 +55,7 @@ class RouterTest: XCTestCase {
     let fileContents = ["file1": Data(value: "I'm a text file")]
     let controllerData = ControllerData(fileContents)
     let mockSock = MockTCPSocket()
-    let router = Router(socket: mockSock, data: controllerData, threadQueue: MockOperationQueue(), port: port)
+    let router = Router(socket: mockSock, data: controllerData, threadQueue: MockOperationQueue(), port: port, responder: MockResponder())
 
     try router.receive()
 
@@ -62,7 +70,7 @@ class RouterTest: XCTestCase {
     let controllerData = ControllerData(fileContents)
     let mockSock = MockTCPSocket(rawRequest)
     let mockQueue = MockOperationQueue()
-    let router = Router(socket: mockSock, data: controllerData, threadQueue: mockQueue, port: port)
+    let router = Router(socket: mockSock, data: controllerData, threadQueue: mockQueue, port: port, responder: MockResponder())
 
     try router.receive()
 
@@ -76,7 +84,7 @@ class RouterTest: XCTestCase {
     let controllerData = ControllerData(fileContents)
     let mockSock = MockTCPSocket(rawRequest)
     let mockQueue = MockOperationQueue()
-    let router = Router(socket: mockSock, data: controllerData, threadQueue: mockQueue, port: 5000)
+    let router = Router(socket: mockSock, data: controllerData, threadQueue: mockQueue, port: 5000, responder: MockResponder())
     let response = HTTPResponse(status: TwoHundred.Ok)
 
     let dispatchCallback = router.getDispatchCallback(response, client: mockSock)
@@ -92,7 +100,7 @@ class RouterTest: XCTestCase {
     let controllerData = ControllerData(fileContents)
     let mockSock = MockTCPSocket(rawRequest)
     let mockQueue = MockOperationQueue()
-    let router = Router(socket: mockSock, data: controllerData, threadQueue: mockQueue, port: 5000)
+    let router = Router(socket: mockSock, data: controllerData, threadQueue: mockQueue, port: 5000, responder: MockResponder())
     let response = HTTPResponse(status: TwoHundred.Ok)
 
     let dispatchCallback = router.getDispatchCallback(response, client: mockSock)
@@ -108,7 +116,7 @@ class RouterTest: XCTestCase {
     let controllerData = ControllerData(fileContents)
     let mockSock = MockTCPSocket()
     let mockQueue = MockOperationQueue()
-    let router = Router(socket: mockSock, data: controllerData, threadQueue: mockQueue, port: port)
+    let router = Router(socket: mockSock, data: controllerData, threadQueue: mockQueue, port: port, responder: MockResponder())
 
     try router.receive()
 

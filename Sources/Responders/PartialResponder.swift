@@ -2,7 +2,7 @@ import Foundation
 import Requests
 import Responses
 
-class PartialResponder: RouteResponder {
+class PartialResponder: ResponseFormatter {
   let request: Request
 
   public init(for request: Request) {

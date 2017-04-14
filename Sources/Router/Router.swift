@@ -1,6 +1,5 @@
 import Requests
 import Responses
-import Controllers
 import Util
 import Responders
 
@@ -9,9 +8,9 @@ public class Router {
   let socket: Socket
   let persistedData: ControllerData
   let threadQueue: ThreadQueue
-  let responder: Responder?
+  let responder: Responder
 
-  public init(socket: Socket, data: ControllerData, threadQueue: ThreadQueue, port: UInt16, responder: Responder? = nil) {
+  public init(socket: Socket, data: ControllerData, threadQueue: ThreadQueue, port: UInt16, responder: Responder) {
     self.port = port
     self.socket = socket
     self.persistedData = data
@@ -30,7 +29,7 @@ public class Router {
 
     if !data.isEmpty {
       let request = try HTTPRequest(for: data.toString())
-      let response = responder?.responses(for: request).flatMap { $0 }.first ?? factoryResponse(request)
+      let response = responder.getResponse(to: request)
 
       dispatch(getDispatchCallback(response, client: client))
     }
@@ -45,11 +44,6 @@ public class Router {
       try client.send(data: response.formatted)
       try client.close()
     }
-  }
-
-  private func factoryResponse(_ request: Request) -> Response {
-    let controller = ControllerFactory.getController(request, with: persistedData)
-    return controller.process(request)
   }
 
 }

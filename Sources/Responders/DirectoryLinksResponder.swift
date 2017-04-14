@@ -1,7 +1,7 @@
 import Requests
 import Responses
 
-class DirectoryLinksResponder: RouteResponder {
+class DirectoryLinksResponder: ResponseFormatter {
   let request: Request
   let files: [String]?
 

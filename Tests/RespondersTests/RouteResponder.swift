@@ -5,7 +5,7 @@ import Requests
 import Responses
 import Routes
 
-class ResponderTest: XCTestCase {
+class RouteResponderTest: XCTestCase {
   // Authentication
     func testItReturnsA401ResponseIfAuthDoesntMatch() {
       let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\nAuthorization: Basic someencodedstuff==\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
@@ -16,9 +16,9 @@ class ResponderTest: XCTestCase {
 
       let routes = ["/logs": route]
 
-      let responder = Responder(routes: routes, data: contents)
+      let responder = RouteResponder(routes: routes, data: contents)
 
-      let response = responder.respond(to: request)
+      let response = responder.getResponse(to: request)
 
       XCTAssertEqual(response.statusCode, "401 Unauthorized")
       XCTAssertEqual(response.headers["WWW-Authenticate"]!, "Basic realm=\"simple\"")
@@ -33,9 +33,9 @@ class ResponderTest: XCTestCase {
 
       let routes = ["/logs": route]
 
-      let responder = Responder(routes: routes, data: contents)
+      let responder = RouteResponder(routes: routes, data: contents)
 
-      let response = responder.respond(to: request)
+      let response = responder.getResponse(to: request)
 
       XCTAssertEqual(response.statusCode, "200 OK")
     }
@@ -49,9 +49,9 @@ class ResponderTest: XCTestCase {
 
       let routes = ["/logs": route]
 
-      let responder = Responder(routes: routes, data: contents)
+      let responder = RouteResponder(routes: routes, data: contents)
 
-      let response = responder.respond(to: request)
+      let response = responder.getResponse(to: request)
 
       XCTAssertEqual(response.statusCode, "401 Unauthorized")
     }
@@ -65,9 +65,9 @@ class ResponderTest: XCTestCase {
 
       let routes = ["/logs": route]
 
-      let responder = Responder(routes: routes, data: contents)
+      let responder = RouteResponder(routes: routes, data: contents)
 
-      let response = responder.respond(to: request)
+      let response = responder.getResponse(to: request)
 
       XCTAssertEqual(response.statusCode, "200 OK")
     }
@@ -81,7 +81,7 @@ class ResponderTest: XCTestCase {
       let route = Route(auth: nil, cookiePrefix: "Eat", includeLogs: false, allowedMethods: [.Get])
       let routes = ["/cookie": route]
 
-      let newResponse = Responder(routes: routes, data: data).respond(to: request)
+      let newResponse = RouteResponder(routes: routes, data: data).getResponse(to: request)
 
       let expected = Array("\n\nEat".utf8)
 
@@ -96,7 +96,7 @@ class ResponderTest: XCTestCase {
       let route = Route(auth: nil, cookiePrefix: "Eat", includeLogs: false, allowedMethods: [.Get])
       let routes = ["/cookie": route]
 
-      let newResponse = Responder(routes: routes, data: data).respond(to: request)
+      let newResponse = RouteResponder(routes: routes, data: data).getResponse(to: request)
 
       XCTAssertEqual(newResponse.headers["Set-Cookie"]!, "type=chocolate")
     }
@@ -110,9 +110,9 @@ class ResponderTest: XCTestCase {
       let route = Route(auth: nil, cookiePrefix: "mmmm", includeLogs: false, allowedMethods: [.Get])
       let routes = ["/eat_cookie": route]
 
-      let responder = Responder(routes: routes, data: contents)
+      let responder = RouteResponder(routes: routes, data: contents)
 
-      let response = responder.respond(to: request)
+      let response = responder.getResponse(to: request)
       let result = Array("\n\nmmmm chocolate".utf8)
 
       XCTAssertEqual(response.body!, result)
@@ -127,7 +127,7 @@ class ResponderTest: XCTestCase {
       let route = Route(auth: "XYZ", cookiePrefix: "Eat", includeLogs: false, allowedMethods: [.Get])
       let routes = ["/cookie": route]
 
-      let res = Responder(routes: routes, data: contents).respond(to: request)
+      let res = RouteResponder(routes: routes, data: contents).getResponse(to: request)
 
       XCTAssertEqual(res.statusCode, "401 Unauthorized")
     }
@@ -141,7 +141,7 @@ class ResponderTest: XCTestCase {
       let route = Route(auth: nil, includeLogs: true, allowedMethods: [.Get])
       let routes = ["/someRoute": route]
 
-      let res = Responder(routes: routes, data: contents).respond(to: request)
+      let res = RouteResponder(routes: routes, data: contents).getResponse(to: request)
       let expected = Array("\n\nGET /someRoute HTTP/1.1".utf8)
 
       XCTAssertEqual(res.body!, expected)
@@ -155,10 +155,10 @@ class ResponderTest: XCTestCase {
 
       let route = Route(auth: nil, includeLogs: true, allowedMethods: [.Get])
       let routes = ["/someRoute": route]
-      let responder = Responder(routes: routes, data: contents)
+      let responder = RouteResponder(routes: routes, data: contents)
 
-      let _ = responder.respond(to: request)
-      let response = responder.respond(to: request)
+      let _ = responder.getResponse(to: request)
+      let response = responder.getResponse(to: request)
       let expected = Array("\n\nGET /someRoute HTTP/1.1\nGET /someRoute HTTP/1.1".utf8)
 
       XCTAssertEqual(response.body!, expected)
@@ -173,7 +173,7 @@ class ResponderTest: XCTestCase {
       let route = Route(auth: nil, cookiePrefix: "Eat", includeLogs: true, allowedMethods: [.Get])
       let routes = ["/cookie": route]
 
-      let res = Responder(routes: routes, data: contents).respond(to: request)
+      let res = RouteResponder(routes: routes, data: contents).getResponse(to: request)
       let expected = Array("\n\nEat\n\nGET /cookie HTTP/1.1".utf8)
 
       XCTAssertEqual(res.body!, expected)
@@ -187,7 +187,7 @@ class ResponderTest: XCTestCase {
       let route = Route(auth: nil, cookiePrefix: "mmmm", includeLogs: true, allowedMethods: [.Get])
       let routes = ["/eat_cookie": route]
 
-      let res = Responder(routes: routes, data: contents).respond(to: request)
+      let res = RouteResponder(routes: routes, data: contents).getResponse(to: request)
       let expected = Array("\n\nmmmm chocolate\n\nGET /eat_cookie HTTP/1.1".utf8)
 
       XCTAssertEqual(res.body!, expected)
@@ -201,7 +201,7 @@ class ResponderTest: XCTestCase {
       let route = Route(auth: "ABC", cookiePrefix: "mmmm", includeLogs: true, allowedMethods: [.Get])
       let routes = ["/eat_cookie": route]
 
-      let res = Responder(routes: routes, data: contents).respond(to: request)
+      let res = RouteResponder(routes: routes, data: contents).getResponse(to: request)
       let expected = Array("\n\nmmmm chocolate\n\nGET /eat_cookie HTTP/1.1".utf8)
 
       XCTAssertEqual(res.body!, expected)
@@ -216,7 +216,7 @@ class ResponderTest: XCTestCase {
       let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get, .Post, .Options])
       let routes = ["/method_options": route]
 
-      let res = Responder(routes: routes, data: contents).respond(to: request)
+      let res = RouteResponder(routes: routes, data: contents).getResponse(to: request)
 
       XCTAssertEqual(res.headers["Allow"]!, "GET,POST,OPTIONS")
     }
@@ -229,7 +229,7 @@ class ResponderTest: XCTestCase {
       let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get, .Post])
       let routes = ["/someResource": route]
 
-      let res = Responder(routes: routes, data: contents).respond(to: request)
+      let res = RouteResponder(routes: routes, data: contents).getResponse(to: request)
 
       XCTAssertEqual(res.statusCode, "405 Method Not Allowed")
     }
@@ -248,7 +248,7 @@ class ResponderTest: XCTestCase {
       let routes = ["/file1": route]
 
       let expected = Array("\n\nthis is a text file.".utf8)
-      let response = Responder(routes: routes, data: contents).respond(to: request)
+      let response = RouteResponder(routes: routes, data: contents).getResponse(to: request)
 
       XCTAssertEqual(response.body!, expected)
     }
@@ -264,7 +264,7 @@ class ResponderTest: XCTestCase {
       let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get])
       let routes = ["/image.jpeg": route]
 
-      let response = Responder(routes: routes, data: contents).respond(to: request)
+      let response = RouteResponder(routes: routes, data: contents).getResponse(to: request)
 
       XCTAssertEqual(response.headers["Content-Type"]!, "image/jpeg")
     }
@@ -282,7 +282,7 @@ class ResponderTest: XCTestCase {
       let route = Route(auth: nil, includeLogs: true, allowedMethods: [.Get])
       let routes = ["/image.jpeg": route]
 
-      let response = Responder(routes: routes, data: contents).respond(to: request)
+      let response = RouteResponder(routes: routes, data: contents).getResponse(to: request)
       let expected = "\n\nsome stuff".toBytes
 
       XCTAssertEqual(response.body!, expected)
@@ -299,7 +299,7 @@ class ResponderTest: XCTestCase {
       let route = Route(auth: nil, includeLogs: true, allowedMethods: [.Get])
       let routes = ["/file1.txt": route]
 
-      let response = Responder(routes: routes, data: contents).respond(to: request)
+      let response = RouteResponder(routes: routes, data: contents).getResponse(to: request)
       let expected = "\n\nsome stuff\n\nGET /file1.txt HTTP/1.1".toBytes
 
       XCTAssertEqual(response.body!, expected)
@@ -318,7 +318,7 @@ class ResponderTest: XCTestCase {
 
       let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get])
       let routes = ["/partial_content.txt": route]
-      let response = Responder(routes: routes, data: contents).respond(to: request)
+      let response = RouteResponder(routes: routes, data: contents).getResponse(to: request)
 
       XCTAssertEqual(response.statusCode, "206 Partial Content")
     }
@@ -335,7 +335,7 @@ class ResponderTest: XCTestCase {
 
       let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get])
       let routes = ["/partial_content.txt": route]
-      let response = Responder(routes: routes, data: contents).respond(to: request)
+      let response = RouteResponder(routes: routes, data: contents).getResponse(to: request)
       let expected = "\n\n is a file that contains text to read part of in order to fulfill a 206.\n".toBytes
 
       XCTAssertEqual(response.body!, expected)
@@ -354,7 +354,7 @@ class ResponderTest: XCTestCase {
       let route = Route(allowedMethods: [.Get], includeDirectoryLinks: true)
 
       let routes = ["/": route]
-      let response = Responder(routes: routes, data: contents).respond(to: request)
+      let response = RouteResponder(routes: routes, data: contents).getResponse(to: request)
 
       let expected = "\n\n<a href=\"/file2\">file2</a><br><a href=\"/file1\">file1</a>".toBytes
 
@@ -370,7 +370,7 @@ class ResponderTest: XCTestCase {
 
       let routes = ["/parameters": route]
 
-      let response = Responder(routes: routes).respond(to: request)
+      let response = RouteResponder(routes: routes).getResponse(to: request)
       let expected = "\n\nvariable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?\nvariable_2 = stuff"
 
       XCTAssertEqual(response.body!, expected.toBytes)
@@ -386,7 +386,7 @@ class ResponderTest: XCTestCase {
 
       let routes = ["/patch-content.txt": route]
 
-      let response = Responder(routes: routes, data: contents).respond(to: request)
+      let response = RouteResponder(routes: routes, data: contents).getResponse(to: request)
 
       XCTAssertEqual(response.statusCode, "204 No Content")
     }
@@ -402,11 +402,11 @@ class ResponderTest: XCTestCase {
 
       let contents = ControllerData(["patch-content.txt": Data(value: "default content")])
 
-      let responder = Responder(routes: routes, data: contents)
+      let responder = RouteResponder(routes: routes, data: contents)
 
-      let _ = responder.respond(to: patchRequest)
+      let _ = responder.getResponse(to: patchRequest)
 
-      let response = responder.respond(to: getRequest)
+      let response = responder.getResponse(to: getRequest)
 
       let expected = "\n\npatched content"
 
@@ -421,7 +421,7 @@ class ResponderTest: XCTestCase {
       let route = Route(allowedMethods: [.Get])
       let routes = ["/form": route]
 
-      let response = Responder(routes: routes).respond(to: request)
+      let response = RouteResponder(routes: routes).getResponse(to: request)
 
       XCTAssert(response.body == nil)
     }
@@ -433,7 +433,7 @@ class ResponderTest: XCTestCase {
 
       let routes = ["/form": route]
 
-      let response = Responder(routes: routes).respond(to: postRequest)
+      let response = RouteResponder(routes: routes).getResponse(to: postRequest)
 
       XCTAssertEqual(response.statusCode, "200 OK")
     }
@@ -447,10 +447,10 @@ class ResponderTest: XCTestCase {
       let route = Route(allowedMethods: [.Post, .Get])
 
       let routes = ["/form": route]
-      let responder = Responder(routes: routes)
+      let responder = RouteResponder(routes: routes)
 
-      let _ = responder.respond(to: postRequest)
-      let response = responder.respond(to: getRequest)
+      let _ = responder.getResponse(to: postRequest)
+      let response = responder.getResponse(to: getRequest)
 
       let expected = "\n\ndata=fatcat"
 
@@ -468,11 +468,11 @@ class ResponderTest: XCTestCase {
       let route = Route(allowedMethods: [.Post, .Put, .Get])
       let routes = ["/form": route]
 
-      let responder = Responder(routes: routes)
+      let responder = RouteResponder(routes: routes)
 
-      let _ = responder.respond(to: postRequest)
-      let _ = responder.respond(to: putRequest)
-      let response = responder.respond(to: getRequest)
+      let _ = responder.getResponse(to: postRequest)
+      let _ = responder.getResponse(to: putRequest)
+      let response = responder.getResponse(to: getRequest)
 
       let expected = "\n\ndata=hamilton"
 
@@ -490,11 +490,11 @@ class ResponderTest: XCTestCase {
       let route = Route(allowedMethods: [.Post, .Delete, .Get])
       let routes = ["/form": route]
 
-      let responder = Responder(routes: routes)
+      let responder = RouteResponder(routes: routes)
 
-      let _ = responder.respond(to: postRequest)
-      let _ = responder.respond(to: deleteRequest)
-      let response = responder.respond(to: getRequest)
+      let _ = responder.getResponse(to: postRequest)
+      let _ = responder.getResponse(to: deleteRequest)
+      let response = responder.getResponse(to: getRequest)
 
       XCTAssert(response.body == nil)
     }
@@ -509,7 +509,7 @@ class ResponderTest: XCTestCase {
 
       let routes = ["/redirect": route, "/": redirectedRoute]
 
-      let response = Responder(routes: routes).respond(to: request)
+      let response = RouteResponder(routes: routes).getResponse(to: request)
 
       XCTAssertEqual(response.statusCode, "302 Found")
     }
@@ -523,7 +523,7 @@ class ResponderTest: XCTestCase {
 
       let routes = ["/redirect": route, "/": redirectedRoute]
 
-      let response = Responder(routes: routes).respond(to: request)
+      let response = RouteResponder(routes: routes).getResponse(to: request)
 
       XCTAssertEqual(response.headers["Location"]!, "/")
     }
@@ -537,7 +537,7 @@ class ResponderTest: XCTestCase {
 
       let routes = ["/redirect": route, "/": redirectedRoute]
 
-      let response = Responder(routes: routes).respond(to: request)
+      let response = RouteResponder(routes: routes).getResponse(to: request)
 
       XCTAssertEqual(response.statusCode, "405 Method Not Allowed")
     }
@@ -550,7 +550,7 @@ class ResponderTest: XCTestCase {
 
       let routes = ["/redirect": route]
 
-      let response = Responder(routes: routes).respond(to: request)
+      let response = RouteResponder(routes: routes).getResponse(to: request)
 
       XCTAssertEqual(response.statusCode, "404 Not Found")
     }
@@ -566,7 +566,7 @@ class ResponderTest: XCTestCase {
       let route = Route(allowedMethods: [.Get], customResponse: customResponse)
       let routes = ["/coffee": route]
 
-      let response = Responder(routes: routes).respond(to: request)
+      let response = RouteResponder(routes: routes).getResponse(to: request)
 
       XCTAssertEqual(response.statusCode, "418 I'm a teapot")
       XCTAssertEqual(response.body!, "\n\nI'm a teapot".toBytes)

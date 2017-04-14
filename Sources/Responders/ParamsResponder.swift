@@ -1,7 +1,7 @@
 import Requests
 import Responses
 
-class ParamsResponder: RouteResponder {
+class ParamsResponder: ResponseFormatter {
   let request: Request
 
   public init(for request: Request) {

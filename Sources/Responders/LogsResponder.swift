@@ -2,7 +2,7 @@ import Responses
 import Requests
 import Util
 
-class LogsResponder: RouteResponder {
+class LogsResponder: ResponseFormatter {
   let request: Request
   let logs: [String]?
 

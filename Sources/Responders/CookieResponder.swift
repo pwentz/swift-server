@@ -2,7 +2,7 @@ import Foundation
 import Responses
 import Requests
 
-class CookieResponder: RouteResponder {
+class CookieResponder: ResponseFormatter {
   let prefix: String
   let request: Request
 

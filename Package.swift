@@ -14,18 +14,11 @@ let package = Package(
         .Target(name: "Routes"),
         .Target(name: "Responders")
       ]),
-      Target(name: "Controllers", dependencies: [
-        .Target(name: "Util"),
-        .Target(name: "Requests"),
-        .Target(name: "Responses"),
-        .Target(name: "Shared")
-      ]),
       Target(name: "Responders", dependencies: [
         .Target(name: "Requests"),
         .Target(name: "Routes")
       ]),
       Target(name: "Router", dependencies: [
-        .Target(name: "Controllers"),
         .Target(name: "Requests"),
         .Target(name: "Responses"),
         .Target(name: "Util"),
