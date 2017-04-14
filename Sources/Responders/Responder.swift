@@ -17,23 +17,13 @@ public class Responder {
   public func respond(to request: Request) -> Response {
     logs.append("\(request.verb.rawValue.uppercased()) \(request.path) HTTP/1.1")
 
-    guard let route = routes[request.path] else {
-      return HTTPResponse(status: FourHundred.NotFound)
+    for response in gatherImmediateResponses(request: request, route: routes[request.path]) {
+      if let confirmedResponse = response {
+        return confirmedResponse
+      }
     }
 
-    if let customResponse = route.customResponse {
-      return customResponse
-    }
-
-    let givenAuth = request.headers["authorization"]?.components(separatedBy: " ").last
-
-    guard givenAuth == route.auth else {
-      return HTTPResponse(status: FourHundred.Unauthorized, headers: ["WWW-Authenticate": "Basic realm=\"simple\""])
-    }
-
-    guard route.allowedMethods.contains(request.verb) else {
-      return HTTPResponse(status: FourHundred.MethodNotAllowed)
-    }
+    let route: Route! = routes[request.path]
 
     if let redirectPath = route.redirectPath {
       if let redirectRoute = routes[redirectPath] {
@@ -53,7 +43,7 @@ public class Responder {
 
     if request.verb == .Get {
       let responders = gatherGetResponders(request: request, route: route)
-      GetResponder(responders: responders).execute(on: &response)
+      responders.forEach { $0.execute(on: &response) }
     }
     else {
       NonGetResponder(for: request, route: route, data: data).execute(on: &response)
@@ -69,6 +59,19 @@ public class Responder {
       LogsResponder(for: request, logs: route.includeLogs ? logs : nil),
       DirectoryLinksResponder(for: request, files: route.includeDirectoryLinks ? data.fileNames : nil),
       PartialResponder(for: request)
+    ]
+  }
+
+  private func gatherImmediateResponses(request: Request, route: Route?) -> [Response?] {
+    let givenAuth = request.headers["authorization"]?.components(separatedBy: " ").last
+    return [
+      route.map { _ in nil } ?? HTTPResponse(status: FourHundred.NotFound),
+      route.flatMap { $0.customResponse.map { $0 } },
+      route.flatMap { $0.auth != givenAuth ?
+        HTTPResponse(status: FourHundred.Unauthorized, headers: ["WWW-Authenticate": "Basic realm=\"simple\""])
+        : nil
+      },
+      route.flatMap { $0.allowedMethods.contains(request.verb) ? nil : HTTPResponse(status: FourHundred.MethodNotAllowed) }
     ]
   }
 
