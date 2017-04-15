@@ -7,7 +7,7 @@ import Responses
 class ContentResponderTest: XCTestCase {
   func testItCanUpdateBodyWithFileContents() {
     let rawRequest = "GET /file1 HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = HTTPRequest(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)!
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ControllerData(
@@ -23,7 +23,7 @@ class ContentResponderTest: XCTestCase {
 
   func testItCanUpdateContentTypeHeaderWhenExtensionIsMissing() {
     let rawRequest = "GET /file1 HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = HTTPRequest(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)!
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ControllerData(
@@ -38,7 +38,7 @@ class ContentResponderTest: XCTestCase {
 
   func testItCanUpdateBodyWithImageContents() {
     let rawRequest = "GET /image.jpeg HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = HTTPRequest(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)!
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ControllerData(
@@ -53,7 +53,7 @@ class ContentResponderTest: XCTestCase {
 
   func testItCanUpdateContentTypeHeaderWithJPEG() {
     let rawRequest = "GET /image.jpeg HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = HTTPRequest(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)!
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ControllerData(
@@ -68,7 +68,7 @@ class ContentResponderTest: XCTestCase {
 
   func testItCanUpdateContentTypeHeaderWithPNG() {
     let rawRequest = "GET /image.png HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = HTTPRequest(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)!
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ControllerData(
@@ -83,7 +83,7 @@ class ContentResponderTest: XCTestCase {
 
   func testItCanUpdateContentTypeHeaderWithGIF() {
     let rawRequest = "GET /image.gif HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = HTTPRequest(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)!
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ControllerData(
@@ -98,7 +98,7 @@ class ContentResponderTest: XCTestCase {
 
   func testItCanUpdateContentTypeHeaderWithTXT() {
     let rawRequest = "GET /file1.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = HTTPRequest(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)!
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ControllerData(

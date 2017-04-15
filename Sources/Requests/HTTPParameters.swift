@@ -7,6 +7,10 @@ public class HTTPParameters: Params {
   public var keys: [String] = []
   public var values: [String] = []
 
+  public var isEmpty: Bool {
+    return keys.isEmpty && values.isEmpty
+  }
+
   public init(for rawParams: String) {
     self.rawParams = rawParams
 
@@ -30,7 +34,7 @@ public class HTTPParameters: Params {
   public func toDictionary() -> [String: String] {
     var matchedParams: [String: String] = [:]
 
-    if keys.isEmpty && values.isEmpty {
+    if isEmpty {
       return matchedParams
     }
 

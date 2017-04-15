@@ -33,7 +33,7 @@ public class RouteResponder: Responder {
   private func responses(for request: Request) -> [Response?] {
     let route = routes[request.path]
 
-    var responses = gatherImmediateResponses(request: request, route: route)
+    var responses = abruptResponsesByRoute(request: request, route: route)
     route.map { responses.append(responseByVerb(request: request, route: $0)) }
 
     return responses
@@ -82,28 +82,34 @@ public class RouteResponder: Responder {
     ]
   }
 
-  private func gatherImmediateResponses(request: Request, route: Route?) -> [Response?] {
+  private func abruptResponsesByRoute(request: Request, route: Route?) -> [Response?] {
     let givenAuth = request.headers["authorization"]?.components(separatedBy: " ").last
     return [
       route.map { _ in nil } ?? notFoundResponse,
       route?.customResponse.map { $0 },
       route?.auth != givenAuth ? unauthorizedResponse : nil ,
       (route?.canRespondTo(request.verb)).flatMap { $0 ? nil : methodNotAllowedResponse },
-
-      route?.redirectPath.map { redirectPath in
-        routes[redirectPath].map {
-
-          $0.canRespondTo(request.verb) ?
-            foundResponse(location: redirectPath) :
-            methodNotAllowedResponse
-
-        } ?? notFoundResponse
-      }
+      redirectResponse(request, route: route)
     ]
   }
 
   private func foundResponse(location: String) -> Response {
     return HTTPResponse(status: ThreeHundred.Found, headers: ["Location": location])
+  }
+
+  private func redirectResponse(_ request: Request, route: Route?) -> Response? {
+    return route?.redirectPath.map { redirectPath -> Response in
+      if let redirectRoute = routes[redirectPath] {
+
+        return redirectRoute.canRespondTo(request.verb) ?
+          foundResponse(location: redirectPath) :
+          methodNotAllowedResponse
+
+      }
+      else {
+        return notFoundResponse
+      }
+    }
   }
 
 }

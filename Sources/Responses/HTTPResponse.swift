@@ -12,7 +12,7 @@ public struct HTTPResponse: Response {
     self.headers = headers
 
     let divide = bodyDivide
-    self.body = body.map { Array(divide.utf8) + $0.toBytes }
+    self.body = body.map { divide.toBytes + $0.toBytes }
   }
 
   public mutating func appendToBody(_ newContent: BytesRepresentable) {

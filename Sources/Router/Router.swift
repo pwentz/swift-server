@@ -27,8 +27,7 @@ public class Router {
     let client = try socket.acceptSocket()
     let data = try client.recv()
 
-    if !data.isEmpty {
-      let request = try HTTPRequest(for: data.toString())
+    if !data.isEmpty, let request = try HTTPRequest(for: data.toString()) {
       let response = responder.getResponse(to: request)
 
       dispatch(getDispatchCallback(response, client: client))
