@@ -6,7 +6,7 @@ import Responses
 class DirectoryLinksResponderTest: XCTestCase {
   func testItCanAddDirectoryLinksToResponseBody() {
     let rawRequest = "GET / HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = HTTPRequest(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)!
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     let files = ["file1", "file2"]
@@ -20,7 +20,7 @@ class DirectoryLinksResponderTest: XCTestCase {
 
   func testItDoesNotAddDirectoryLinksIfFilesAreNil() {
     let rawRequest = "GET / HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = HTTPRequest(for: rawRequest)
+    let request = HTTPRequest(for: rawRequest)!
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     DirectoryLinksResponder(for: request, files: nil).execute(on: &response)

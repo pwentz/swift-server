@@ -14,11 +14,16 @@ public struct HTTPRequest: Request {
 
   public var headers: [String: String] = [:]
 
-  public init(for rawRequest: String) {
+  public init?(for rawRequest: String) {
     let splitRequest = rawRequest.components(separatedBy: crlf)
     let requestTail = splitRequest[splitRequest.index(before: splitRequest.endIndex)]
 
     let splitMainHeader = splitRequest[splitRequest.startIndex].components(separatedBy: " ")
+
+    guard splitMainHeader.count >= 2 else {
+      return nil
+    }
+
     let givenVerb = splitMainHeader[splitMainHeader.startIndex]
 
     let fullPath = splitMainHeader[splitMainHeader.index(after: splitMainHeader.startIndex)]
@@ -34,11 +39,7 @@ public struct HTTPRequest: Request {
 
     params = splitPath.first(where: { $0.contains(separator) }).flatMap { params -> HTTPParameters? in
       let dividedParams = params.components(separatedBy: separator).filter { !$0.isEmpty }
-      if dividedParams.count < 2 {
-        return nil
-      }
-
-      return HTTPParameters(for: params)
+      return dividedParams.count >= 2 ? HTTPParameters(for: params) : nil
     }
 
     body = requestTail.contains(headerDivide) ? nil : requestTail
