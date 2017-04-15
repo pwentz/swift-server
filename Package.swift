@@ -16,7 +16,14 @@ let package = Package(
       ]),
       Target(name: "Responders", dependencies: [
         .Target(name: "Requests"),
-        .Target(name: "Routes")
+        .Target(name: "Routes"),
+        .Target(name: "Responses"),
+        .Target(name: "ResponseFormatters")
+      ]),
+      Target(name: "ResponseFormatters", dependencies: [
+        .Target(name: "Requests"),
+        .Target(name: "Routes"),
+        .Target(name: "Responses")
       ]),
       Target(name: "Router", dependencies: [
         .Target(name: "Requests"),

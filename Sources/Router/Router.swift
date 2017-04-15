@@ -38,7 +38,7 @@ public class Router {
     threadQueue.async(callback)
   }
 
-  internal func getDispatchCallback(_ response: Response, client: Socket) -> () throws -> Void {
+  internal func getDispatchCallback(_ response: HTTPResponse, client: Socket) -> () throws -> Void {
     return {
       try client.send(data: response.formatted)
       try client.close()

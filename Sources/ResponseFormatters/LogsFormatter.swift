@@ -2,7 +2,7 @@ import Responses
 import Requests
 import Util
 
-class LogsResponder: ResponseFormatter {
+public class LogsFormatter: ResponseFormatter {
   let request: Request
   let logs: [String]?
 
@@ -11,7 +11,7 @@ class LogsResponder: ResponseFormatter {
     self.logs = logs
   }
 
-  func execute(on response: inout HTTPResponse) {
+  public func execute(on response: inout HTTPResponse) {
     logs.map { serverLogs in
       response.appendToBody(serverLogs.joined(separator: "\n"))
     }

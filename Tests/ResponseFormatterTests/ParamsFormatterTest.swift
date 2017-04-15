@@ -1,15 +1,15 @@
 import XCTest
 import Requests
 import Responses
-@testable import Responders
+@testable import ResponseFormatters
 
-class ParamsResponderTest: XCTestCase {
+class ParamsFormatterTest: XCTestCase {
   func testItCanHandleNoParams() {
     let rawRequest = "GET /parameters HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
     let request = HTTPRequest(for: rawRequest)!
     var response = HTTPResponse(status: TwoHundred.Ok)
 
-    ParamsResponder(for: request).execute(on: &response)
+    ParamsFormatter(for: request).execute(on: &response)
 
     XCTAssertNil(response.body)
   }
@@ -19,7 +19,7 @@ class ParamsResponderTest: XCTestCase {
     let request = HTTPRequest(for: rawRequest)!
     var response = HTTPResponse(status: TwoHundred.Ok)
 
-    ParamsResponder(for: request).execute(on: &response)
+    ParamsFormatter(for: request).execute(on: &response)
     let expected = "\n\nvariable_1 = Operators"
 
     XCTAssertEqual(response.body!, expected.toBytes)
@@ -30,7 +30,7 @@ class ParamsResponderTest: XCTestCase {
     let request = HTTPRequest(for: rawRequest)!
     var response = HTTPResponse(status: TwoHundred.Ok)
 
-    ParamsResponder(for: request).execute(on: &response)
+    ParamsFormatter(for: request).execute(on: &response)
     let expected = "\n\nvariable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?"
 
     XCTAssertEqual(response.body!, expected.toBytes)
@@ -41,7 +41,7 @@ class ParamsResponderTest: XCTestCase {
     let request = HTTPRequest(for: rawRequest)!
     var response = HTTPResponse(status: TwoHundred.Ok)
 
-    ParamsResponder(for: request).execute(on: &response)
+    ParamsFormatter(for: request).execute(on: &response)
     let expected = "\n\nvariable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?\nvariable_2 = stuff"
 
     XCTAssertEqual(response.body!, expected.toBytes)
