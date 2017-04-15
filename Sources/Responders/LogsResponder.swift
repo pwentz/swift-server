@@ -13,9 +13,7 @@ class LogsResponder: ResponseFormatter {
 
   func execute(on response: inout HTTPResponse) {
     logs.map { serverLogs in
-      if !isAnImage(request.path) {
-        response.appendToBody(serverLogs.joined(separator: "\n"))
-      }
+      response.appendToBody(serverLogs.joined(separator: "\n"))
     }
   }
 }

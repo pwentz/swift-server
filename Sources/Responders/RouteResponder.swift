@@ -45,7 +45,9 @@ public class RouteResponder: Responder {
     switch request.verb {
     case .Get:
       let responders = gatherGetResponders(request: request, route: route)
-      responders.forEach { $0.execute(on: &response) }
+      isAnImage(request.path) ?
+        responders.first.map { $0.execute(on: &response) } :
+        responders.forEach { $0.execute(on: &response) }
 
     case .Options:
       let allowedMethods = route
