@@ -3,23 +3,18 @@ public protocol Params {
   var multipleSeparator: String { get }
   var keys: [String] { get }
   var values: [String] { get }
+  var isEmpty: Bool { get }
 
   func toDictionary() -> [String: String]
 }
 
-
-public protocol Parameterizable {
-  init?(parameters: Params)
-}
-
-
-extension String: Parameterizable {
+extension String {
   public init?(parameters: Params) {
-    var result = ""
-
-    if parameters.keys.isEmpty && parameters.values.isEmpty {
+    if parameters.isEmpty {
       return nil
     }
+
+    var result = ""
 
     for (index, paramKey) in parameters.keys.enumerated() {
       result += (paramKey + parameters.keyValueSeparator + parameters.values[index] + "\n")
