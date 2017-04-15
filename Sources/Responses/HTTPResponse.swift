@@ -1,7 +1,7 @@
 public struct HTTPResponse: Response {
-  public let statusCode: String
-  public let headers: [String: String]
-  public let body: [UInt8]?
+  public var statusCode: String
+  public var headers: [String: String]
+  public var body: [UInt8]?
   public let crlf: String = "\r\n"
   public let headerDivide: String = ":"
   public let transferProtocol: String = "HTTP/1.1"
@@ -13,6 +13,25 @@ public struct HTTPResponse: Response {
 
     let divide = bodyDivide
     self.body = body.map { Array(divide.utf8) + $0.toBytes }
+  }
+
+  public mutating func appendToBody(_ newContent: BytesRepresentable) {
+    let formattedContent = "\n\n".toBytes + newContent.toBytes
+    self.body = body.map { $0 + formattedContent } ?? formattedContent
+  }
+
+  public mutating func replaceBody(with newContent: BytesRepresentable) {
+    self.body = "\n\n".toBytes + newContent.toBytes
+  }
+
+  public mutating func appendToHeaders(with newHeaders: [String: String]) {
+    for (key, value) in newHeaders {
+      headers[key] = value
+    }
+  }
+
+  public mutating func updateStatus(with newStatus: StatusCode) {
+    self.statusCode = newStatus.description
   }
 
 }

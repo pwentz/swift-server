@@ -4,7 +4,11 @@ import Router
 import Util
 import Errors
 import Shared
+import Requests
+import Responses
 import FileIO
+import Routes
+import Responders
 
 let defaultPort: UInt16 = 5000
 let reader = CommandLineReader(args: CommandLine.arguments)
@@ -23,9 +27,34 @@ do {
     contents[file] = try Data(contentsOf: URL(fileURLWithPath: publicDir + "/" + file))
   }
 
-  let persistedData = ControllerData(contents, nonFiles: ["form", "logs", "cookie"])
+  let persistedData = ControllerData(contents)
 
-  let router = Router(socket: socket, data: persistedData, threadQueue: DispatchQueue.global(qos: .userInteractive), port: port)
+  let customTeapotResponse = HTTPResponse(status: FourHundred.Teapot, body: "I'm a teapot")
+
+  var routes: [String: Route] = [
+    "/logs": Route(auth: authCredentials, includeLogs: true, allowedMethods: [.Get]),
+    "/log": Route(allowedMethods: [.Get]),
+    "/these": Route(allowedMethods: [.Put]),
+    "/requests": Route(allowedMethods: [.Head]),
+    "/cookie": Route(cookiePrefix: "Eat", allowedMethods: [.Get]),
+    "/eat_cookie": Route(cookiePrefix: "mmmm", allowedMethods: [.Get]),
+    "/coffee": Route(allowedMethods: [.Get], customResponse: customTeapotResponse),
+    "/tea": Route(allowedMethods: [.Get]),
+    "/parameters": Route(allowedMethods: [.Get]),
+    "/form": Route(allowedMethods: [.Get, .Post, .Put, .Delete]),
+    "/redirect": Route(allowedMethods: [.Get], redirectPath: "/"),
+    "/": Route(allowedMethods: [.Get, .Head], includeDirectoryLinks: true),
+    "/method_options": Route(allowedMethods: [.Options, .Get, .Head, .Post, .Put]),
+    "/method_options2": Route(allowedMethods: [.Options, .Get])
+  ]
+
+  persistedData.fileNames.forEach {
+    routes["/\($0)"] = Route(allowedMethods: [.Get, .Patch])
+  }
+
+  let responder = RouteResponder(routes: routes, data: persistedData)
+
+  let router = Router(socket: socket, data: persistedData, threadQueue: DispatchQueue.global(qos: .userInteractive), port: port, responder: responder)
 
   try router.listen()
 

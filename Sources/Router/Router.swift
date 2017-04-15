@@ -1,19 +1,21 @@
 import Requests
 import Responses
-import Controllers
 import Util
+import Responders
 
 public class Router {
   let port: UInt16
   let socket: Socket
   let persistedData: ControllerData
   let threadQueue: ThreadQueue
+  let responder: Responder
 
-  public init(socket: Socket, data: ControllerData, threadQueue: ThreadQueue, port: UInt16) {
+  public init(socket: Socket, data: ControllerData, threadQueue: ThreadQueue, port: UInt16, responder: Responder) {
     self.port = port
     self.socket = socket
     self.persistedData = data
     self.threadQueue = threadQueue
+    self.responder = responder
   }
 
   public func listen() throws {
@@ -27,8 +29,7 @@ public class Router {
 
     if !data.isEmpty {
       let request = try HTTPRequest(for: data.toString())
-      let controller = ControllerFactory.getController(request, with: persistedData)
-      let response = controller.process(request)
+      let response = responder.getResponse(to: request)
 
       dispatch(getDispatchCallback(response, client: client))
     }

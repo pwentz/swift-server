@@ -13,3 +13,6 @@ excluded:
   - Package.swift
 
 empty_count: warning
+
+line_length:
+  warning: 110

@@ -3,6 +3,7 @@ import Foundation
 public class ControllerData {
   private var contents: [String: Data]
   private let nonFiles: [String]
+  public let fileNames: [String]
 
   public init(_ fileContents: [String: Data], nonFiles: [String] = []) {
     var contents = fileContents
@@ -13,6 +14,7 @@ public class ControllerData {
 
     self.contents = contents
     self.nonFiles = nonFiles
+    self.fileNames = [String](fileContents.keys)
   }
 
   public func update(_ key: String, withVal value: String) {
@@ -27,8 +29,8 @@ public class ControllerData {
     return contents[key]
   }
 
-  public func fileNames() -> [String] {
-    return contents.keys.filter { !nonFiles.contains($0) }
+  public func remove(at key: String) {
+    contents[key] = nil
   }
 
 }
