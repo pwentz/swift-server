@@ -2,7 +2,7 @@ import Responses
 import Requests
 import Util
 
-class ContentResponder: ResponseFormatter {
+public class ContentFormatter: ResponseFormatter {
   let request: Request
   let data: ControllerData
 

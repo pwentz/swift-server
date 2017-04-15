@@ -1,6 +1,4 @@
-import Util
-
-public struct HTTPResponse: Response {
+public struct HTTPResponse {
   public var statusCode: String
   public var headers: [String: String]
   public var body: [UInt8]?
@@ -36,4 +34,11 @@ public struct HTTPResponse: Response {
     self.statusCode = newStatus.description
   }
 
+  public var formatted: [UInt8] {
+    let joinedHeaders = headers.map { $0 + headerDivide + $1 }.joined(separator: crlf)
+    let statusLine = "\(transferProtocol) \(statusCode + crlf)"
+    let formattedBody = body ?? []
+
+    return statusLine.toBytes + joinedHeaders.toBytes + formattedBody
+  }
 }

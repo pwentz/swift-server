@@ -8,7 +8,7 @@ public class Route {
   public let allowedMethods: [HTTPRequestMethod]
   public let includeDirectoryLinks: Bool
   public let redirectPath: String?
-  public let customResponse: Response?
+  public let customResponse: HTTPResponse?
 
   public init(auth: String? = nil, cookiePrefix: String? = nil, includeLogs: Bool = false, allowedMethods: [HTTPRequestMethod], includeDirectoryLinks: Bool = false, redirectPath: String? = nil) {
     self.auth = auth
@@ -20,7 +20,7 @@ public class Route {
     self.customResponse = nil
   }
 
-  public init(allowedMethods: [HTTPRequestMethod], customResponse: Response) {
+  public init(allowedMethods: [HTTPRequestMethod], customResponse: HTTPResponse) {
     self.auth = nil
     self.cookiePrefix = nil
     self.includeLogs = false

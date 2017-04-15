@@ -1,3 +1,3 @@
 public protocol Respondable {
-  init(response: Response)
+  init(response: HTTPResponse)
 }

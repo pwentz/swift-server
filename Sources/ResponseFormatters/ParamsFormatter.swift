@@ -1,14 +1,14 @@
 import Requests
 import Responses
 
-class ParamsResponder: ResponseFormatter {
+public class ParamsFormatter: ResponseFormatter {
   let request: Request
 
   public init(for request: Request) {
     self.request = request
   }
 
-  func execute(on response: inout HTTPResponse) {
+  public func execute(on response: inout HTTPResponse) {
     request.params.map { params in
       let formattedParams = params
                              .toDictionary()

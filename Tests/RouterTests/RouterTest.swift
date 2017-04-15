@@ -7,7 +7,7 @@ import FileIO
 import Util
 
 class MockResponder: Responder {
-  public func getResponse(to request: Request) -> Response {
+  public func getResponse(to request: Request) -> HTTPResponse {
     return HTTPResponse(status: TwoHundred.Ok)
   }
 }

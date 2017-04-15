@@ -1,10 +1,10 @@
 import XCTest
-@testable import Responders
+@testable import ResponseFormatters
 import Util
 import Requests
 import Responses
 
-class ContentResponderTest: XCTestCase {
+class ContentFormatterTest: XCTestCase {
   func testItCanUpdateBodyWithFileContents() {
     let rawRequest = "GET /file1 HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let request = HTTPRequest(for: rawRequest)!
@@ -15,8 +15,8 @@ class ContentResponderTest: XCTestCase {
        "file2": Data(value: "this is another text file.")]
     )
 
-    let contentResponder = ContentResponder(for: request, data: contents)
-    contentResponder.execute(on: &response)
+    let contentFormatter = ContentFormatter(for: request, data: contents)
+    contentFormatter.execute(on: &response)
 
     XCTAssertEqual(response.body!, "\n\nthis is a text file.".toBytes)
   }
@@ -30,8 +30,8 @@ class ContentResponderTest: XCTestCase {
       ["file1": Data(value: "this is a text file.")]
     )
 
-    let contentResponder = ContentResponder(for: request, data: contents)
-    contentResponder.execute(on: &response)
+    let contentFormatter = ContentFormatter(for: request, data: contents)
+    contentFormatter.execute(on: &response)
 
     XCTAssertEqual(response.headers["Content-Type"]!, "text/html")
   }
@@ -45,8 +45,8 @@ class ContentResponderTest: XCTestCase {
       ["image.jpeg": Data(value: "some encoded stuff")]
     )
 
-    let contentResponder = ContentResponder(for: request, data: contents)
-    contentResponder.execute(on: &response)
+    let contentFormatter = ContentFormatter(for: request, data: contents)
+    contentFormatter.execute(on: &response)
 
     XCTAssertEqual(response.body!, "\n\nsome encoded stuff".toBytes)
   }
@@ -60,8 +60,8 @@ class ContentResponderTest: XCTestCase {
       ["image.jpeg": Data(value: "some encoded stuff")]
     )
 
-    let contentResponder = ContentResponder(for: request, data: contents)
-    contentResponder.execute(on: &response)
+    let contentFormatter = ContentFormatter(for: request, data: contents)
+    contentFormatter.execute(on: &response)
 
     XCTAssertEqual(response.headers["Content-Type"]!, "image/jpeg")
   }
@@ -75,8 +75,8 @@ class ContentResponderTest: XCTestCase {
       ["image.png": Data(value: "some encoded stuff")]
     )
 
-    let contentResponder = ContentResponder(for: request, data: contents)
-    contentResponder.execute(on: &response)
+    let contentFormatter = ContentFormatter(for: request, data: contents)
+    contentFormatter.execute(on: &response)
 
     XCTAssertEqual(response.headers["Content-Type"]!, "image/png")
   }
@@ -90,8 +90,8 @@ class ContentResponderTest: XCTestCase {
       ["image.gif": Data(value: "some encoded stuff")]
     )
 
-    let contentResponder = ContentResponder(for: request, data: contents)
-    contentResponder.execute(on: &response)
+    let contentFormatter = ContentFormatter(for: request, data: contents)
+    contentFormatter.execute(on: &response)
 
     XCTAssertEqual(response.headers["Content-Type"]!, "image/gif")
   }
@@ -105,8 +105,8 @@ class ContentResponderTest: XCTestCase {
       ["file1.txt": Data(value: "this is a text file.")]
     )
 
-    let contentResponder = ContentResponder(for: request, data: contents)
-    contentResponder.execute(on: &response)
+    let contentFormatter = ContentFormatter(for: request, data: contents)
+    contentFormatter.execute(on: &response)
 
     XCTAssertEqual(response.headers["Content-Type"]!, "text/plain")
   }
