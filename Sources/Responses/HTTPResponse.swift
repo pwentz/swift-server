@@ -1,3 +1,5 @@
+import Util
+
 public struct HTTPResponse: Response {
   public var statusCode: String
   public var headers: [String: String]

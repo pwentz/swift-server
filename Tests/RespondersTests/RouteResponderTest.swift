@@ -253,22 +253,6 @@ class RouteResponderTest: XCTestCase {
       XCTAssertEqual(response.body!, expected)
     }
 
-    func testItCanReturnCorrectContentTypeForFile() {
-      let rawRequest = "GET /image.jpeg HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-      let request = HTTPRequest(for: rawRequest)!
-
-      let contents = ControllerData(
-        ["image.jpeg": Data(value: "some stuff")]
-      )
-
-      let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get])
-      let routes = ["/image.jpeg": route]
-
-      let response = RouteResponder(routes: routes, data: contents).getResponse(to: request)
-
-      XCTAssertEqual(response.headers["Content-Type"]!, "image/jpeg")
-    }
-
   // File Data with Logs?
 
     func testItDeniesAdditionalBodyWhenContentTypeDoesNotAllowIt() {
@@ -570,5 +554,70 @@ class RouteResponderTest: XCTestCase {
 
       XCTAssertEqual(response.statusCode, "418 I'm a teapot")
       XCTAssertEqual(response.body!, "\n\nI'm a teapot".toBytes)
+    }
+
+  // Appending body to response w/ image content
+    func testItDoesNotIncludeDirectoryLinksWhenResponseIsAnImage() {
+      let rawRequest = "GET /image.jpeg HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
+      let request = HTTPRequest(for: rawRequest)!
+
+      let contents = ControllerData(
+        ["image.jpeg": Data(value: "some encoded stuff")]
+      )
+
+      let route = Route(allowedMethods: [.Get], includeDirectoryLinks: true)
+      let routes = ["/image.jpeg": route]
+
+      let response = RouteResponder(routes: routes, data: contents).getResponse(to: request)
+
+      XCTAssertEqual(response.body!, "\n\nsome encoded stuff".toBytes)
+    }
+
+    func testItDoesNotIncludeLogsWhenResponseIsAnImage() {
+      let rawRequest = "GET /image.jpeg HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
+      let request = HTTPRequest(for: rawRequest)!
+
+      let contents = ControllerData(
+        ["image.jpeg": Data(value: "some encoded stuff")]
+      )
+
+      let route = Route(includeLogs: true, allowedMethods: [.Get])
+      let routes = ["/image.jpeg": route]
+
+      let response = RouteResponder(routes: routes, data: contents).getResponse(to: request)
+
+      XCTAssertEqual(response.body!, "\n\nsome encoded stuff".toBytes)
+    }
+
+    func testItDoesNotIncludeCookiePrefixWhenResponseIsAnImage() {
+      let rawRequest = "GET /image.jpeg HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
+      let request = HTTPRequest(for: rawRequest)!
+
+      let contents = ControllerData(
+        ["image.jpeg": Data(value: "some encoded stuff")]
+      )
+
+      let route = Route(cookiePrefix: "some stuff", allowedMethods: [.Get])
+      let routes = ["/image.jpeg": route]
+
+      let response = RouteResponder(routes: routes, data: contents).getResponse(to: request)
+
+      XCTAssertEqual(response.body!, "\n\nsome encoded stuff".toBytes)
+    }
+
+    func testItDoesNotIncludePartialResponseWhenResponseIsAnImage() {
+      let rawRequest = "GET /image.jpeg HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate\r\nRange: bytes=-4"
+      let request = HTTPRequest(for: rawRequest)!
+
+      let contents = ControllerData(
+        ["image.jpeg": Data(value: "some encoded stuff")]
+      )
+
+      let route = Route(allowedMethods: [.Get])
+      let routes = ["/image.jpeg": route]
+
+      let response = RouteResponder(routes: routes, data: contents).getResponse(to: request)
+
+      XCTAssertEqual(response.body!, "\n\nsome encoded stuff".toBytes)
     }
 }
