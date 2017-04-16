@@ -1,5 +1,4 @@
-import Foundation
-import Shared
+import Config
 import Errors
 
 public class DirectoryReader {

@@ -1,6 +1,3 @@
-import Foundation
-import Errors
-
 public func isAnImage(_ file: String) -> Bool {
   return file.hasSuffix("jpeg") ||
           file.hasSuffix("gif") ||

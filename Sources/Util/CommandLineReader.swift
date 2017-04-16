@@ -1,4 +1,3 @@
-import Foundation
 import Errors
 
 public class CommandLineReader {

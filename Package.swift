@@ -6,19 +6,21 @@ let package = Package(
       Target(name: "Server", dependencies: [
         .Target(name: "Router"),
         .Target(name: "Util"),
-        .Target(name: "Errors"),
-        .Target(name: "Shared"),
+        .Target(name: "Config"),
         .Target(name: "FileIO"),
-        .Target(name: "Requests"),
-        .Target(name: "Responses"),
         .Target(name: "Routes"),
         .Target(name: "Responders")
+      ]),
+      Target(name: "Config", dependencies: [
+        .Target(name: "Routes"),
+        .Target(name: "Responses")
       ]),
       Target(name: "Responders", dependencies: [
         .Target(name: "Requests"),
         .Target(name: "Routes"),
         .Target(name: "Responses"),
-        .Target(name: "ResponseFormatters")
+        .Target(name: "ResponseFormatters"),
+        .Target(name: "Util")
       ]),
       Target(name: "ResponseFormatters", dependencies: [
         .Target(name: "Requests"),
@@ -28,22 +30,18 @@ let package = Package(
       Target(name: "Router", dependencies: [
         .Target(name: "Requests"),
         .Target(name: "Responses"),
-        .Target(name: "Util"),
-        .Target(name: "Shared"),
-        .Target(name: "FileIO"),
-        .Target(name: "Responders"),
-        .Target(name: "Routes")
+        .Target(name: "Responders")
       ]),
       Target(name: "Util", dependencies: [
         .Target(name: "Errors"),
-        .Target(name: "Shared")
       ]),
       Target(name: "FileIO", dependencies: [
-        .Target(name: "Shared"),
+        .Target(name: "Config"),
         .Target(name: "Errors")
       ]),
       Target(name: "Routes", dependencies: [
-        .Target(name: "Requests")
+        .Target(name: "Requests"),
+        .Target(name: "Responses")
       ])
     ],
     dependencies: [

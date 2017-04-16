@@ -1,10 +1,8 @@
-import Foundation
-
-public struct HTTPRequest: Request {
+public struct HTTPRequest {
   public let verb: HTTPRequestMethod
   public let path: String
   public let pathName: String
-  public let params: Params?
+  public let params: HTTPParameters?
   public let body: String?
   public let crlf: String = "\r\n"
   public let headerDivide: String = ":"

@@ -2,10 +2,10 @@ import Requests
 import Responses
 
 public class DirectoryLinksFormatter: ResponseFormatter {
-  let request: Request
+  let request: HTTPRequest
   let files: [String]?
 
-  public init(for request: Request, files: [String]?) {
+  public init(for request: HTTPRequest, files: [String]?) {
     self.request = request
     self.files = files
   }

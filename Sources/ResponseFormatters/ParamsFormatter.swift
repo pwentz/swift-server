@@ -2,9 +2,9 @@ import Requests
 import Responses
 
 public class ParamsFormatter: ResponseFormatter {
-  let request: Request
+  let request: HTTPRequest
 
-  public init(for request: Request) {
+  public init(for request: HTTPRequest) {
     self.request = request
   }
 

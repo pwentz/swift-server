@@ -3,10 +3,10 @@ import Requests
 import Util
 
 public class LogsFormatter: ResponseFormatter {
-  let request: Request
+  let request: HTTPRequest
   let logs: [String]?
 
-  public init(for request: Request, logs: [String]? = nil) {
+  public init(for request: HTTPRequest, logs: [String]? = nil) {
     self.request = request
     self.logs = logs
   }

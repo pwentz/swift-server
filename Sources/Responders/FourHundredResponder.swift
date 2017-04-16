@@ -17,7 +17,7 @@ class FourHundredResponder {
     self.route = route
   }
 
-  public func responses(to request: Request) -> [HTTPResponse?] {
+  public func responses(to request: HTTPRequest) -> [HTTPResponse?] {
     let givenAuth = request.headers["authorization"]?.components(separatedBy: " ").last
 
     return [
