@@ -1,8 +1,8 @@
-public protocol StatusCode {
+public protocol HTTPStatusCode {
   var description: String { get }
 }
 
-public enum TwoHundred: StatusCode {
+public enum TwoHundred: HTTPStatusCode {
   case Ok, NoContent, PartialContent
 
   public var description: String {
@@ -14,7 +14,7 @@ public enum TwoHundred: StatusCode {
   }
 }
 
-public enum ThreeHundred: StatusCode {
+public enum ThreeHundred: HTTPStatusCode {
   case Found
 
   public var description: String {
@@ -24,7 +24,7 @@ public enum ThreeHundred: StatusCode {
   }
 }
 
-public enum FourHundred: StatusCode {
+public enum FourHundred: HTTPStatusCode {
   case Unauthorized, NotFound, MethodNotAllowed, Teapot
 
   public var description: String {
