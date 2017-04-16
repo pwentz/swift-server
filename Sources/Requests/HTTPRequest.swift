@@ -1,9 +1,8 @@
 public struct HTTPRequest {
-  public let verb: HTTPRequestMethod
   public let path: String
-  public let pathName: String
-  public let params: HTTPParameters?
+  public let verb: HTTPRequestMethod?
   public let body: String?
+  public let params: HTTPParameters?
   public let crlf: String = "\r\n"
   public let headerDivide: String = ":"
   public let transferProtocol: String = "HTTP/1.1"
@@ -29,11 +28,9 @@ public struct HTTPRequest {
     let splitPath = fullPath.components(separatedBy: parameterDivide)
 
     let separator = parameterKeyValueSeparator
-
-    verb = HTTPRequestMethod(rawValue: givenVerb.capitalized).map { $0 } ?? .Invalid
+    verb = HTTPRequestMethod(rawValue: givenVerb.capitalized)
 
     path = fullPath.range(of: parameterDivide).map { fullPath.substring(to: $0.lowerBound) } ?? fullPath
-    pathName = path.substring(from: path.index(after: path.startIndex))
 
     params = splitPath.first(where: { $0.contains(separator) }).flatMap { params -> HTTPParameters? in
       let dividedParams = params.components(separatedBy: separator).filter { !$0.isEmpty }
@@ -45,7 +42,7 @@ public struct HTTPRequest {
     headers = splitRequest
                .dropFirst()
                .map { RequestHeader(for: $0) }
-               .filter { !$0.key.isEmpty && !$0.value.isEmpty }
+               .filter { !$0.isEmpty }
                .reduce([:], toDictionary)
   }
 

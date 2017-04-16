@@ -5,6 +5,10 @@ struct RequestHeader {
   let value: String
   let keyValueDivider: String = ":"
 
+  var isEmpty: Bool {
+    return key.isEmpty || value.isEmpty
+  }
+
   init(for rawHeader: String) {
     let separatorIndex = rawHeader.range(of: keyValueDivider)
 

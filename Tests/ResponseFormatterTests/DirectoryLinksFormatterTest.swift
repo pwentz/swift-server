@@ -9,7 +9,7 @@ class DirectoryLinksFormatterTest: XCTestCase {
     let request = HTTPRequest(for: rawRequest)!
     var response = HTTPResponse(status: TwoHundred.Ok)
 
-    let files = ["file1", "file2"]
+    let files = ["/file1", "/file2"]
 
     DirectoryLinksFormatter(for: request, files: files).execute(on: &response)
 

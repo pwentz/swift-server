@@ -21,13 +21,13 @@ do {
   let fileNames = try DirectoryReader(FileManager.default).getFileNames(at: publicDir)
 
   for file in fileNames {
-    contents[file] = try Data(contentsOf: URL(fileURLWithPath: publicDir + "/" + file))
+    contents["/\(file)"] = try Data(contentsOf: URL(fileURLWithPath: publicDir + "/" + file))
   }
 
   let persistedData = ControllerData(contents)
 
   persistedData.fileNames.forEach {
-    routes["/\($0)"] = Route(allowedMethods: [.Get, .Patch])
+    routes[$0] = Route(allowedMethods: [.Get, .Patch])
   }
 
   let responder = RouteResponder(routes: routes, data: persistedData)
@@ -42,7 +42,7 @@ do {
 } catch {
   let fileName = DateHelper(today: Date(), calendar: Calendar.current, formatter: DateFormatter()).formatTimestamp(prefix: "FAILURE")
   let urlPath = URL(fileURLWithPath: logsPath + "/" + fileName).appendingPathExtension("txt")
-  try urlPath.write(writableContent: "ERROR: \(error)\r\nARGS: \(reader.join("\r\n"))")
+  try urlPath.write(content: "ERROR: \(error)\r\nARGS: \(reader.join("\r\n"))")
 
   throw error
 }

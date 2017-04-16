@@ -129,13 +129,6 @@ class RequestTest: XCTestCase {
       XCTAssertEqual(request.body!, "data=fatcat")
     }
 
-    func testItHasAPathName() {
-      let rawRequest = "POST /form HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate\r\ndata=fatcat"
-      let request = HTTPRequest(for: rawRequest)!
-
-      XCTAssertEqual(request.pathName, "form")
-    }
-
     func testItCanHandleInvalidRequests() {
       let rawRequest = "GET/tosomewhereHTTP/1.1"
       let request = HTTPRequest(for: rawRequest)

@@ -30,7 +30,7 @@ public class Route {
     self.customResponse = customResponse
   }
 
-  public func canRespondTo(_ verb: HTTPRequestMethod) -> Bool {
-    return self.allowedMethods.contains(verb)
+  public func canRespondTo(_ verb: HTTPRequestMethod?) -> Bool {
+    return verb.map { self.allowedMethods.contains($0) } ?? false
   }
 }
