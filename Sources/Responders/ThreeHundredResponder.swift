@@ -9,7 +9,7 @@ class ThreeHundredResponder {
     self.route = route
   }
 
-  func getResponse(to request: Request) -> HTTPResponse? {
+  func getResponse(to request: HTTPRequest) -> HTTPResponse? {
     return route?.redirectPath.flatMap { redirectPath -> HTTPResponse? in
         foundResponse(location: redirectPath)
     }

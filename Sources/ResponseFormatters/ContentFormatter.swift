@@ -3,10 +3,10 @@ import Requests
 import Util
 
 public class ContentFormatter: ResponseFormatter {
-  let request: Request
+  let request: HTTPRequest
   let data: ControllerData
 
-  public init(for request: Request, data: ControllerData) {
+  public init(for request: HTTPRequest, data: ControllerData) {
     self.request = request
     self.data = data
   }
@@ -19,7 +19,7 @@ public class ContentFormatter: ResponseFormatter {
     }
   }
 
-  private func getContentType(for request: Request) -> String {
+  private func getContentType(for request: HTTPRequest) -> String {
     return request.path.range(of: ".").map { extStart -> String in
       let ext = request.path.substring(from: extStart.upperBound)
 

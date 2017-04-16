@@ -1,12 +1,11 @@
-import Foundation
 import Responses
 import Requests
 
 public class CookieFormatter: ResponseFormatter {
   let prefix: String
-  let request: Request
+  let request: HTTPRequest
 
-  public init(for request: Request, prefix: String) {
+  public init(for request: HTTPRequest, prefix: String) {
     self.request = request
     self.prefix = prefix
   }

@@ -1,4 +1,3 @@
-import Foundation
 import Util
 import Routes
 import Requests
@@ -15,7 +14,7 @@ public class RouteResponder: Responder {
     self.data = data
   }
 
-  public func getResponse(to request: Request) -> HTTPResponse {
+  public func getResponse(to request: HTTPRequest) -> HTTPResponse {
     logs.append("\(request.verb.rawValue.uppercased()) \(request.path) HTTP/1.1")
 
     let validResponses = responses(for: request).flatMap { $0 }
@@ -23,7 +22,7 @@ public class RouteResponder: Responder {
     return validResponses[validResponses.startIndex]
   }
 
-  private func responses(for request: Request) -> [HTTPResponse?] {
+  private func responses(for request: HTTPRequest) -> [HTTPResponse?] {
     let route = routes[request.path]
 
     var responses = FourHundredResponder(route: route).responses(to: request)
@@ -33,12 +32,12 @@ public class RouteResponder: Responder {
     return responses
   }
 
-  private func responseByVerb(request: Request, route: Route) -> HTTPResponse {
+  private func responseByVerb(request: HTTPRequest, route: Route) -> HTTPResponse {
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     switch request.verb {
     case .Get:
-      let responders = gatherGetResponders(request: request, route: route)
+      let responders = getFormatters(request: request, route: route)
       isAnImage(request.path) ?
         responders.first.map { $0.execute(on: &response) } :
         responders.forEach { $0.execute(on: &response) }
@@ -68,7 +67,7 @@ public class RouteResponder: Responder {
     return response
   }
 
-  private func gatherGetResponders(request: Request, route: Route) -> [ResponseFormatter] {
+  private func getFormatters(request: HTTPRequest, route: Route) -> [ResponseFormatter] {
     return [
       ContentFormatter(for: request, data: data),
       route.cookiePrefix.map { CookieFormatter(for: request, prefix: $0) } ?? ParamsFormatter(for: request),

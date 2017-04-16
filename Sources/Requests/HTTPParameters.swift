@@ -1,6 +1,4 @@
-import Foundation
-
-public class HTTPParameters: Params {
+public class HTTPParameters {
   public let rawParams: String
   public let keyValueSeparator: String = "="
   public let multipleSeparator: String = "&"
@@ -50,3 +48,17 @@ public class HTTPParameters: Params {
   }
 
 }
+
+extension String {
+  public init?(parameters: HTTPParameters) {
+    if parameters.isEmpty { return nil }
+    var result = ""
+
+    for (index, paramKey) in parameters.keys.enumerated() {
+      result += (paramKey + parameters.keyValueSeparator + parameters.values[index] + "\n")
+    }
+
+    self.init(result.trimmingCharacters(in: .newlines))
+  }
+}
+

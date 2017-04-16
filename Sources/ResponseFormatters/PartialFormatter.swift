@@ -1,18 +1,17 @@
-import Foundation
 import Requests
 import Responses
 
 public class PartialFormatter: ResponseFormatter {
-  let request: Request
+  let request: HTTPRequest
 
-  public init(for request: Request) {
+  public init(for request: HTTPRequest) {
     self.request = request
   }
 
   public func execute(on response: inout HTTPResponse) {
     request.headers["range"].map { range in
       let partialContent = response.body
-                                   .flatMap(toString)
+                                   .flatMap(responseBodyToString)
                                    .map { rangeOf("\($0)\n", range: range) }
 
       response.updateStatus(with: TwoHundred.PartialContent)
@@ -31,7 +30,7 @@ public class PartialFormatter: ResponseFormatter {
     return chars[range].joined(separator: "")
   }
 
-  private func toString(_ body: [UInt8]) -> String? {
+  private func responseBodyToString(_ body: [UInt8]) -> String? {
     return String(bytes: body, encoding: .utf8)?.trimmingCharacters(in: .newlines)
   }
 

@@ -1,19 +1,16 @@
 import Requests
 import Responses
-import Util
 import Responders
 
 public class Router {
   let port: UInt16
   let socket: Socket
-  let persistedData: ControllerData
   let threadQueue: ThreadQueue
   let responder: Responder
 
-  public init(socket: Socket, data: ControllerData, threadQueue: ThreadQueue, port: UInt16, responder: Responder) {
+  public init(socket: Socket, threadQueue: ThreadQueue, port: UInt16, responder: Responder) {
     self.port = port
     self.socket = socket
-    self.persistedData = data
     self.threadQueue = threadQueue
     self.responder = responder
   }
