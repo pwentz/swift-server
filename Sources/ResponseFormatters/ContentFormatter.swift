@@ -12,7 +12,7 @@ public class ContentFormatter: ResponseFormatter {
   }
 
   public func execute(on response: inout HTTPResponse) {
-    data.getBinary(request.pathName).map { resource in
+    data.getBinary(request.path).map { resource in
       response.appendToHeaders(with: ["Content-Type": getContentType(for: request)])
 
       response.appendToBody(resource)

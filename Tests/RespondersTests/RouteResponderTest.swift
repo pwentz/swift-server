@@ -240,8 +240,8 @@ class RouteResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)!
 
       let contents = ControllerData(
-        ["file1": Data(value: "this is a text file."),
-         "file2": Data(value: "this is another text file.")]
+        ["/file1": Data(value: "this is a text file."),
+         "/file2": Data(value: "this is another text file.")]
       )
 
       let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get, .Put, .Patch])
@@ -260,7 +260,7 @@ class RouteResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)!
 
       let contents = ControllerData(
-        ["image.jpeg": Data(value: "some stuff")]
+        ["/image.jpeg": Data(value: "some stuff")]
       )
 
       let route = Route(auth: nil, includeLogs: true, allowedMethods: [.Get])
@@ -277,7 +277,7 @@ class RouteResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)!
 
       let contents = ControllerData(
-        ["file1.txt": Data(value: "some stuff")]
+        ["/file1.txt": Data(value: "some stuff")]
       )
 
       let route = Route(auth: nil, includeLogs: true, allowedMethods: [.Get])
@@ -297,7 +297,7 @@ class RouteResponderTest: XCTestCase {
       let content = "This is a file that contains text to read part of in order to fulfill a 206."
 
       let contents = ControllerData(
-        ["partial_content.txt": Data(value: content)]
+        ["/partial_content.txt": Data(value: content)]
       )
 
       let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get])
@@ -314,7 +314,7 @@ class RouteResponderTest: XCTestCase {
       let content = "This is a file that contains text to read part of in order to fulfill a 206."
 
       let contents = ControllerData(
-        ["partial_content.txt": Data(value: content)]
+        ["/partial_content.txt": Data(value: content)]
       )
 
       let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get])
@@ -331,8 +331,8 @@ class RouteResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)!
 
       let contents = ControllerData(
-        ["file1": Data(value: "I'm a text file"),
-         "file2": Data(value: "I'm a different text file")]
+        ["/file1": Data(value: "I'm a text file"),
+         "/file2": Data(value: "I'm a different text file")]
       )
 
       let route = Route(allowedMethods: [.Get], includeDirectoryLinks: true)
@@ -340,7 +340,7 @@ class RouteResponderTest: XCTestCase {
       let routes = ["/": route]
       let response = RouteResponder(routes: routes, data: contents).getResponse(to: request)
 
-      let expected = "\n\n<a href=\"/file2\">file2</a><br><a href=\"/file1\">file1</a>".toBytes
+      let expected = "\n\n<a href=\"/file1\">file1</a><br><a href=\"/file2\">file2</a>".toBytes
 
       XCTAssertEqual(response.body!, expected)
     }
@@ -483,63 +483,6 @@ class RouteResponderTest: XCTestCase {
       XCTAssert(response.body == nil)
     }
 
-  // Redirect
-    // func testItCanRedirectWith302Status() {
-    //   let rawRequest = "GET /redirect HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
-    //   let request = HTTPRequest(for: rawRequest)!
-
-    //   let route = Route(allowedMethods: [.Get], redirectPath: "/")
-    //   let redirectedRoute = Route(allowedMethods: [.Get])
-
-    //   let routes = ["/redirect": route, "/": redirectedRoute]
-
-    //   let response = RouteResponder(routes: routes).getResponse(to: request)
-
-    //   XCTAssertEqual(response.statusCode, "302 Found")
-    // }
-
-    // func testItCanRedirectWithLocationHeader() {
-    //   let rawRequest = "GET /redirect HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
-    //   let request = HTTPRequest(for: rawRequest)!
-
-    //   let route = Route(allowedMethods: [.Get], redirectPath: "/")
-    //   let redirectedRoute = Route(allowedMethods: [.Get])
-
-    //   let routes = ["/redirect": route, "/": redirectedRoute]
-
-    //   let response = RouteResponder(routes: routes).getResponse(to: request)
-
-    //   XCTAssertEqual(response.headers["Location"]!, "/")
-    // }
-
-    // func testItGivesAMethodNotAllowedStatusIfRedirectedRouteIsNotSupported() {
-    //   let rawRequest = "GET /redirect HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
-    //   let request = HTTPRequest(for: rawRequest)!
-
-    //   let route = Route(allowedMethods: [.Get], redirectPath: "/")
-    //   let redirectedRoute = Route(allowedMethods: [.Post])
-
-    //   let routes = ["/redirect": route, "/": redirectedRoute]
-
-    //   let response = RouteResponder(routes: routes).getResponse(to: request)
-
-    //   XCTAssertEqual(response.statusCode, "405 Method Not Allowed")
-    // }
-
-    // func testItGivesA404IfRedirectedRouteDoesNotExist() {
-    //   let rawRequest = "GET /redirect HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
-    //   let request = HTTPRequest(for: rawRequest)!
-
-    //   let route = Route(allowedMethods: [.Get], redirectPath: "/someRoute")
-
-    //   let routes = ["/redirect": route]
-
-    //   let response = RouteResponder(routes: routes).getResponse(to: request)
-
-    //   XCTAssertEqual(response.statusCode, "404 Not Found")
-    // }
-
-
   // Custom HTTPResponse
 
     func testItReturnsCustomResponseWhenRouteHasCustomResponse() {
@@ -562,7 +505,7 @@ class RouteResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)!
 
       let contents = ControllerData(
-        ["image.jpeg": Data(value: "some encoded stuff")]
+        ["/image.jpeg": Data(value: "some encoded stuff")]
       )
 
       let route = Route(allowedMethods: [.Get], includeDirectoryLinks: true)
@@ -578,7 +521,7 @@ class RouteResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)!
 
       let contents = ControllerData(
-        ["image.jpeg": Data(value: "some encoded stuff")]
+        ["/image.jpeg": Data(value: "some encoded stuff")]
       )
 
       let route = Route(includeLogs: true, allowedMethods: [.Get])
@@ -594,7 +537,7 @@ class RouteResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)!
 
       let contents = ControllerData(
-        ["image.jpeg": Data(value: "some encoded stuff")]
+        ["/image.jpeg": Data(value: "some encoded stuff")]
       )
 
       let route = Route(cookiePrefix: "some stuff", allowedMethods: [.Get])
@@ -610,7 +553,7 @@ class RouteResponderTest: XCTestCase {
       let request = HTTPRequest(for: rawRequest)!
 
       let contents = ControllerData(
-        ["image.jpeg": Data(value: "some encoded stuff")]
+        ["/image.jpeg": Data(value: "some encoded stuff")]
       )
 
       let route = Route(allowedMethods: [.Get])
@@ -619,5 +562,19 @@ class RouteResponderTest: XCTestCase {
       let response = RouteResponder(routes: routes, data: contents).getResponse(to: request)
 
       XCTAssertEqual(response.body!, "\n\nsome encoded stuff".toBytes)
+    }
+
+
+  // Invalid verb
+    func testItReturns405OnInvalidMethod() {
+      let rawRequest = "HEY /someRoute HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate\r\nRange: bytes=-4"
+      let request = HTTPRequest(for: rawRequest)!
+
+      let route = Route(allowedMethods: [.Get])
+      let routes = ["/someRoute": route]
+
+      let response = RouteResponder(routes: routes).getResponse(to: request)
+
+      XCTAssertEqual(response.statusCode, "405 Method Not Allowed")
     }
 }

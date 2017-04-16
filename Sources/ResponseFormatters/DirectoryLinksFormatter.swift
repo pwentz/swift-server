@@ -12,8 +12,12 @@ public class DirectoryLinksFormatter: ResponseFormatter {
 
   public func execute(on response: inout HTTPResponse) {
     files.map { fileNames in
-      let links = fileNames.map { "<a href=\"/\($0)\">\($0)</a>" }
+      let links = fileNames.map { "<a href=\"\($0)\">\(trimSlash(in: $0))</a>" }
       response.appendToBody(links.joined(separator: "<br>"))
     }
+  }
+
+  private func trimSlash(in file: String) -> String {
+    return file.substring(from: file.index(after: file.startIndex))
   }
 }

@@ -11,8 +11,8 @@ class ContentFormatterTest: XCTestCase {
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ControllerData(
-      ["file1": Data(value: "this is a text file."),
-       "file2": Data(value: "this is another text file.")]
+      ["/file1": Data(value: "this is a text file."),
+       "/file2": Data(value: "this is another text file.")]
     )
 
     let contentFormatter = ContentFormatter(for: request, data: contents)
@@ -27,7 +27,7 @@ class ContentFormatterTest: XCTestCase {
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ControllerData(
-      ["file1": Data(value: "this is a text file.")]
+      ["/file1": Data(value: "this is a text file.")]
     )
 
     let contentFormatter = ContentFormatter(for: request, data: contents)
@@ -42,7 +42,7 @@ class ContentFormatterTest: XCTestCase {
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ControllerData(
-      ["image.jpeg": Data(value: "some encoded stuff")]
+      ["/image.jpeg": Data(value: "some encoded stuff")]
     )
 
     let contentFormatter = ContentFormatter(for: request, data: contents)
@@ -57,7 +57,7 @@ class ContentFormatterTest: XCTestCase {
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ControllerData(
-      ["image.jpeg": Data(value: "some encoded stuff")]
+      ["/image.jpeg": Data(value: "some encoded stuff")]
     )
 
     let contentFormatter = ContentFormatter(for: request, data: contents)
@@ -72,7 +72,7 @@ class ContentFormatterTest: XCTestCase {
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ControllerData(
-      ["image.png": Data(value: "some encoded stuff")]
+      ["/image.png": Data(value: "some encoded stuff")]
     )
 
     let contentFormatter = ContentFormatter(for: request, data: contents)
@@ -87,7 +87,7 @@ class ContentFormatterTest: XCTestCase {
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ControllerData(
-      ["image.gif": Data(value: "some encoded stuff")]
+      ["/image.gif": Data(value: "some encoded stuff")]
     )
 
     let contentFormatter = ContentFormatter(for: request, data: contents)
@@ -102,7 +102,7 @@ class ContentFormatterTest: XCTestCase {
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ControllerData(
-      ["file1.txt": Data(value: "this is a text file.")]
+      ["/file1.txt": Data(value: "this is a text file.")]
     )
 
     let contentFormatter = ContentFormatter(for: request, data: contents)

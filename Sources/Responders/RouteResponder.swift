@@ -15,7 +15,8 @@ public class RouteResponder: Responder {
   }
 
   public func getResponse(to request: HTTPRequest) -> HTTPResponse {
-    logs.append("\(request.verb.rawValue.uppercased()) \(request.path) HTTP/1.1")
+    let requestLog = request.verb.map { "\($0.rawValue.uppercased()) \(request.path) HTTP/1.1" }
+    logs.append(requestLog ?? "INVALID REQUEST")
 
     let validResponses = responses(for: request).flatMap { $0 }
 
@@ -36,13 +37,13 @@ public class RouteResponder: Responder {
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     switch request.verb {
-    case .Get:
+    case let verb where verb == .Get:
       let responders = getFormatters(request: request, route: route)
       isAnImage(request.path) ?
         responders.first.map { $0.execute(on: &response) } :
         responders.forEach { $0.execute(on: &response) }
 
-    case .Options:
+    case let verb where verb == .Options:
       let allowedMethods = route
                             .allowedMethods
                             .map { $0.rawValue.uppercased() }
@@ -50,15 +51,15 @@ public class RouteResponder: Responder {
 
       response.appendToHeaders(with: ["Allow": allowedMethods])
 
-    case .Post, .Put:
-      data.update(request.pathName, withVal: request.body ?? "")
+    case let verb where verb == .Post || verb == .Put:
+      data.update(request.path, withVal: request.body ?? "")
 
-    case .Patch:
-      data.update(request.pathName, withVal: request.body ?? "")
+    case let verb where verb == .Patch:
+      data.update(request.path, withVal: request.body ?? "")
       response.updateStatus(with: TwoHundred.NoContent)
 
-    case .Delete:
-      data.remove(at: request.pathName)
+    case let verb where verb == .Delete:
+      data.remove(at: request.path)
 
     default:
       break
