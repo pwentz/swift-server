@@ -1,7 +1,9 @@
+import Foundation
+
 public struct HTTPResponse {
-  public var statusCode: String
-  public var headers: [String: String]
-  public var body: [UInt8]?
+  public let statusCode: String
+  public let headers: [String: String]
+  public let body: [UInt8]?
   public let crlf: String = "\r\n"
   public let headerDivide: String = ":"
   public let transferProtocol: String = "HTTP/1.1"
@@ -13,22 +15,18 @@ public struct HTTPResponse {
     self.body = body?.toBytes
   }
 
-  public mutating func appendToBody(_ newContent: BytesRepresentable) {
-    self.body = body.map { $0 + "\n\n".toBytes + newContent.toBytes } ?? newContent.toBytes
+  public func updateBody(with newBody: Data) -> BytesRepresentable? {
+    return self.body.map { ($0 + "\n\n".toBytes).toData + newBody } ?? newBody
   }
 
-  public mutating func replaceBody(with newContent: BytesRepresentable) {
-    self.body = newContent.toBytes
-  }
+  public func updateHeaders(with newHeaders: [String: String]) -> [String: String] {
+    var existingHeaders = self.headers
 
-  public mutating func appendToHeaders(with newHeaders: [String: String]) {
-    for (key, value) in newHeaders {
-      headers[key] = value
+    for (k,v) in newHeaders {
+      existingHeaders[k] = v
     }
-  }
 
-  public mutating func updateStatus(with newStatus: HTTPStatusCode) {
-    self.statusCode = newStatus.description
+    return existingHeaders
   }
 
   public var formatted: [UInt8] {

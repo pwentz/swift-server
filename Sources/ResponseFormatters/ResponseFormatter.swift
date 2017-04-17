@@ -1,5 +1,5 @@
 import Responses
 
 public protocol ResponseFormatter {
-  func execute(on response: inout HTTPResponse)
+  func addToResponse(_ response: HTTPResponse) -> HTTPResponse
 }

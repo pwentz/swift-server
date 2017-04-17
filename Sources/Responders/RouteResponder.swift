@@ -1,3 +1,4 @@
+import Foundation
 import Util
 import Routes
 import Requests
@@ -37,14 +38,14 @@ public class RouteResponder: Responder {
   }
 
   private func responseByVerb(request: HTTPRequest, route: Route) -> HTTPResponse {
-    var response = HTTPResponse(status: TwoHundred.Ok)
+    let response = HTTPResponse(status: TwoHundred.Ok)
 
     switch request.verb {
     case let verb where verb == .Get:
       let responders = getFormatters(request: request, route: route)
-      isAnImage(request.path) ?
-        responders.first.map { $0.execute(on: &response) } :
-        responders.forEach { $0.execute(on: &response) }
+      return isAnImage(request.path) ?
+        responders.first!.addToResponse(response) :
+        responders.reduce(response) { $1.addToResponse($0) }
 
     case let verb where verb == .Options:
       let allowedMethods = route
@@ -52,23 +53,23 @@ public class RouteResponder: Responder {
                             .map { $0.rawValue.uppercased() }
                             .joined(separator: ",")
 
-      response.appendToHeaders(with: ["Allow": allowedMethods])
+      return HTTPResponse(status: TwoHundred.Ok, headers: ["Allow": allowedMethods])
 
     case let verb where verb == .Post || verb == .Put:
       data.update(request.path, withVal: request.body)
+      return response
 
     case let verb where verb == .Patch:
       data.update(request.path, withVal: request.body)
-      response.updateStatus(with: TwoHundred.NoContent)
+      return HTTPResponse(status: TwoHundred.NoContent)
 
     case let verb where verb == .Delete:
       data.remove(at: request.path)
+      return response
 
     default:
-      break
+      return response
     }
-
-    return response
   }
 
   private func getFormatters(request: HTTPRequest, route: Route) -> [ResponseFormatter] {

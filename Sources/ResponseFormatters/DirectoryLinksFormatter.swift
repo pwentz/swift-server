@@ -7,13 +7,19 @@ public class DirectoryLinksFormatter: ResponseFormatter {
     self.files = files
   }
 
-  public func execute(on response: inout HTTPResponse) {
+  public func addToResponse(_ response: HTTPResponse) -> HTTPResponse {
     guard let fileNames = files else {
-      return
+      return response
     }
 
     let links = fileNames.map { "<a href=\"\($0)\">\(trimSlash(in: $0))</a>" }
-    response.appendToBody(links.joined(separator: "<br>"))
+    let newBody = links.joined(separator: "<br>").toData
+
+    return HTTPResponse(
+      status: TwoHundred.Ok,
+      headers: response.headers,
+      body: response.updateBody(with: newBody)
+    )
   }
 
   private func trimSlash(in file: String) -> String {

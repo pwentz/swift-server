@@ -1,12 +1,17 @@
+import Foundation
+
 extension String: BytesRepresentable {
   public var toBytes: [UInt8] {
     return Array(self.utf8)
   }
 }
 
-extension String {
+public extension String {
+  var toData: Data {
+    return self.toBytes.toData
+  }
 
-  public init(response: HTTPResponse) {
+  init(response: HTTPResponse) {
     let joinedHeaders = response.headers
                                 .map { $0 + response.headerDivide + $1 }
                                 .joined(separator: response.crlf)

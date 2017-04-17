@@ -11,14 +11,18 @@ public class ContentFormatter: ResponseFormatter {
     self.data = data
   }
 
-  public func execute(on response: inout HTTPResponse) {
+  public func addToResponse(_ response: HTTPResponse) -> HTTPResponse {
     guard let resource = data.getBinary(path) else {
-      return
+      return response
     }
 
-    response.appendToHeaders(with: ["Content-Type": getContentType()])
+    let newHeaders = ["Content-Type": getContentType()]
 
-    response.appendToBody(resource)
+    return HTTPResponse(
+      status: TwoHundred.Ok,
+      headers: response.updateHeaders(with: newHeaders),
+      body: response.updateBody(with: resource)
+    )
   }
 
   private func getContentType() -> String {

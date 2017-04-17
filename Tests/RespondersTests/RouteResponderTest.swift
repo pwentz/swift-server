@@ -68,7 +68,7 @@ class RouteResponderTest: XCTestCase {
       XCTAssertEqual(response.statusCode, "200 OK")
     }
 
-  // Set Cookie
+  // // Set Cookie
     func testItReturnsResponseWithCorrectBody() {
       let rawRequest = "GET /cookie?type=chocolate HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
@@ -95,7 +95,7 @@ class RouteResponderTest: XCTestCase {
       XCTAssertEqual(newResponse.headers["Set-Cookie"]!, "type=chocolate")
     }
 
-  // Cookie Header
+  // // Cookie Header
     func testItCanRespondWithCorrectBodyGivenCookieHeader() {
       let rawRequest = "GET /eat_cookie HTTP/1.1\r\nCookie: type=chocolate\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
@@ -111,7 +111,7 @@ class RouteResponderTest: XCTestCase {
       XCTAssertEqual(response.body!, result)
     }
 
-  // Set Cookie AND Auth
+  // // Set Cookie AND Auth
     func testItCanHandleCookieAndAuthInvalidAuth() {
       let rawRequest = "GET /cookie?type=chocolate HTTP/1.1\r\nAuthorization: Basic ABC\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
@@ -124,7 +124,7 @@ class RouteResponderTest: XCTestCase {
       XCTAssertEqual(res.statusCode, "401 Unauthorized")
     }
 
-  // Include Logs
+  // // Include Logs
     func testItCanIncludeLogsInResponseBody() {
       let rawRequest = "GET /someRoute HTTP/1.1\r\n Host: localhost:5000\r\nConnection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
@@ -154,7 +154,7 @@ class RouteResponderTest: XCTestCase {
       XCTAssertEqual(response.body!, expected)
     }
 
-  // Include logs AND cookie
+  // // Include logs AND cookie
     func testItCanSetCookieAndIncludeLogs() {
       let rawRequest = "GET /cookie?type=chocolate HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
@@ -194,7 +194,7 @@ class RouteResponderTest: XCTestCase {
       XCTAssertEqual(res.body!, expected)
     }
 
-  // Allowed Methods
+  // // Allowed Methods
     func testItFixesAllowHeaderOnOptionRequest() {
       let rawRequest = "OPTIONS /method_options HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
@@ -219,7 +219,7 @@ class RouteResponderTest: XCTestCase {
       XCTAssertEqual(res.statusCode, "405 Method Not Allowed")
     }
 
-  // FIle Data
+  // // FIle Data
     func testItCanReturnCorrectFileContentForFileData() {
       let rawRequest = "GET /file1 HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
@@ -238,7 +238,7 @@ class RouteResponderTest: XCTestCase {
       XCTAssertEqual(response.body!, expected)
     }
 
-  // File Data with Logs?
+  // // File Data with Logs?
 
     func testItDeniesAdditionalBodyWhenContentTypeDoesNotAllowIt() {
       let rawRequest = "GET /image.jpeg HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
@@ -274,43 +274,7 @@ class RouteResponderTest: XCTestCase {
       XCTAssertEqual(response.body!, expected)
     }
 
-  // Partial Contents
-    func testItCanRespondWithA206WithPartialContent() {
-      let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate\r\nRange:bytes=4-"
-      let request = HTTPRequest(for: rawRequest)!
-
-      let content = "This is a file that contains text to read part of in order to fulfill a 206.\n"
-
-      let contents = ResourceData(
-        ["/partial_content.txt": Data(bytes: content.toBytes)]
-      )
-
-      let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get])
-      let routes = ["/partial_content.txt": route]
-      let response = RouteResponder(routes: routes, data: contents).getResponse(to: request)
-
-      XCTAssertEqual(response.statusCode, "206 Partial Content")
-    }
-
-    func testItCanRespondWithPartialContentsGivenRangeStart() {
-      let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate\r\nRange:bytes=4-"
-      let request = HTTPRequest(for: rawRequest)!
-
-      let content = "This is a file that contains text to read part of in order to fulfill a 206.\n"
-
-      let contents = ResourceData(
-        ["/partial_content.txt": Data(bytes: content.toBytes)]
-      )
-
-      let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get])
-      let routes = ["/partial_content.txt": route]
-      let response = RouteResponder(routes: routes, data: contents).getResponse(to: request)
-      let expected = " is a file that contains text to read part of in order to fulfill a 206.\n".toBytes
-
-      XCTAssertEqual(response.body!, expected)
-    }
-
-  // File Links
+  // // File Links
     func testItCanRespondWhenRouteIncludesLinks() {
       let rawRequest = "GET / HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
@@ -330,7 +294,7 @@ class RouteResponderTest: XCTestCase {
       XCTAssertEqual(response.body!, expected)
     }
 
-  // Params (no Cookie)
+  // // Params (no Cookie)
     func testItCanRespondWithExpectedParams() {
       let rawRequest = "GET /parameters?variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F&variable_2=stuff HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
@@ -345,7 +309,7 @@ class RouteResponderTest: XCTestCase {
       XCTAssertEqual(response.body!, expected.toBytes)
     }
 
-  // Patch file resources
+  // // Patch file resources
     func testItCanReturnA204WhenSentAPatch() {
       let rawRequest = "PATCH /patch-content.txt HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nIf-Match: dc50a0d27dda2eee9f65644cd7e4c9cf11de8bec\r\nContent-Length: 15\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate\r\npatched content"
       let request = HTTPRequest(for: rawRequest)!
@@ -382,7 +346,7 @@ class RouteResponderTest: XCTestCase {
       XCTAssertEqual(response.body!, expected.toBytes)
     }
 
-  // Post/Put/Delete/Get non-file resources
+  // // Post/Put/Delete/Get non-file resources
     func testItReturnsEmptyOnInitialGet() {
       let rawRequest = "GET /form HTTP/1.1\r\nHost:\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
@@ -468,7 +432,7 @@ class RouteResponderTest: XCTestCase {
       XCTAssert(response.body == nil)
     }
 
-  // Custom HTTPResponse
+  // // Custom HTTPResponse
 
     func testItReturnsCustomResponseWhenRouteHasCustomResponse() {
       let rawRequest = "GET /coffee HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
@@ -484,7 +448,7 @@ class RouteResponderTest: XCTestCase {
       XCTAssertEqual(response.body!, "I'm a teapot".toBytes)
     }
 
-  // Appending body to response w/ image content
+  // // Appending body to response w/ image content
     func testItDoesNotIncludeDirectoryLinksWhenResponseIsAnImage() {
       let rawRequest = "GET /image.jpeg HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
@@ -550,7 +514,7 @@ class RouteResponderTest: XCTestCase {
     }
 
 
-  // Invalid verb
+  // // Invalid verb
     func testItReturns405OnInvalidMethod() {
       let rawRequest = "HEY /someRoute HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate\r\nRange: bytes=-4"
       let request = HTTPRequest(for: rawRequest)!
