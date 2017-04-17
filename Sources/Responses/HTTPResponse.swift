@@ -7,7 +7,7 @@ public struct HTTPResponse {
   public let transferProtocol: String = "HTTP/1.1"
   public let bodyDivide: String = "\n\n"
 
-  public init(status: StatusCode, headers: [String: String] = [:], body: BytesRepresentable? = nil) {
+  public init(status: HTTPStatusCode, headers: [String: String] = [:], body: BytesRepresentable? = nil) {
     self.statusCode = status.description
     self.headers = headers
 
@@ -30,7 +30,7 @@ public struct HTTPResponse {
     }
   }
 
-  public mutating func updateStatus(with newStatus: StatusCode) {
+  public mutating func updateStatus(with newStatus: HTTPStatusCode) {
     self.statusCode = newStatus.description
   }
 
