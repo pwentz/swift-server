@@ -1,6 +1,10 @@
 import Responses
 import Routes
 
+public let logsPath = "/Users/patrickwentz/8th-light/projects/swift/server/Sources/Server/Debug"
+public let defaultPublicDirPath = "/Users/patrickwentz/cob_spec/public"
+public let authCredentials = "YWRtaW46aHVudGVyMg=="
+
 public var routes: [String: Route] = [
   "/logs": Route(auth: authCredentials, includeLogs: true, allowedMethods: [.Get]),
   "/log": Route(allowedMethods: [.Get]),
@@ -19,7 +23,3 @@ public var routes: [String: Route] = [
   "/method_options": Route(allowedMethods: [.Options, .Get, .Head, .Post, .Put]),
   "/method_options2": Route(allowedMethods: [.Options, .Get])
 ]
-
-public let logsPath = "/Users/patrickwentz/8th-light/projects/swift/server/Sources/Server/Debug"
-public let defaultPublicDirPath = "/Users/patrickwentz/cob_spec/public"
-public let authCredentials = "YWRtaW46aHVudGVyMg=="

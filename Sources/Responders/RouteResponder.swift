@@ -26,13 +26,14 @@ public class RouteResponder: Responder {
   private func responses(for request: HTTPRequest) -> [HTTPResponse?] {
     let route = routes[request.path]
 
-    return (
-      FourHundredResponder(route: route).responses(to: request) +
-      [
-        ThreeHundredResponder(route: route).getResponse(to: request),
-        route.map { responseByVerb(request: request, route: $0) }
-      ]
-    )
+    let clientErrorResponses = FourHundredResponder(route: route).responses(to: request)
+
+    let remainingResponses = [
+      ThreeHundredResponder(route: route).getResponse(to: request),
+      route.map { responseByVerb(request: request, route: $0) }
+    ]
+
+    return clientErrorResponses + remainingResponses
   }
 
   private func responseByVerb(request: HTTPRequest, route: Route) -> HTTPResponse {
