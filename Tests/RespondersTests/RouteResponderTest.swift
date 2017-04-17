@@ -279,7 +279,7 @@ class RouteResponderTest: XCTestCase {
       let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate\r\nRange:bytes=4-"
       let request = HTTPRequest(for: rawRequest)!
 
-      let content = "This is a file that contains text to read part of in order to fulfill a 206."
+      let content = "This is a file that contains text to read part of in order to fulfill a 206.\n"
 
       let contents = ResourceData(
         ["/partial_content.txt": Data(bytes: content.toBytes)]
@@ -296,7 +296,7 @@ class RouteResponderTest: XCTestCase {
       let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate\r\nRange:bytes=4-"
       let request = HTTPRequest(for: rawRequest)!
 
-      let content = "This is a file that contains text to read part of in order to fulfill a 206."
+      let content = "This is a file that contains text to read part of in order to fulfill a 206.\n"
 
       let contents = ResourceData(
         ["/partial_content.txt": Data(bytes: content.toBytes)]

@@ -15,7 +15,7 @@ public class PartialFormatter: ResponseFormatter {
 
     let partialContent = response.body
                                  .flatMap(responseBodyToString)
-                                 .map { rangeOf("\($0)\n", range: validRange) }
+                                 .map { rangeOf($0, range: validRange) }
 
     response.updateStatus(with: TwoHundred.PartialContent)
     response.replaceBody(with: partialContent ?? "")
@@ -33,7 +33,7 @@ public class PartialFormatter: ResponseFormatter {
   }
 
   private func responseBodyToString(_ body: [UInt8]) -> String? {
-    return String(bytes: body, encoding: .utf8)?.trimmingCharacters(in: .newlines)
+    return String(bytes: body, encoding: .utf8)
   }
 
   private func calculateRange(of rawRange: String, length contentLength: Int) -> Range<Int> {
