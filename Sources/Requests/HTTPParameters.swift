@@ -51,7 +51,10 @@ public class HTTPParameters {
 
 extension String {
   public init?(parameters: HTTPParameters) {
-    if parameters.isEmpty { return nil }
+    if parameters.isEmpty {
+      return nil
+    }
+
     var result = ""
 
     for (index, paramKey) in parameters.keys.enumerated() {
@@ -61,4 +64,3 @@ extension String {
     self.init(result.trimmingCharacters(in: .newlines))
   }
 }
-

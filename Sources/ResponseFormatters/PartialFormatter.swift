@@ -2,21 +2,23 @@ import Requests
 import Responses
 
 public class PartialFormatter: ResponseFormatter {
-  let request: HTTPRequest
+  let range: String?
 
-  public init(for request: HTTPRequest) {
-    self.request = request
+  public init(for range: String?) {
+    self.range = range
   }
 
   public func execute(on response: inout HTTPResponse) {
-    request.headers["range"].map { range in
-      let partialContent = response.body
-                                   .flatMap(responseBodyToString)
-                                   .map { rangeOf("\($0)\n", range: range) }
-
-      response.updateStatus(with: TwoHundred.PartialContent)
-      response.replaceBody(with: partialContent ?? "")
+    guard let validRange = range else {
+      return
     }
+
+    let partialContent = response.body
+                                 .flatMap(responseBodyToString)
+                                 .map { rangeOf("\($0)\n", range: validRange) }
+
+    response.updateStatus(with: TwoHundred.PartialContent)
+    response.replaceBody(with: partialContent ?? "")
   }
 
   private func rangeOf(_ currentBody: String, range: String) -> String {

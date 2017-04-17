@@ -3,25 +3,27 @@ import Requests
 import Util
 
 public class ContentFormatter: ResponseFormatter {
-  let request: HTTPRequest
-  let data: ControllerData
+  let path: String
+  let data: ResourceData
 
-  public init(for request: HTTPRequest, data: ControllerData) {
-    self.request = request
+  public init(for path: String, data: ResourceData) {
+    self.path = path
     self.data = data
   }
 
   public func execute(on response: inout HTTPResponse) {
-    data.getBinary(request.path).map { resource in
-      response.appendToHeaders(with: ["Content-Type": getContentType(for: request)])
-
-      response.appendToBody(resource)
+    guard let resource = data.getBinary(path) else {
+      return
     }
+
+    response.appendToHeaders(with: ["Content-Type": getContentType()])
+
+    response.appendToBody(resource)
   }
 
-  private func getContentType(for request: HTTPRequest) -> String {
-    return request.path.range(of: ".").map { extStart -> String in
-      let ext = request.path.substring(from: extStart.upperBound)
+  private func getContentType() -> String {
+    return path.range(of: ".").map { extStart -> String in
+      let ext = path.substring(from: extStart.upperBound)
 
       return isAnImage(ext) ? "image/\(ext)" : "text/plain"
     } ?? "text/html"
