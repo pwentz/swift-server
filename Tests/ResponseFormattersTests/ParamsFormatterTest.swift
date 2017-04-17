@@ -20,7 +20,7 @@ class ParamsFormatterTest: XCTestCase {
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     ParamsFormatter(for: request.params).execute(on: &response)
-    let expected = "\n\nvariable_1 = Operators"
+    let expected = "variable_1 = Operators"
 
     XCTAssertEqual(response.body!, expected.toBytes)
   }
@@ -31,7 +31,7 @@ class ParamsFormatterTest: XCTestCase {
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     ParamsFormatter(for: request.params).execute(on: &response)
-    let expected = "\n\nvariable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?"
+    let expected = "variable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?"
 
     XCTAssertEqual(response.body!, expected.toBytes)
   }
@@ -42,7 +42,7 @@ class ParamsFormatterTest: XCTestCase {
     var response = HTTPResponse(status: TwoHundred.Ok)
 
     ParamsFormatter(for: request.params).execute(on: &response)
-    let expected = "\n\nvariable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?\nvariable_2 = stuff"
+    let expected = "variable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?\nvariable_2 = stuff"
 
     XCTAssertEqual(response.body!, expected.toBytes)
   }

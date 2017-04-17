@@ -12,7 +12,7 @@ class CookieFormatterTest: XCTestCase {
 
     CookieFormatter(for: request, prefix: cookiePrefix).execute(on: &response)
 
-    XCTAssertEqual(response.body!, "\n\nEat".toBytes)
+    XCTAssertEqual(response.body!, "Eat".toBytes)
   }
 
   func testItCanAddSetCookieHeaderToResponse() {
@@ -34,7 +34,7 @@ class CookieFormatterTest: XCTestCase {
 
     CookieFormatter(for: request, prefix: cookiePrefix).execute(on: &response)
 
-    XCTAssertEqual(response.body!, "\n\nwow chocolate".toBytes)
+    XCTAssertEqual(response.body!, "wow chocolate".toBytes)
   }
 
   func testItWillNotAppendIfNoCookieHeader() {
