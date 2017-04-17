@@ -13,7 +13,7 @@ class PartialFormatterTest: XCTestCase {
     let partialFormatter = PartialFormatter(for: request.headers["range"])
 
     partialFormatter.execute(on: &response)
-    let expected = "\n\n is a file that contains text to read part of in order to fulfill a 206.\n"
+    let expected = " is a file that contains text to read part of in order to fulfill a 206.\n"
 
     XCTAssertEqual(response.body!, expected.toBytes)
   }
@@ -28,7 +28,7 @@ class PartialFormatterTest: XCTestCase {
 
     partialFormatter.execute(on: &response)
 
-    let expected = "\n\n 206.\n"
+    let expected = " 206.\n"
 
     XCTAssertEqual(response.body!, expected.toBytes)
   }
@@ -40,7 +40,7 @@ class PartialFormatterTest: XCTestCase {
     var response = HTTPResponse(status: TwoHundred.Ok, body: content)
 
     PartialFormatter(for: request.headers["range"]).execute(on: &response)
-    let expected = "\n\nThis "
+    let expected = "This "
 
     XCTAssertEqual(response.body!, expected.toBytes)
   }

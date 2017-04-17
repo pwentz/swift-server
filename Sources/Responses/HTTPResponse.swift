@@ -10,18 +10,15 @@ public struct HTTPResponse {
   public init(status: HTTPStatusCode, headers: [String: String] = [:], body: BytesRepresentable? = nil) {
     self.statusCode = status.description
     self.headers = headers
-
-    let divide = bodyDivide
-    self.body = body.map { divide.toBytes + $0.toBytes }
+    self.body = body?.toBytes
   }
 
   public mutating func appendToBody(_ newContent: BytesRepresentable) {
-    let formattedContent = "\n\n".toBytes + newContent.toBytes
-    self.body = body.map { $0 + formattedContent } ?? formattedContent
+    self.body = body.map { $0 + "\n\n".toBytes + newContent.toBytes } ?? newContent.toBytes
   }
 
   public mutating func replaceBody(with newContent: BytesRepresentable) {
-    self.body = "\n\n".toBytes + newContent.toBytes
+    self.body = newContent.toBytes
   }
 
   public mutating func appendToHeaders(with newHeaders: [String: String]) {
@@ -37,7 +34,7 @@ public struct HTTPResponse {
   public var formatted: [UInt8] {
     let joinedHeaders = headers.map { $0 + headerDivide + $1 }.joined(separator: crlf)
     let statusLine = "\(transferProtocol) \(statusCode + crlf)"
-    let formattedBody = body ?? []
+    let formattedBody = body.map { "\n\n".toBytes + $0 } ?? []
 
     return statusLine.toBytes + joinedHeaders.toBytes + formattedBody
   }

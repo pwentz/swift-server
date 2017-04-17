@@ -11,7 +11,7 @@ class DirectoryLinksFormatterTest: XCTestCase {
 
     DirectoryLinksFormatter(files: files).execute(on: &response)
 
-    let expected = "\n\n<a href=\"/file1\">file1</a><br><a href=\"/file2\">file2</a>"
+    let expected = "<a href=\"/file1\">file1</a><br><a href=\"/file2\">file2</a>"
 
     XCTAssertEqual(response.body!, expected.toBytes)
   }

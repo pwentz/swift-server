@@ -11,7 +11,7 @@ class LogsFormatterTest: XCTestCase {
     let logsFormatter = LogsFormatter(logs: existingLogs)
     logsFormatter.execute(on: &response)
 
-    let expected = "\n\nGET /someRoute HTTP/1.1"
+    let expected = "GET /someRoute HTTP/1.1"
 
     XCTAssertEqual(response.body!, expected.toBytes)
   }
