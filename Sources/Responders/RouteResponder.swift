@@ -6,10 +6,10 @@ import ResponseFormatters
 
 public class RouteResponder: Responder {
   let routes: [String: Route]
-  let data: ControllerData
+  let data: ResourceData
   var logs: [String] = []
 
-  public init(routes: [String: Route], data: ControllerData = ControllerData([:])) {
+  public init(routes: [String: Route], data: ResourceData = ResourceData([:])) {
     self.routes = routes
     self.data = data
   }
@@ -26,11 +26,13 @@ public class RouteResponder: Responder {
   private func responses(for request: HTTPRequest) -> [HTTPResponse?] {
     let route = routes[request.path]
 
-    var responses = FourHundredResponder(route: route).responses(to: request)
-    responses.append(ThreeHundredResponder(route: route).getResponse(to: request))
-    route.map { responses.append(responseByVerb(request: request, route: $0)) }
-
-    return responses
+    return (
+      FourHundredResponder(route: route).responses(to: request) +
+      [
+        ThreeHundredResponder(route: route).getResponse(to: request),
+        route.map { responseByVerb(request: request, route: $0) }
+      ]
+    )
   }
 
   private func responseByVerb(request: HTTPRequest, route: Route) -> HTTPResponse {
@@ -52,10 +54,10 @@ public class RouteResponder: Responder {
       response.appendToHeaders(with: ["Allow": allowedMethods])
 
     case let verb where verb == .Post || verb == .Put:
-      data.update(request.path, withVal: request.body ?? "")
+      data.update(request.path, withVal: request.body)
 
     case let verb where verb == .Patch:
-      data.update(request.path, withVal: request.body ?? "")
+      data.update(request.path, withVal: request.body)
       response.updateStatus(with: TwoHundred.NoContent)
 
     case let verb where verb == .Delete:
@@ -70,11 +72,11 @@ public class RouteResponder: Responder {
 
   private func getFormatters(request: HTTPRequest, route: Route) -> [ResponseFormatter] {
     return [
-      ContentFormatter(for: request, data: data),
-      route.cookiePrefix.map { CookieFormatter(for: request, prefix: $0) } ?? ParamsFormatter(for: request),
-      LogsFormatter(for: request, logs: route.includeLogs ? logs : nil),
-      DirectoryLinksFormatter(for: request, files: route.includeDirectoryLinks ? data.fileNames : nil),
-      PartialFormatter(for: request)
+      ContentFormatter(for: request.path, data: data),
+      route.cookiePrefix.map { CookieFormatter(for: request, prefix: $0) } ?? ParamsFormatter(for: request.params),
+      LogsFormatter(logs: route.includeLogs ? logs : nil),
+      DirectoryLinksFormatter(files: route.includeDirectoryLinks ? data.fileNames : nil),
+      PartialFormatter(for: request.headers["range"])
     ]
   }
 

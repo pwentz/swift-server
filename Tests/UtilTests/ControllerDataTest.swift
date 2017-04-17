@@ -3,15 +3,15 @@ import XCTest
 
 class ControllerDataTest: XCTestCase {
   func testItHasAGetter() {
-    let contents: [String: Data] = ["file1": Data(value: "I'm a text file")]
-    let data = ControllerData(contents)
+    let contents: [String: Data] = ["file1": Data(bytes: "I'm a text file".toBytes)]
+    let data = ResourceData(contents)
 
     XCTAssertEqual(data.get("file1"), "I'm a text file")
   }
 
   func testItCanMutateValues() {
-    let contents: [String: Data] = ["file1": Data(value: "I'm a text file")]
-    let data = ControllerData(contents)
+    let contents: [String: Data] = ["file1": Data(bytes: "I'm a text file".toBytes)]
+    let data = ResourceData(contents)
 
     data.update("file1", withVal: "I'm a modified text file")
 
@@ -19,10 +19,10 @@ class ControllerDataTest: XCTestCase {
   }
 
   func testMutationsPersistToReferences() {
-    let contents: [String: Data] = ["file1": Data(value: "I'm a text file")]
-    let data = ControllerData(contents)
+    let contents: [String: Data] = ["file1": Data(bytes: "I'm a text file".toBytes)]
+    let data = ResourceData(contents)
 
-    let referenceToData: [ControllerData] = [data]
+    let referenceToData: [ResourceData] = [data]
 
     data.update("file1", withVal: "I'm a modified text file")
 
@@ -30,9 +30,9 @@ class ControllerDataTest: XCTestCase {
   }
 
   func testItCanFilterOutGivenFilenames() {
-    let contents: [String: Data] = ["file1": Data(value: "I'm a text file")]
+    let contents: [String: Data] = ["file1": Data(bytes: "I'm a text file".toBytes)]
 
-    let data = ControllerData(contents)
+    let data = ResourceData(contents)
 
     XCTAssertEqual(data.fileNames, ["file1"])
   }

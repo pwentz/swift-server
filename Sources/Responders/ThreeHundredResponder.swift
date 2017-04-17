@@ -10,12 +10,11 @@ class ThreeHundredResponder {
   }
 
   func getResponse(to request: HTTPRequest) -> HTTPResponse? {
-    return route?.redirectPath.flatMap { redirectPath -> HTTPResponse? in
-        foundResponse(location: redirectPath)
-    }
+    return route?.redirectPath.flatMap { foundResponse(location: $0) }
   }
 
   private func foundResponse(location: String) -> HTTPResponse {
     return HTTPResponse(status: ThreeHundred.Found, headers: ["Location": location])
   }
+
 }

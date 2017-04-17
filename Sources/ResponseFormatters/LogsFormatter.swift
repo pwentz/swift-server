@@ -1,19 +1,18 @@
 import Responses
-import Requests
 import Util
 
 public class LogsFormatter: ResponseFormatter {
-  let request: HTTPRequest
-  let logs: [String]?
+  let serverLogs: [String]?
 
-  public init(for request: HTTPRequest, logs: [String]? = nil) {
-    self.request = request
-    self.logs = logs
+  public init(logs: [String]? = nil) {
+    serverLogs = logs
   }
 
   public func execute(on response: inout HTTPResponse) {
-    logs.map { serverLogs in
-      response.appendToBody(serverLogs.joined(separator: "\n"))
+    guard let logs = serverLogs else {
+      return
     }
+
+    response.appendToBody(logs.joined(separator: "\n"))
   }
 }

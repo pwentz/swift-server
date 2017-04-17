@@ -21,10 +21,11 @@ class FourHundredResponder {
     let givenAuth = request.headers["authorization"]?.components(separatedBy: " ").last
 
     return [
-      route.map { _ in nil } ?? notFoundResponse,
-      route?.customResponse.map { $0 },
-      route?.auth != givenAuth ? unauthorizedResponse : nil ,
+      route == nil ? notFoundResponse : nil,
+      route?.customResponse,
+      route?.auth != givenAuth ? unauthorizedResponse : nil,
       (route?.canRespondTo(request.verb)).flatMap { $0 ? nil : methodNotAllowedResponse }
     ]
   }
+
 }

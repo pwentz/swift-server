@@ -24,7 +24,7 @@ do {
     contents["/\(file)"] = try Data(contentsOf: URL(fileURLWithPath: publicDir + "/" + file))
   }
 
-  let persistedData = ControllerData(contents)
+  let persistedData = ResourceData(contents)
 
   persistedData.fileNames.forEach {
     routes[$0] = Route(allowedMethods: [.Get, .Patch])

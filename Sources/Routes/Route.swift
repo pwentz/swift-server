@@ -33,4 +33,5 @@ public class Route {
   public func canRespondTo(_ verb: HTTPRequestMethod?) -> Bool {
     return verb.map { self.allowedMethods.contains($0) } ?? false
   }
+
 }

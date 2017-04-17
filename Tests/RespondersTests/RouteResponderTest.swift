@@ -10,13 +10,12 @@ class RouteResponderTest: XCTestCase {
     func testItReturnsA401ResponseIfAuthDoesntMatch() {
       let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\nAuthorization: Basic someencodedstuff==\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
-      let contents = ControllerData([:])
 
       let route = Route(auth: "XYZ", includeLogs: false, allowedMethods: [.Get])
 
       let routes = ["/logs": route]
 
-      let responder = RouteResponder(routes: routes, data: contents)
+      let responder = RouteResponder(routes: routes)
 
       let response = responder.getResponse(to: request)
 
@@ -27,13 +26,12 @@ class RouteResponderTest: XCTestCase {
     func testItReturnsA200ResponseIfAuthMatches() {
       let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\nAuthorization: Basic XYZ\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
-      let contents = ControllerData([:])
 
       let route = Route(auth: "XYZ", includeLogs: false, allowedMethods: [.Get])
 
       let routes = ["/logs": route]
 
-      let responder = RouteResponder(routes: routes, data: contents)
+      let responder = RouteResponder(routes: routes)
 
       let response = responder.getResponse(to: request)
 
@@ -43,13 +41,12 @@ class RouteResponderTest: XCTestCase {
     func testItReturnsA401ResponseIfAuthDoesntExist() {
       let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
-      let contents = ControllerData([:])
 
       let route = Route(auth: "XYZ", includeLogs: false, allowedMethods: [.Get])
 
       let routes = ["/logs": route]
 
-      let responder = RouteResponder(routes: routes, data: contents)
+      let responder = RouteResponder(routes: routes)
 
       let response = responder.getResponse(to: request)
 
@@ -59,13 +56,12 @@ class RouteResponderTest: XCTestCase {
     func testItReturnsA200IfAuthIsNil() {
       let rawRequest = "GET /logs HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
-      let contents = ControllerData([:])
 
       let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get])
 
       let routes = ["/logs": route]
 
-      let responder = RouteResponder(routes: routes, data: contents)
+      let responder = RouteResponder(routes: routes)
 
       let response = responder.getResponse(to: request)
 
@@ -76,14 +72,13 @@ class RouteResponderTest: XCTestCase {
     func testItReturnsResponseWithCorrectBody() {
       let rawRequest = "GET /cookie?type=chocolate HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
-      let data = ControllerData([:])
 
       let route = Route(auth: nil, cookiePrefix: "Eat", includeLogs: false, allowedMethods: [.Get])
       let routes = ["/cookie": route]
 
-      let newResponse = RouteResponder(routes: routes, data: data).getResponse(to: request)
+      let newResponse = RouteResponder(routes: routes).getResponse(to: request)
 
-      let expected = Array("\n\nEat".utf8)
+      let expected = "\n\nEat".toBytes
 
       XCTAssertEqual(newResponse.body!, expected)
     }
@@ -91,12 +86,11 @@ class RouteResponderTest: XCTestCase {
     func testItReturnsAResponseWithSetCookieHeadersWhenSetCookieFlagIsTrue() {
       let rawRequest = "GET /cookie?type=chocolate HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
-      let data = ControllerData([:])
 
       let route = Route(auth: nil, cookiePrefix: "Eat", includeLogs: false, allowedMethods: [.Get])
       let routes = ["/cookie": route]
 
-      let newResponse = RouteResponder(routes: routes, data: data).getResponse(to: request)
+      let newResponse = RouteResponder(routes: routes).getResponse(to: request)
 
       XCTAssertEqual(newResponse.headers["Set-Cookie"]!, "type=chocolate")
     }
@@ -105,15 +99,14 @@ class RouteResponderTest: XCTestCase {
     func testItCanRespondWithCorrectBodyGivenCookieHeader() {
       let rawRequest = "GET /eat_cookie HTTP/1.1\r\nCookie: type=chocolate\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
-      let contents = ControllerData([:])
 
       let route = Route(auth: nil, cookiePrefix: "mmmm", includeLogs: false, allowedMethods: [.Get])
       let routes = ["/eat_cookie": route]
 
-      let responder = RouteResponder(routes: routes, data: contents)
+      let responder = RouteResponder(routes: routes)
 
       let response = responder.getResponse(to: request)
-      let result = Array("\n\nmmmm chocolate".utf8)
+      let result = "\n\nmmmm chocolate".toBytes
 
       XCTAssertEqual(response.body!, result)
     }
@@ -122,12 +115,11 @@ class RouteResponderTest: XCTestCase {
     func testItCanHandleCookieAndAuthInvalidAuth() {
       let rawRequest = "GET /cookie?type=chocolate HTTP/1.1\r\nAuthorization: Basic ABC\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
-      let contents = ControllerData([:])
 
       let route = Route(auth: "XYZ", cookiePrefix: "Eat", includeLogs: false, allowedMethods: [.Get])
       let routes = ["/cookie": route]
 
-      let res = RouteResponder(routes: routes, data: contents).getResponse(to: request)
+      let res = RouteResponder(routes: routes).getResponse(to: request)
 
       XCTAssertEqual(res.statusCode, "401 Unauthorized")
     }
@@ -136,13 +128,12 @@ class RouteResponderTest: XCTestCase {
     func testItCanIncludeLogsInResponseBody() {
       let rawRequest = "GET /someRoute HTTP/1.1\r\n Host: localhost:5000\r\nConnection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
-      let contents = ControllerData([:])
 
       let route = Route(auth: nil, includeLogs: true, allowedMethods: [.Get])
       let routes = ["/someRoute": route]
 
-      let res = RouteResponder(routes: routes, data: contents).getResponse(to: request)
-      let expected = Array("\n\nGET /someRoute HTTP/1.1".utf8)
+      let res = RouteResponder(routes: routes).getResponse(to: request)
+      let expected = "\n\nGET /someRoute HTTP/1.1".toBytes
 
       XCTAssertEqual(res.body!, expected)
     }
@@ -151,15 +142,14 @@ class RouteResponderTest: XCTestCase {
       let _ = "GET /someRoute HTTP/1.1\r\n Host: localhost:5000\r\nConnection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let rawRequest = "GET /someRoute HTTP/1.1\r\n Host: localhost:5000\r\nConnection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
-      let contents = ControllerData([:])
 
       let route = Route(auth: nil, includeLogs: true, allowedMethods: [.Get])
       let routes = ["/someRoute": route]
-      let responder = RouteResponder(routes: routes, data: contents)
+      let responder = RouteResponder(routes: routes)
 
       let _ = responder.getResponse(to: request)
       let response = responder.getResponse(to: request)
-      let expected = Array("\n\nGET /someRoute HTTP/1.1\nGET /someRoute HTTP/1.1".utf8)
+      let expected = "\n\nGET /someRoute HTTP/1.1\nGET /someRoute HTTP/1.1".toBytes
 
       XCTAssertEqual(response.body!, expected)
     }
@@ -168,13 +158,12 @@ class RouteResponderTest: XCTestCase {
     func testItCanSetCookieAndIncludeLogs() {
       let rawRequest = "GET /cookie?type=chocolate HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
-      let contents = ControllerData([:])
 
       let route = Route(auth: nil, cookiePrefix: "Eat", includeLogs: true, allowedMethods: [.Get])
       let routes = ["/cookie": route]
 
-      let res = RouteResponder(routes: routes, data: contents).getResponse(to: request)
-      let expected = Array("\n\nEat\n\nGET /cookie HTTP/1.1".utf8)
+      let res = RouteResponder(routes: routes).getResponse(to: request)
+      let expected = "\n\nEat\n\nGET /cookie HTTP/1.1".toBytes
 
       XCTAssertEqual(res.body!, expected)
     }
@@ -182,13 +171,12 @@ class RouteResponderTest: XCTestCase {
     func testItCanGetCookieAndIncludeLogs() {
       let rawRequest = "GET /eat_cookie HTTP/1.1\r\nCookie: type=chocolate\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
-      let contents = ControllerData([:])
 
       let route = Route(auth: nil, cookiePrefix: "mmmm", includeLogs: true, allowedMethods: [.Get])
       let routes = ["/eat_cookie": route]
 
-      let res = RouteResponder(routes: routes, data: contents).getResponse(to: request)
-      let expected = Array("\n\nmmmm chocolate\n\nGET /eat_cookie HTTP/1.1".utf8)
+      let res = RouteResponder(routes: routes).getResponse(to: request)
+      let expected = "\n\nmmmm chocolate\n\nGET /eat_cookie HTTP/1.1".toBytes
 
       XCTAssertEqual(res.body!, expected)
     }
@@ -196,13 +184,12 @@ class RouteResponderTest: XCTestCase {
     func testItCanGetCookieAndIncludeLogsWithAuth() {
       let rawRequest = "GET /eat_cookie HTTP/1.1\r\nAuthorization: Basic ABC\r\nCookie: type=chocolate\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
-      let contents = ControllerData([:])
 
       let route = Route(auth: "ABC", cookiePrefix: "mmmm", includeLogs: true, allowedMethods: [.Get])
       let routes = ["/eat_cookie": route]
 
-      let res = RouteResponder(routes: routes, data: contents).getResponse(to: request)
-      let expected = Array("\n\nmmmm chocolate\n\nGET /eat_cookie HTTP/1.1".utf8)
+      let res = RouteResponder(routes: routes).getResponse(to: request)
+      let expected = "\n\nmmmm chocolate\n\nGET /eat_cookie HTTP/1.1".toBytes
 
       XCTAssertEqual(res.body!, expected)
     }
@@ -211,12 +198,11 @@ class RouteResponderTest: XCTestCase {
     func testItFixesAllowHeaderOnOptionRequest() {
       let rawRequest = "OPTIONS /method_options HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
-      let contents = ControllerData([:])
 
       let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get, .Post, .Options])
       let routes = ["/method_options": route]
 
-      let res = RouteResponder(routes: routes, data: contents).getResponse(to: request)
+      let res = RouteResponder(routes: routes).getResponse(to: request)
 
       XCTAssertEqual(res.headers["Allow"]!, "GET,POST,OPTIONS")
     }
@@ -224,12 +210,11 @@ class RouteResponderTest: XCTestCase {
     func testItDoesNotAllowMethodsThatAreNotDefinedByRoute() {
       let rawRequest = "DELETE /someResource HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
-      let contents = ControllerData([:])
 
       let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get, .Post])
       let routes = ["/someResource": route]
 
-      let res = RouteResponder(routes: routes, data: contents).getResponse(to: request)
+      let res = RouteResponder(routes: routes).getResponse(to: request)
 
       XCTAssertEqual(res.statusCode, "405 Method Not Allowed")
     }
@@ -239,15 +224,15 @@ class RouteResponderTest: XCTestCase {
       let rawRequest = "GET /file1 HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
 
-      let contents = ControllerData(
-        ["/file1": Data(value: "this is a text file."),
-         "/file2": Data(value: "this is another text file.")]
+      let contents = ResourceData(
+        ["/file1": Data(bytes: "this is a text file.".toBytes),
+         "/file2": Data(bytes: "this is another text file.".toBytes)]
       )
 
       let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get, .Put, .Patch])
       let routes = ["/file1": route]
 
-      let expected = Array("\n\nthis is a text file.".utf8)
+      let expected = "\n\nthis is a text file.".toBytes
       let response = RouteResponder(routes: routes, data: contents).getResponse(to: request)
 
       XCTAssertEqual(response.body!, expected)
@@ -259,8 +244,8 @@ class RouteResponderTest: XCTestCase {
       let rawRequest = "GET /image.jpeg HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
 
-      let contents = ControllerData(
-        ["/image.jpeg": Data(value: "some stuff")]
+      let contents = ResourceData(
+        ["/image.jpeg": Data(bytes: "some stuff".toBytes)]
       )
 
       let route = Route(auth: nil, includeLogs: true, allowedMethods: [.Get])
@@ -276,8 +261,8 @@ class RouteResponderTest: XCTestCase {
       let rawRequest = "GET /file1.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
 
-      let contents = ControllerData(
-        ["/file1.txt": Data(value: "some stuff")]
+      let contents = ResourceData(
+        ["/file1.txt": Data(bytes: "some stuff".toBytes)]
       )
 
       let route = Route(auth: nil, includeLogs: true, allowedMethods: [.Get])
@@ -296,8 +281,8 @@ class RouteResponderTest: XCTestCase {
 
       let content = "This is a file that contains text to read part of in order to fulfill a 206."
 
-      let contents = ControllerData(
-        ["/partial_content.txt": Data(value: content)]
+      let contents = ResourceData(
+        ["/partial_content.txt": Data(bytes: content.toBytes)]
       )
 
       let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get])
@@ -313,8 +298,8 @@ class RouteResponderTest: XCTestCase {
 
       let content = "This is a file that contains text to read part of in order to fulfill a 206."
 
-      let contents = ControllerData(
-        ["/partial_content.txt": Data(value: content)]
+      let contents = ResourceData(
+        ["/partial_content.txt": Data(bytes: content.toBytes)]
       )
 
       let route = Route(auth: nil, includeLogs: false, allowedMethods: [.Get])
@@ -330,9 +315,9 @@ class RouteResponderTest: XCTestCase {
       let rawRequest = "GET / HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
 
-      let contents = ControllerData(
-        ["/file1": Data(value: "I'm a text file"),
-         "/file2": Data(value: "I'm a different text file")]
+      let contents = ResourceData(
+        ["/file1": Data(bytes: "I'm a text file".toBytes),
+         "/file2": Data(bytes: "I'm a different text file".toBytes)]
       )
 
       let route = Route(allowedMethods: [.Get], includeDirectoryLinks: true)
@@ -364,7 +349,7 @@ class RouteResponderTest: XCTestCase {
     func testItCanReturnA204WhenSentAPatch() {
       let rawRequest = "PATCH /patch-content.txt HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nIf-Match: dc50a0d27dda2eee9f65644cd7e4c9cf11de8bec\r\nContent-Length: 15\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate\r\npatched content"
       let request = HTTPRequest(for: rawRequest)!
-      let contents = ControllerData(["patch-content.txt": Data(value: "default content")])
+      let contents = ResourceData(["patch-content.txt": Data(bytes: "default content".toBytes)])
 
       let route = Route(allowedMethods: [.Patch])
 
@@ -384,7 +369,7 @@ class RouteResponderTest: XCTestCase {
       let route = Route(allowedMethods: [.Patch, .Get])
       let routes = ["/patch-content.txt": route]
 
-      let contents = ControllerData(["patch-content.txt": Data(value: "default content")])
+      let contents = ResourceData(["patch-content.txt": Data(bytes: "default content".toBytes)])
 
       let responder = RouteResponder(routes: routes, data: contents)
 
@@ -504,8 +489,8 @@ class RouteResponderTest: XCTestCase {
       let rawRequest = "GET /image.jpeg HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
 
-      let contents = ControllerData(
-        ["/image.jpeg": Data(value: "some encoded stuff")]
+      let contents = ResourceData(
+        ["/image.jpeg": Data(bytes: "some encoded stuff".toBytes)]
       )
 
       let route = Route(allowedMethods: [.Get], includeDirectoryLinks: true)
@@ -520,8 +505,8 @@ class RouteResponderTest: XCTestCase {
       let rawRequest = "GET /image.jpeg HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
 
-      let contents = ControllerData(
-        ["/image.jpeg": Data(value: "some encoded stuff")]
+      let contents = ResourceData(
+        ["/image.jpeg": Data(bytes: "some encoded stuff".toBytes)]
       )
 
       let route = Route(includeLogs: true, allowedMethods: [.Get])
@@ -536,8 +521,8 @@ class RouteResponderTest: XCTestCase {
       let rawRequest = "GET /image.jpeg HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
       let request = HTTPRequest(for: rawRequest)!
 
-      let contents = ControllerData(
-        ["/image.jpeg": Data(value: "some encoded stuff")]
+      let contents = ResourceData(
+        ["/image.jpeg": Data(bytes: "some encoded stuff".toBytes)]
       )
 
       let route = Route(cookiePrefix: "some stuff", allowedMethods: [.Get])
@@ -552,8 +537,8 @@ class RouteResponderTest: XCTestCase {
       let rawRequest = "GET /image.jpeg HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate\r\nRange: bytes=-4"
       let request = HTTPRequest(for: rawRequest)!
 
-      let contents = ControllerData(
-        ["/image.jpeg": Data(value: "some encoded stuff")]
+      let contents = ResourceData(
+        ["/image.jpeg": Data(bytes: "some encoded stuff".toBytes)]
       )
 
       let route = Route(allowedMethods: [.Get])

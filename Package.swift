@@ -34,6 +34,7 @@ let package = Package(
       ]),
       Target(name: "Util", dependencies: [
         .Target(name: "Errors"),
+        .Target(name: "Responses")
       ]),
       Target(name: "FileIO", dependencies: [
         .Target(name: "Config"),

@@ -10,7 +10,7 @@ class PartialFormatterTest: XCTestCase {
     let content = "This is a file that contains text to read part of in order to fulfill a 206."
     var response = HTTPResponse(status: TwoHundred.Ok, body: content)
 
-    let partialFormatter = PartialFormatter(for: request)
+    let partialFormatter = PartialFormatter(for: request.headers["range"])
 
     partialFormatter.execute(on: &response)
     let expected = "\n\n is a file that contains text to read part of in order to fulfill a 206.\n"
@@ -24,7 +24,7 @@ class PartialFormatterTest: XCTestCase {
     let content = "This is a file that contains text to read part of in order to fulfill a 206."
     var response = HTTPResponse(status: TwoHundred.Ok, body: content)
 
-    let partialFormatter = PartialFormatter(for: request)
+    let partialFormatter = PartialFormatter(for: request.headers["range"])
 
     partialFormatter.execute(on: &response)
 
@@ -39,7 +39,7 @@ class PartialFormatterTest: XCTestCase {
     let content = "This is a file that contains text to read part of in order to fulfill a 206."
     var response = HTTPResponse(status: TwoHundred.Ok, body: content)
 
-    PartialFormatter(for: request).execute(on: &response)
+    PartialFormatter(for: request.headers["range"]).execute(on: &response)
     let expected = "\n\nThis "
 
     XCTAssertEqual(response.body!, expected.toBytes)
@@ -51,7 +51,7 @@ class PartialFormatterTest: XCTestCase {
     let content = "This is a file that contains text to read part of in order to fulfill a 206."
     var response = HTTPResponse(status: TwoHundred.Ok, body: content)
 
-    PartialFormatter(for: request).execute(on: &response)
+    PartialFormatter(for: request.headers["range"]).execute(on: &response)
 
     XCTAssertEqual(response.statusCode, "206 Partial Content")
   }
