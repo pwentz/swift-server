@@ -20,8 +20,7 @@ public class RouteResponder: Responder {
       return HTTPResponse(status: FourHundred.NotFound)
     }
 
-    let requestLog = request.verb.map { "\($0.rawValue.uppercased()) \(request.path) HTTP/1.1" }
-    logs.append(requestLog ?? "INVALID REQUEST METHOD")
+    appendToLogs(request)
 
     if let clientError = FourHundredResponder(route: route).response(to: request) {
       return clientError
@@ -57,9 +56,17 @@ public class RouteResponder: Responder {
 
       return HTTPResponse(status: TwoHundred.Ok, headers: ["Allow": allowedMethods])
 
-    case let verb where verb == .Post || verb == .Put:
+    case let verb where verb == .Post:
       data.update(request.path, withVal: request.body)
       return validResponse
+
+    case let verb where verb == .Put:
+      let resource = data.get(request.path)
+      data.update(request.path, withVal: request.body)
+
+      return resource == nil ?
+        HTTPResponse(status: TwoHundred.Created) :
+        validResponse
 
     case let verb where verb == .Patch:
       data.update(request.path, withVal: request.body)
@@ -71,6 +78,12 @@ public class RouteResponder: Responder {
 
     default:
       return validResponse
+    }
+  }
+
+  private func appendToLogs(_ request: HTTPRequest) {
+    if let verb = request.verb {
+      logs.append("\(verb.rawValue.uppercased()) \(request.path) HTTP/1.1")
     }
   }
 

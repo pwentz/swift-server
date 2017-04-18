@@ -3,13 +3,14 @@ public protocol HTTPStatusCode {
 }
 
 public enum TwoHundred: HTTPStatusCode {
-  case Ok, NoContent, PartialContent
+  case Ok, NoContent, PartialContent, Created
 
   public var description: String {
     switch self {
       case .Ok: return "200 OK"
       case .NoContent: return "204 No Content"
       case .PartialContent: return "206 Partial Content"
+      case .Created: return "201 Created"
     }
   }
 }
