@@ -7,7 +7,6 @@ import FileIO
 import Routes
 import Responders
 
-let defaultPort: UInt16 = 5000
 let reader = CommandLineReader(args: CommandLine.arguments)
 var contents: [String: Data] = [:]
 

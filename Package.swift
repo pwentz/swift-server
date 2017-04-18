@@ -25,7 +25,8 @@ let package = Package(
       Target(name: "ResponseFormatters", dependencies: [
         .Target(name: "Requests"),
         .Target(name: "Routes"),
-        .Target(name: "Responses")
+        .Target(name: "Responses"),
+        .Target(name: "Util")
       ]),
       Target(name: "Router", dependencies: [
         .Target(name: "Requests"),

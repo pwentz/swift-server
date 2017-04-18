@@ -1,3 +1,4 @@
+import Foundation
 import Responses
 import Requests
 import Util

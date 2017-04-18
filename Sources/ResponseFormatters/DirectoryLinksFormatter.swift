@@ -1,3 +1,4 @@
+import Foundation
 import Responses
 
 public class DirectoryLinksFormatter: ResponseFormatter {
@@ -9,6 +10,10 @@ public class DirectoryLinksFormatter: ResponseFormatter {
 
   public func addToResponse(_ response: HTTPResponse) -> HTTPResponse {
     guard let fileNames = files else {
+      return response
+    }
+
+    guard response.headers["Content-Type"] != "text/plain" else {
       return response
     }
 
