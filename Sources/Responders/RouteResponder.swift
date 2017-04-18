@@ -16,36 +16,38 @@ public class RouteResponder: Responder {
   }
 
   public func getResponse(to request: HTTPRequest) -> HTTPResponse {
+    guard let route = routes[request.path] else {
+      return HTTPResponse(status: FourHundred.NotFound)
+    }
+
     let requestLog = request.verb.map { "\($0.rawValue.uppercased()) \(request.path) HTTP/1.1" }
-    logs.append(requestLog ?? "INVALID REQUEST")
+    logs.append(requestLog ?? "INVALID REQUEST METHOD")
 
-    let validResponses = responses(for: request).flatMap { $0 }
+    if let clientError = FourHundredResponder(route: route).response(to: request) {
+      return clientError
+    }
 
-    return validResponses[validResponses.startIndex]
-  }
+    if let customResponse = route.customResponse {
+      return customResponse
+    }
 
-  private func responses(for request: HTTPRequest) -> [HTTPResponse?] {
-    let route = routes[request.path]
+    if let redirect = ThreeHundredResponder(route: route).response(to: request) {
+      return redirect
+    }
 
-    let clientErrorResponses = FourHundredResponder(route: route).responses(to: request)
-
-    let remainingResponses = [
-      ThreeHundredResponder(route: route).getResponse(to: request),
-      route.map { responseByVerb(request: request, route: $0) }
-    ]
-
-    return clientErrorResponses + remainingResponses
+    return responseByVerb(request: request, route: route)
   }
 
   private func responseByVerb(request: HTTPRequest, route: Route) -> HTTPResponse {
-    let response = HTTPResponse(status: TwoHundred.Ok)
-
+    let validResponse = HTTPResponse(status: TwoHundred.Ok)
     switch request.verb {
+
     case let verb where verb == .Get:
-      let responders = getFormatters(request: request, route: route)
+      let formatters = getFormatters(request: request, route: route)
+
       return isAnImage(request.path) ?
-        responders.first!.addToResponse(response) :
-        responders.reduce(response) { $1.addToResponse($0) }
+        formatters.first!.addToResponse(validResponse) :
+        formatters.reduce(validResponse) { $1.addToResponse($0) }
 
     case let verb where verb == .Options:
       let allowedMethods = route
@@ -57,7 +59,7 @@ public class RouteResponder: Responder {
 
     case let verb where verb == .Post || verb == .Put:
       data.update(request.path, withVal: request.body)
-      return response
+      return validResponse
 
     case let verb where verb == .Patch:
       data.update(request.path, withVal: request.body)
@@ -65,10 +67,10 @@ public class RouteResponder: Responder {
 
     case let verb where verb == .Delete:
       data.remove(at: request.path)
-      return response
+      return validResponse
 
     default:
-      return response
+      return validResponse
     }
   }
 

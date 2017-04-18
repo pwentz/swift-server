@@ -12,7 +12,7 @@ class ThreeHundredResponderTest: XCTestCase {
 
     let responder = ThreeHundredResponder(route: route)
 
-    let response = responder.getResponse(to: request)
+    let response = responder.response(to: request)
     let expectedResponse = HTTPResponse(status: ThreeHundred.Found, headers: ["Location": "/"])
 
     XCTAssertEqual(response, expectedResponse)
