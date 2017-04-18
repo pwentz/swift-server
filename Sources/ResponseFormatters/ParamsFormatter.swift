@@ -8,16 +8,22 @@ public class ParamsFormatter: ResponseFormatter {
     self.params = params
   }
 
-  public func execute(on response: inout HTTPResponse) {
+  public func addToResponse(_ response: HTTPResponse) -> HTTPResponse {
     guard let validParams = params else {
-      return
+      return response
     }
 
     let formattedParams = validParams
                            .toDictionary()
                            .map { $0 + " = " + $1 }
                            .joined(separator: "\n")
+                           .toData
 
-    response.appendToBody(formattedParams)
+    return HTTPResponse(
+      status: TwoHundred.Ok,
+      headers: response.headers,
+      body: response.updateBody(with: formattedParams)
+    )
   }
+
 }

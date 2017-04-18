@@ -8,11 +8,16 @@ public class LogsFormatter: ResponseFormatter {
     serverLogs = logs
   }
 
-  public func execute(on response: inout HTTPResponse) {
+  public func addToResponse(_ response: HTTPResponse) -> HTTPResponse {
     guard let logs = serverLogs else {
-      return
+      return response
     }
 
-    response.appendToBody(logs.joined(separator: "\n"))
+    return HTTPResponse(
+      status: TwoHundred.Ok,
+      headers: response.headers,
+      body: response.updateBody(with: logs.joined(separator: "\n").toData)
+    )
   }
+
 }

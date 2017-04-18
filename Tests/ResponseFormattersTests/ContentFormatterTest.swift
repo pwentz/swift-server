@@ -6,7 +6,7 @@ import Responses
 
 class ContentFormatterTest: XCTestCase {
   func testItCanUpdateBodyWithFileContents() {
-    var response = HTTPResponse(status: TwoHundred.Ok)
+    let response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ResourceData(
       ["/file1": Data(bytes: "this is a text file.".toBytes),
@@ -14,86 +14,112 @@ class ContentFormatterTest: XCTestCase {
     )
 
     let contentFormatter = ContentFormatter(for: "/file1", data: contents)
-    contentFormatter.execute(on: &response)
+    let newResponse = contentFormatter.addToResponse(response)
 
-    XCTAssertEqual(response.body!, "this is a text file.".toBytes)
+    XCTAssertEqual(newResponse.body!, "this is a text file.".toBytes)
   }
 
   func testItCanUpdateContentTypeHeaderWhenExtensionIsMissing() {
-    var response = HTTPResponse(status: TwoHundred.Ok)
+    let response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ResourceData(
       ["/file1": Data(bytes: "this is a text file.".toBytes)]
     )
 
     let contentFormatter = ContentFormatter(for: "/file1", data: contents)
-    contentFormatter.execute(on: &response)
+    let newResponse = contentFormatter.addToResponse(response)
 
-    XCTAssertEqual(response.headers["Content-Type"]!, "text/html")
+    XCTAssertEqual(newResponse.headers["Content-Type"]!, "text/html")
+  }
+
+  func testItCanAppendContentTypeHeaderToExistingHeaders() {
+    let response = HTTPResponse(status: TwoHundred.Ok, headers: ["Date": "today"])
+
+    let contents = ResourceData(
+      ["/file1": Data(bytes: "this is a text file.".toBytes)]
+    )
+
+    let contentFormatter = ContentFormatter(for: "/file1", data: contents)
+    let newResponse = contentFormatter.addToResponse(response)
+
+    XCTAssertEqual(newResponse.headers, ["Date": "today", "Content-Type": "text/html"])
   }
 
   func testItCanUpdateBodyWithImageContents() {
-    var response = HTTPResponse(status: TwoHundred.Ok)
+    let response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ResourceData(
       ["/image.jpeg": Data(bytes: "some encoded stuff".toBytes)]
     )
 
     let contentFormatter = ContentFormatter(for: "/image.jpeg", data: contents)
-    contentFormatter.execute(on: &response)
+    let newResponse = contentFormatter.addToResponse(response)
 
-    XCTAssertEqual(response.body!, "some encoded stuff".toBytes)
+    XCTAssertEqual(newResponse.body!, "some encoded stuff".toBytes)
   }
 
   func testItCanUpdateContentTypeHeaderWithJPEG() {
-    var response = HTTPResponse(status: TwoHundred.Ok)
+    let response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ResourceData(
       ["/image.jpeg": Data(bytes: "some encoded stuff".toBytes)]
     )
 
     let contentFormatter = ContentFormatter(for: "/image.jpeg", data: contents)
-    contentFormatter.execute(on: &response)
+    let newResponse = contentFormatter.addToResponse(response)
 
-    XCTAssertEqual(response.headers["Content-Type"]!, "image/jpeg")
+    XCTAssertEqual(newResponse.headers["Content-Type"]!, "image/jpeg")
   }
 
   func testItCanUpdateContentTypeHeaderWithPNG() {
-    var response = HTTPResponse(status: TwoHundred.Ok)
+    let response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ResourceData(
       ["/image.png": Data(bytes: "some encoded stuff".toBytes)]
     )
 
     let contentFormatter = ContentFormatter(for: "/image.png", data: contents)
-    contentFormatter.execute(on: &response)
+    let newResponse = contentFormatter.addToResponse(response)
 
-    XCTAssertEqual(response.headers["Content-Type"]!, "image/png")
+    XCTAssertEqual(newResponse.headers["Content-Type"]!, "image/png")
   }
 
   func testItCanUpdateContentTypeHeaderWithGIF() {
-    var response = HTTPResponse(status: TwoHundred.Ok)
+    let response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ResourceData(
       ["/image.gif": Data(bytes: "some encoded stuff".toBytes)]
     )
 
     let contentFormatter = ContentFormatter(for: "/image.gif", data: contents)
-    contentFormatter.execute(on: &response)
+    let newResponse = contentFormatter.addToResponse(response)
 
-    XCTAssertEqual(response.headers["Content-Type"]!, "image/gif")
+    XCTAssertEqual(newResponse.headers["Content-Type"]!, "image/gif")
   }
 
   func testItCanUpdateContentTypeHeaderWithTXT() {
-    var response = HTTPResponse(status: TwoHundred.Ok)
+    let response = HTTPResponse(status: TwoHundred.Ok)
 
     let contents = ResourceData(
       ["/file1.txt": Data(bytes: "this is a text file.".toBytes)]
     )
 
     let contentFormatter = ContentFormatter(for: "/file1.txt", data: contents)
-    contentFormatter.execute(on: &response)
+    let newResponse = contentFormatter.addToResponse(response)
 
-    XCTAssertEqual(response.headers["Content-Type"]!, "text/plain")
+    XCTAssertEqual(newResponse.headers["Content-Type"]!, "text/plain")
+  }
+
+  func testItCanAppendFileDataToExistingResponseBody() {
+    let response = HTTPResponse(status: TwoHundred.Ok, body: "hello, ")
+
+    let contents = ResourceData(
+      ["/file1.txt": Data(bytes: "this is a text file.".toBytes)]
+    )
+
+    let contentFormatter = ContentFormatter(for: "/file1.txt", data: contents)
+    let newResponse = contentFormatter.addToResponse(response)
+
+    XCTAssertEqual(newResponse.body!, "hello, \n\nthis is a text file.".toBytes)
   }
 }

@@ -50,7 +50,7 @@ public struct HTTPRequest {
     var mutableResult = result
     let separatorIndex = rawHeader.range(of: ":")
 
-    // missing key/values are be represented as empty strings
+    // missing key w/ value or vice-versa appears as empty string
     let key = separatorIndex.map {
       rawHeader.substring(to: $0.lowerBound)
                .trimmingCharacters(in: .whitespaces)

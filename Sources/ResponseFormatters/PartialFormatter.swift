@@ -8,17 +8,21 @@ public class PartialFormatter: ResponseFormatter {
     self.range = range
   }
 
-  public func execute(on response: inout HTTPResponse) {
+  public func addToResponse(_ response: HTTPResponse) -> HTTPResponse {
     guard let validRange = range else {
-      return
+      return response
     }
 
-    let partialContent = response.body
-                                 .flatMap(responseBodyToString)
-                                 .map { rangeOf($0, range: validRange) }
+    let partialBody = response.body
+                              .flatMap{ String(bytes: $0, encoding: .utf8) }
+                              .map { rangeOf($0, range: validRange) }?
+                              .toData
 
-    response.updateStatus(with: TwoHundred.PartialContent)
-    response.replaceBody(with: partialContent ?? "")
+    return HTTPResponse(
+      status: TwoHundred.PartialContent,
+      headers: response.headers,
+      body: partialBody
+    )
   }
 
   private func rangeOf(_ currentBody: String, range: String) -> String {
@@ -30,10 +34,6 @@ public class PartialFormatter: ResponseFormatter {
     let range = calculateRange(of: rawRange, length: currentBody.characters.count)
 
     return chars[range].joined(separator: "")
-  }
-
-  private func responseBodyToString(_ body: [UInt8]) -> String? {
-    return String(bytes: body, encoding: .utf8)
   }
 
   private func calculateRange(of rawRange: String, length contentLength: Int) -> Range<Int> {

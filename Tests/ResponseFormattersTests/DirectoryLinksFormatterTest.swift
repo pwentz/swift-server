@@ -4,23 +4,44 @@ import Responses
 @testable import ResponseFormatters
 
 class DirectoryLinksFormatterTest: XCTestCase {
-  func testItCanAddDirectoryLinksToResponseBody() {
-    var response = HTTPResponse(status: TwoHundred.Ok)
+  func testItReturnNewResponseWithAddedDirectoryLinks() {
+    let response = HTTPResponse(status: TwoHundred.Ok)
 
     let files = ["/file1", "/file2"]
 
-    DirectoryLinksFormatter(files: files).execute(on: &response)
+    let newResponse = DirectoryLinksFormatter(files: files).addToResponse(response)
 
     let expected = "<a href=\"/file1\">file1</a><br><a href=\"/file2\">file2</a>"
 
-    XCTAssertEqual(response.body!, expected.toBytes)
+    XCTAssertEqual(newResponse.body!, expected.toBytes)
+  }
+
+  func testItReturnsANewResponseWithExistingBodyAndAdditionalLinks() {
+    let response = HTTPResponse(status: TwoHundred.Ok, body: "neat!")
+
+    let files = ["/file1", "/file2"]
+
+    let newResponse = DirectoryLinksFormatter(files: files).addToResponse(response)
+
+    let expected = "neat!\n\n<a href=\"/file1\">file1</a><br><a href=\"/file2\">file2</a>"
+
+    XCTAssertEqual(newResponse.body!, expected.toBytes)
   }
 
   func testItDoesNotAddDirectoryLinksIfFilesAreNil() {
-    var response = HTTPResponse(status: TwoHundred.Ok)
+    let response = HTTPResponse(status: TwoHundred.Ok)
 
-    DirectoryLinksFormatter(files: nil).execute(on: &response)
+    let newResponse = DirectoryLinksFormatter(files: nil).addToResponse(response)
 
-    XCTAssertNil(response.body)
+    XCTAssertNil(newResponse.body)
   }
+
+  func testItReturnsNewResponseBodyAsIsIfFilesAreNil() {
+    let response = HTTPResponse(status: TwoHundred.Ok, body: "neat!")
+
+    let newResponse = DirectoryLinksFormatter(files: nil).addToResponse(response)
+
+    XCTAssertEqual(newResponse.body!, "neat!".toBytes)
+  }
+
 }
