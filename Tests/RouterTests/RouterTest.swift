@@ -106,4 +106,17 @@ class RouterTest: XCTestCase {
 
     XCTAssert(mockQueue.wasAsyncMethodCalled == false)
   }
+
+  func testItSendsA400RequestIfInvalidRequest() throws {
+    let port: UInt16 = 5000
+
+    let invalidRequestLine = "GET/someRouteHTTP/1.1"
+    let mockSock = MockTCPSocket(invalidRequestLine)
+    let mockQueue = MockOperationQueue()
+    let router = Router(socket: mockSock, threadQueue: mockQueue, port: port, responder: MockResponder())
+
+    try router.receive()
+
+    XCTAssertEqual(mockSock.sentResponseCode!, "400 Bad Request")
+  }
 }

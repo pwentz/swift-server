@@ -24,8 +24,11 @@ public class Router {
     let client = try socket.acceptSocket()
     let data = try client.recv()
 
-    if !data.isEmpty, let request = try HTTPRequest(for: data.toString()) {
-      let response = responder.getResponse(to: request)
+    if !data.isEmpty {
+      let request = try HTTPRequest(for: data.toString())
+      let badRequestResponse = HTTPResponse(status: FourHundred.BadRequest)
+
+      let response = request.map { responder.getResponse(to: $0) } ?? badRequestResponse
 
       dispatch(getDispatchCallback(response, client: client))
     }

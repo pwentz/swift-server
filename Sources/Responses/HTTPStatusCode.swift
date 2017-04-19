@@ -26,7 +26,7 @@ public enum ThreeHundred: HTTPStatusCode {
 }
 
 public enum FourHundred: HTTPStatusCode {
-  case Unauthorized, NotFound, MethodNotAllowed, Teapot
+  case Unauthorized, NotFound, MethodNotAllowed, Teapot, BadRequest
 
   public var description: String {
     switch self {
@@ -34,6 +34,7 @@ public enum FourHundred: HTTPStatusCode {
       case .NotFound: return "404 Not Found"
       case .MethodNotAllowed: return "405 Method Not Allowed"
       case .Teapot: return "418 I\'m a teapot"
+      case .BadRequest: return "400 Bad Request"
     }
   }
 }

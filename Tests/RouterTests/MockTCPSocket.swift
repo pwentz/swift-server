@@ -1,3 +1,4 @@
+import Foundation
 import Router
 
 class MockTCPSocket: Socket {
@@ -7,6 +8,8 @@ class MockTCPSocket: Socket {
   var wasRecvCalled: Bool = false
   var wasSendCalled: Bool = false
   var wasCloseCalled: Bool = false
+
+  var sentResponseCode: String? = nil
 
   let rawRequest: String?
 
@@ -33,6 +36,15 @@ class MockTCPSocket: Socket {
   }
 
   func send(data: [UInt8]) throws {
+    let parsedResponse = String(bytes: data, encoding: .utf8)!
+
+    sentResponseCode = parsedResponse
+                        .components(separatedBy: " ")
+                        .dropFirst()
+                        .joined(separator: " ")
+                        .trimmingCharacters(in: .newlines)
+
+
     wasSendCalled = true
   }
 
