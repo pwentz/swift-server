@@ -22,7 +22,7 @@ public class RouteResponder: Responder {
 
     updateLogsIfValid(request)
 
-    let clientErrorResponder = FourHundredResponder(route: route)
+    let clientErrorResponder = FourHundredResponder(route: route, data: data)
     let redirectResponder = ThreeHundredResponder(redirectPath: route.redirectPath)
     let successResponder = TwoHundredResponder(route: route, data: data, logs: logs)
 
