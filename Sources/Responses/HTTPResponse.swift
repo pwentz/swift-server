@@ -22,7 +22,7 @@ public struct HTTPResponse {
   public func updateHeaders(with newHeaders: [String: String]) -> [String: String] {
     var existingHeaders = self.headers
 
-    for (k,v) in newHeaders {
+    for (k, v) in newHeaders {
       existingHeaders[k] = v
     }
 

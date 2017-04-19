@@ -15,7 +15,7 @@ public class PartialFormatter: ResponseFormatter {
     }
 
     let partialBody = response.body
-                              .flatMap{ String(bytes: $0, encoding: .utf8) }
+                              .flatMap { String(bytes: $0, encoding: .utf8) }
                               .map { rangeOf($0, range: validRange) }?
                               .toData
 
@@ -49,4 +49,5 @@ public class PartialFormatter: ResponseFormatter {
     return rangeEnd < rangeStart ? rangeStart..<contentLength
                                  : rangeStart..<rangeEnd + 1
   }
+
 }

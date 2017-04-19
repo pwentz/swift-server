@@ -8,9 +8,8 @@ class ThreeHundredResponderTest: XCTestCase {
   func testItReturnsARedirectRoute() {
     let rawRequest = "GET /someRoute HTTP/1.1\r\n Host: localhost:5000\r\nConnection: Keep-Alive\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
     let request = HTTPRequest(for: rawRequest)!
-    let route = Route(allowedMethods: [.Get], redirectPath: "/")
 
-    let responder = ThreeHundredResponder(route: route)
+    let responder = ThreeHundredResponder(redirectPath: "/")
 
     let response = responder.response(to: request)
     let expectedResponse = HTTPResponse(status: ThreeHundred.Found, headers: ["Location": "/"])

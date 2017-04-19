@@ -39,4 +39,5 @@ public class CookieFormatter: ResponseFormatter {
       $0 + " " + (prefixedBody ?? "")
     }?.trimmingCharacters(in: .whitespaces) ?? prefixedBody
   }
+
 }

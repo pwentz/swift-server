@@ -5,13 +5,6 @@ import Routes
 class FourHundredResponder {
   private let route: Route
 
-  private let unauthorizedResponse = HTTPResponse(
-    status: FourHundred.Unauthorized,
-    headers: ["WWW-Authenticate": "Basic realm=\"simple\""]
-  )
-
-  private let methodNotAllowedResponse = HTTPResponse(status: FourHundred.MethodNotAllowed)
-
   public init(route: Route) {
     self.route = route
   }
@@ -20,11 +13,14 @@ class FourHundredResponder {
     let givenAuth = request.headers["authorization"]?.components(separatedBy: " ").last
 
     guard route.auth == givenAuth else {
-      return unauthorizedResponse
+      return HTTPResponse(
+        status: FourHundred.Unauthorized,
+        headers: ["WWW-Authenticate": "Basic realm=\"simple\""]
+      )
     }
 
     guard route.canRespondTo(request.verb) else {
-      return methodNotAllowedResponse
+      return HTTPResponse(status: FourHundred.MethodNotAllowed)
     }
 
     return nil

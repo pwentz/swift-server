@@ -33,4 +33,5 @@ public class ContentFormatter: ResponseFormatter {
       return isAnImage(ext) ? "image/\(ext)" : "text/plain"
     } ?? "text/html"
   }
+
 }
