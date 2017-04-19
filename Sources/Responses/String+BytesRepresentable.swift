@@ -12,9 +12,9 @@ public extension String {
   }
 
   init?(response: HTTPResponse) {
-    let joinedHeaders = response.headers
+    let joinedHeaders = response.headers?
                                 .map { $0 + response.headerDivide + $1 }
-                                .joined(separator: response.crlf)
+                                .joined(separator: response.crlf) ?? ""
 
     let statusLine = "\(response.transferProtocol) \(response.statusCode + response.crlf)"
 

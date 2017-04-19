@@ -34,7 +34,7 @@ class CookieFormatterTest: XCTestCase {
 
     let newResponse = CookieFormatter(for: request, prefix: cookiePrefix).addToResponse(response)
 
-    XCTAssertEqual(newResponse.headers["Set-Cookie"]!, "type=chocolate")
+    XCTAssertEqual(newResponse.headers!["Set-Cookie"]!, "type=chocolate")
   }
 
   func testItCanAddSetCookieHeaderToExistingResponseHeaders() {
@@ -45,7 +45,7 @@ class CookieFormatterTest: XCTestCase {
 
     let newResponse = CookieFormatter(for: request, prefix: cookiePrefix).addToResponse(response)
 
-    XCTAssertEqual(newResponse.headers, ["Content-Type": "text/html", "Set-Cookie": "type=chocolate"])
+    XCTAssertEqual(newResponse.headers!, ["Content-Type": "text/html", "Set-Cookie": "type=chocolate"])
   }
 
   func testItCanAppendCookiePrefixAfterCookieIsSet() {
@@ -68,7 +68,7 @@ class CookieFormatterTest: XCTestCase {
     let newResponse = CookieFormatter(for: request, prefix: cookiePrefix).addToResponse(response)
 
     XCTAssertEqual(newResponse.body!, "wow chocolate wow".toBytes)
-    XCTAssertEqual(newResponse.headers["Set-Cookie"], "type=oatmeal")
+    XCTAssertEqual(newResponse.headers!["Set-Cookie"], "type=oatmeal")
   }
 
   func testItWillNotAppendIfNoCookieHeader() {

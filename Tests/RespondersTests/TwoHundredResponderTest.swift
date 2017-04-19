@@ -159,7 +159,7 @@ class TwoHundredResponderTest: XCTestCase {
       let responder = TwoHundredResponder(route: route, data: data)
       let response = responder.response(to: patchRequest)
 
-      XCTAssertEqual(response.headers["ETag"]!, "abcde")
+      XCTAssertEqual(response.headers!["ETag"]!, "abcde")
     }
 
     func testItSendsA204StatusInResponseToPatch() {
@@ -181,7 +181,7 @@ class TwoHundredResponderTest: XCTestCase {
 
       let response = TwoHundredResponder(route: route).response(to: request)
 
-      XCTAssertEqual(response.headers["Allow"]!, "OPTIONS,POST,HEAD")
+      XCTAssertEqual(response.headers!["Allow"]!, "OPTIONS,POST,HEAD")
     }
 
     func testItCanHandleHeadRequests() {
