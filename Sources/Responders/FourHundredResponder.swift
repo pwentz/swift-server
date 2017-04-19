@@ -27,8 +27,8 @@ class FourHundredResponder {
       return HTTPResponse(status: FourHundred.MethodNotAllowed)
     }
 
-    if let resource = data.get(request.path), isRangeOutOfBounds(for: resource, rangeHeader) {
-      let byteMax = resource.characters.count - 1
+    if let resource = data[request.path], isRangeOutOfBounds(for: resource.count, rangeHeader) {
+      let byteMax = resource.count - 1
 
       return HTTPResponse(
         status: FourHundred.RangeNotSatisfiable,
@@ -39,9 +39,7 @@ class FourHundredResponder {
     return nil
   }
 
-  private func isRangeOutOfBounds(for resource: String, _ range: (start: Int?, end: Int?)) -> Bool {
-    let contentLength = resource.characters.count
-
+  private func isRangeOutOfBounds(for contentLength: Int, _ range: (start: Int?, end: Int?)) -> Bool {
     if let endRange = range.end, contentLength < endRange {
       return true
     }

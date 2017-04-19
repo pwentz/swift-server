@@ -13,7 +13,7 @@ public class ContentFormatter: ResponseFormatter {
   }
 
   public func addToResponse(_ response: HTTPResponse) -> HTTPResponse {
-    guard let resource = data.getBinary(path) else {
+    guard let resource = data[path] else {
       return response
     }
 
