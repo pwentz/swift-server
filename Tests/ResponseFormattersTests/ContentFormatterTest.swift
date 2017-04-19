@@ -29,7 +29,7 @@ class ContentFormatterTest: XCTestCase {
     let contentFormatter = ContentFormatter(for: "/file1", data: contents)
     let newResponse = contentFormatter.addToResponse(response)
 
-    XCTAssertEqual(newResponse.headers["Content-Type"]!, "text/html")
+    XCTAssertEqual(newResponse.headers!["Content-Type"]!, "text/html")
   }
 
   func testItCanAppendContentTypeHeaderToExistingHeaders() {
@@ -42,7 +42,7 @@ class ContentFormatterTest: XCTestCase {
     let contentFormatter = ContentFormatter(for: "/file1", data: contents)
     let newResponse = contentFormatter.addToResponse(response)
 
-    XCTAssertEqual(newResponse.headers, ["Date": "today", "Content-Type": "text/html"])
+    XCTAssertEqual(newResponse.headers!, ["Date": "today", "Content-Type": "text/html"])
   }
 
   func testItCanUpdateBodyWithImageContents() {
@@ -68,7 +68,7 @@ class ContentFormatterTest: XCTestCase {
     let contentFormatter = ContentFormatter(for: "/image.jpeg", data: contents)
     let newResponse = contentFormatter.addToResponse(response)
 
-    XCTAssertEqual(newResponse.headers["Content-Type"]!, "image/jpeg")
+    XCTAssertEqual(newResponse.headers!["Content-Type"]!, "image/jpeg")
   }
 
   func testItCanUpdateContentTypeHeaderWithPNG() {
@@ -81,7 +81,7 @@ class ContentFormatterTest: XCTestCase {
     let contentFormatter = ContentFormatter(for: "/image.png", data: contents)
     let newResponse = contentFormatter.addToResponse(response)
 
-    XCTAssertEqual(newResponse.headers["Content-Type"]!, "image/png")
+    XCTAssertEqual(newResponse.headers!["Content-Type"]!, "image/png")
   }
 
   func testItCanUpdateContentTypeHeaderWithGIF() {
@@ -94,7 +94,7 @@ class ContentFormatterTest: XCTestCase {
     let contentFormatter = ContentFormatter(for: "/image.gif", data: contents)
     let newResponse = contentFormatter.addToResponse(response)
 
-    XCTAssertEqual(newResponse.headers["Content-Type"]!, "image/gif")
+    XCTAssertEqual(newResponse.headers!["Content-Type"]!, "image/gif")
   }
 
   func testItCanUpdateContentTypeHeaderWithTXT() {
@@ -107,7 +107,7 @@ class ContentFormatterTest: XCTestCase {
     let contentFormatter = ContentFormatter(for: "/file1.txt", data: contents)
     let newResponse = contentFormatter.addToResponse(response)
 
-    XCTAssertEqual(newResponse.headers["Content-Type"]!, "text/plain")
+    XCTAssertEqual(newResponse.headers!["Content-Type"]!, "text/plain")
   }
 
   func testItCanAppendFileDataToExistingResponseBody() {

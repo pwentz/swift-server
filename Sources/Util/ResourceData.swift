@@ -15,7 +15,7 @@ public class ResourceData {
       return
     }
 
-    contents.updateValue(Data(bytes: confirmedValue.toBytes), forKey: key)
+    contents.updateValue(confirmedValue.toData, forKey: key)
   }
 
   public func get(_ key: String) -> String? {

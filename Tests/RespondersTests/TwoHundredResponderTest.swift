@@ -149,6 +149,19 @@ class TwoHundredResponderTest: XCTestCase {
       XCTAssertEqual(response.body!, "new cheese".toBytes)
     }
 
+    func testItSendsETagInHeaderIfPresentInRequest() {
+      let patchRequest = HTTPRequest(for: "PATCH /someRoute HTTP/1.1\r\nIf-Match: abcde\r\nnew cheese")!
+
+      let data = ResourceData(["/someRoute": "cheese".toData])
+
+      let route = Route(allowedMethods: [.Get, .Patch])
+
+      let responder = TwoHundredResponder(route: route, data: data)
+      let response = responder.response(to: patchRequest)
+
+      XCTAssertEqual(response.headers!["ETag"]!, "abcde")
+    }
+
     func testItSendsA204StatusInResponseToPatch() {
       let patchRequest = HTTPRequest(for: "PATCH /someRoute HTTP/1.1\r\nnew cheese")!
 
@@ -168,7 +181,7 @@ class TwoHundredResponderTest: XCTestCase {
 
       let response = TwoHundredResponder(route: route).response(to: request)
 
-      XCTAssertEqual(response.headers["Allow"]!, "OPTIONS,POST,HEAD")
+      XCTAssertEqual(response.headers!["Allow"]!, "OPTIONS,POST,HEAD")
     }
 
     func testItCanHandleHeadRequests() {

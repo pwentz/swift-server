@@ -48,7 +48,10 @@ class TwoHundredResponder {
 
     case let verb where verb == .Patch:
       data.update(request.path, withVal: request.body)
-      return HTTPResponse(status: TwoHundred.NoContent)
+      let headers = request.headers["if-match"].map { ["ETag": $0] }
+
+      return HTTPResponse(status: TwoHundred.NoContent, headers: headers)
+
 
     case let verb where verb == .Delete:
       data.remove(at: request.path)

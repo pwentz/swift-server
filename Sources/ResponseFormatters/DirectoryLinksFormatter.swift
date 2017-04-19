@@ -13,7 +13,7 @@ public class DirectoryLinksFormatter: ResponseFormatter {
       return response
     }
 
-    guard response.headers["Content-Type"] != "text/plain" else {
+    guard response.headers?["Content-Type"] != "text/plain" else {
       return response
     }
 

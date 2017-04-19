@@ -39,7 +39,7 @@ class ResponseTest: XCTestCase {
 
     let response = HTTPResponse(status: ok, headers: headers, body: body)
 
-    XCTAssertEqual(response.headers, headers)
+    XCTAssertEqual(response.headers!, headers)
   }
 
   func testItCanFormatItselfWithExistingBody() {
