@@ -10,20 +10,16 @@ public class ResourceData {
     self.fileNames = [String](fileContents.keys)
   }
 
+  public subscript(key: String) -> Data? {
+    return contents[key]
+  }
+
   public func update(_ key: String, withVal value: String?) {
     guard let confirmedValue = value else {
       return
     }
 
     contents.updateValue(confirmedValue.toData, forKey: key)
-  }
-
-  public func get(_ key: String) -> String? {
-    return contents[key].flatMap { String(data: $0, encoding: .utf8) }
-  }
-
-  public func getBinary(_ key: String) -> Data? {
-    return contents[key]
   }
 
   public func remove(at key: String) {

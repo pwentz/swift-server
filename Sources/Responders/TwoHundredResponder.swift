@@ -39,7 +39,7 @@ class TwoHundredResponder {
       return validResponse
 
     case let verb where verb == .Put:
-      let resource = data.get(request.path)
+      let resource = data[request.path]
       data.update(request.path, withVal: request.body)
 
       return resource == nil ?
