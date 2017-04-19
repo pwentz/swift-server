@@ -17,15 +17,15 @@ public struct HTTPRequest {
     let splitRequest = rawRequest.components(separatedBy: crlf)
     let requestTail = splitRequest[splitRequest.index(before: splitRequest.endIndex)]
 
-    let splitMainHeader = splitRequest[splitRequest.startIndex].components(separatedBy: " ")
+    let splitRequestLine = splitRequest[splitRequest.startIndex].components(separatedBy: " ")
 
-    guard splitMainHeader.count >= 2 else {
+    guard splitRequestLine.count >= 2 else {
       return nil
     }
 
-    let givenVerb = splitMainHeader[splitMainHeader.startIndex]
+    let givenVerb = splitRequestLine[splitRequestLine.startIndex]
 
-    let fullPath = splitMainHeader[splitMainHeader.index(after: splitMainHeader.startIndex)]
+    let fullPath = splitRequestLine[splitRequestLine.index(after: splitRequestLine.startIndex)]
 
     let splitPath = fullPath.components(separatedBy: parameterDivide)
 
