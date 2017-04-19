@@ -44,4 +44,17 @@ class DirectoryLinksFormatterTest: XCTestCase {
     XCTAssertEqual(newResponse.body!, "neat!".toBytes)
   }
 
+  func testItDoesNotAppendHTMLDataWhenContentTypeIsText() {
+    let response = HTTPResponse(
+      status: TwoHundred.Ok,
+      headers: ["Content-Type": "text/plain"],
+      body: "some image content"
+    )
+
+    let files = ["/someRoute"]
+
+    let newResponse = DirectoryLinksFormatter(files: files).addToResponse(response)
+
+    XCTAssertEqual(newResponse.body!, "some image content".toBytes)
+  }
 }

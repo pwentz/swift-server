@@ -17,17 +17,23 @@ public class DirectoryLinksFormatter: ResponseFormatter {
       return response
     }
 
-    let links = fileNames.map { "<a href=\"\($0)\">\(trimSlash(in: $0))</a>" }
-    let newBody = links.joined(separator: "<br>").toData
+    let formattedLinks = fileNames.map(htmlLink)
+                                  .joined(separator: "<br>")
+                                  .toData
 
     return HTTPResponse(
       status: TwoHundred.Ok,
       headers: response.headers,
-      body: response.updateBody(with: newBody)
+      body: response.updateBody(with: formattedLinks)
     )
   }
 
   private func trimSlash(in file: String) -> String {
     return file.substring(from: file.index(after: file.startIndex))
   }
+
+  private func htmlLink(_ file: String) -> String {
+    return "<a href=\"\(file)\">\(trimSlash(in: file))</a>"
+  }
+
 }

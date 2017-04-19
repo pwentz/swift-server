@@ -3,14 +3,14 @@ import Responses
 import Requests
 
 class ThreeHundredResponder {
-  let route: Route
+  let redirectPath: String?
 
-  init(route: Route) {
-    self.route = route
+  init(redirectPath: String?) {
+    self.redirectPath = redirectPath
   }
 
   func response(to request: HTTPRequest) -> HTTPResponse? {
-    return route.redirectPath.map { foundResponse(location: $0) }
+    return redirectPath.map { foundResponse(location: $0) }
   }
 
   private func foundResponse(location: String) -> HTTPResponse {
