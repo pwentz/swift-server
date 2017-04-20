@@ -101,17 +101,17 @@ class RequestTest: XCTestCase {
     func testItHasParams() {
         let rawRequest = "GET /cookie?type=chocolate HTTP/1.1\r\nHost:yahoo.com\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
         let request = HTTPRequest(for: rawRequest)!
+        let result = [String: String](params: request.params!)
 
-
-        XCTAssertEqual(request.params!.toDictionary(), ["type": "chocolate"])
+        XCTAssertEqual(result, ["type": "chocolate"])
     }
 
     func testItCanHandleDifferentParams() {
         let rawRequest = "GET /cookie?roast=beef HTTP/1.1\r\nHost:yahoo.com\r\nConnection:Keep-Alive\r\nUser-Agent:chrome\r\nAccept-Encoding:gzip,deflate"
         let request = HTTPRequest(for: rawRequest)!
+        let result = [String: String](params: request.params!)
 
-
-        XCTAssertEqual(request.params!.toDictionary(), ["roast": "beef"])
+        XCTAssertEqual(result, ["roast": "beef"])
     }
 
     func testHavingParamsDoesntChangePath() {

@@ -13,8 +13,7 @@ public class ParamsFormatter: ResponseFormatter {
       return response
     }
 
-    let formattedParams = validParams
-                           .toDictionary()
+    let formattedParams = [String: String](params: validParams)
                            .map { $0 + " = " + $1 }
                            .joined(separator: "\n")
                            .toData
