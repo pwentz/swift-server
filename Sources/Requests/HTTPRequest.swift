@@ -9,7 +9,6 @@ public struct HTTPRequest {
   public let headerDivide: String = ":"
   public let transferProtocol: String = "HTTP/1.1"
   private let parameterDivide: String = "?"
-  private let parameterKeyValueSeparator: String = "="
 
   public var headers: [String: String] = [:]
 
@@ -29,15 +28,11 @@ public struct HTTPRequest {
 
     let splitPath = fullPath.components(separatedBy: parameterDivide)
 
-    let separator = parameterKeyValueSeparator
     verb = HTTPRequestMethod(rawValue: givenVerb.capitalized)
 
     path = fullPath.range(of: parameterDivide).map { fullPath.substring(to: $0.lowerBound) } ?? fullPath
 
-    params = splitPath.first(where: { $0.contains(separator) }).flatMap { params -> HTTPParameters? in
-      let dividedParams = params.components(separatedBy: separator).filter { !$0.isEmpty }
-      return dividedParams.count >= 2 ? HTTPParameters(for: params) : nil
-    }
+    params = splitPath.first(where: { $0.contains("=") }).flatMap { HTTPParameters(for: $0) }
 
     body = requestTail.contains(headerDivide) ? nil : requestTail
 

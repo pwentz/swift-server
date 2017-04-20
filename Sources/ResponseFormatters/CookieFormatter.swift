@@ -17,7 +17,7 @@ public class CookieFormatter: ResponseFormatter {
     }
 
     let cookieHeaders = request.params.flatMap { params -> [String: String]? in
-      String(parameters: params).map { ["Set-Cookie": $0] }
+      String(params: params).map { ["Set-Cookie": $0] }
     }
 
     return HTTPResponse(
