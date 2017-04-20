@@ -15,7 +15,7 @@ class PartialFormatterTest: XCTestCase {
     let newResponse = partialFormatter.addToResponse(response)
     let expected = " is a file that contains text to read part of in order to fulfill a 206.\n"
 
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, expected.toBytes)
   }
 
   func testItCanUpdateBodyOnResponseGivenRangeEnd() {
@@ -31,7 +31,7 @@ class PartialFormatterTest: XCTestCase {
 
     let expected = " 206.\n"
 
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, expected.toBytes)
   }
 
   func testItCanUpdateBodyOnResponseGiveRangeStartAndEnd() {
@@ -45,7 +45,7 @@ class PartialFormatterTest: XCTestCase {
     let newResponse = partialFormatter.addToResponse(response)
     let expected = "This "
 
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, expected.toBytes)
   }
 
   func testItCanUpdateStatusOnResponse() {
@@ -69,6 +69,6 @@ class PartialFormatterTest: XCTestCase {
     let partialFormatter = PartialFormatter(for: request.headers["range"])
     let newResponse = partialFormatter.addToResponse(response)
 
-    XCTAssertEqual(newResponse.body!, content.toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, content.toBytes)
   }
 }

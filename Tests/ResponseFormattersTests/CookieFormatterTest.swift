@@ -12,7 +12,7 @@ class CookieFormatterTest: XCTestCase {
 
     let newResponse = CookieFormatter(for: request, prefix: cookiePrefix).addToResponse(response)
 
-    XCTAssertEqual(newResponse.body!, "Eat".toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, "Eat".toBytes)
   }
 
   func testItCanAppendCookiePrefixToExistingBody() {
@@ -23,7 +23,7 @@ class CookieFormatterTest: XCTestCase {
 
     let newResponse = CookieFormatter(for: request, prefix: cookiePrefix).addToResponse(response)
 
-    XCTAssertEqual(newResponse.body!, "some stuff\n\nEat".toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, "some stuff\n\nEat".toBytes)
   }
 
   func testItCanAddSetCookieHeaderToResponse() {
@@ -56,7 +56,7 @@ class CookieFormatterTest: XCTestCase {
 
     let newResponse = CookieFormatter(for: request, prefix: cookiePrefix).addToResponse(response)
 
-    XCTAssertEqual(newResponse.body!, "wow chocolate".toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, "wow chocolate".toBytes)
   }
 
   func testItCanSetCookieAndRespondWithCookie() {
@@ -67,7 +67,7 @@ class CookieFormatterTest: XCTestCase {
 
     let newResponse = CookieFormatter(for: request, prefix: cookiePrefix).addToResponse(response)
 
-    XCTAssertEqual(newResponse.body!, "wow chocolate wow".toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, "wow chocolate wow".toBytes)
     XCTAssertEqual(newResponse.headers!["Set-Cookie"], "type=oatmeal")
   }
 

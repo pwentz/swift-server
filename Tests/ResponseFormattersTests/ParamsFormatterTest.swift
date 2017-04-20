@@ -22,7 +22,7 @@ class ParamsFormatterTest: XCTestCase {
     let newResponse = ParamsFormatter(for: request.params).addToResponse(response)
     let expected = "variable_1 = Operators"
 
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, expected.toBytes)
   }
 
   func testItCanDecodeComplexParams() {
@@ -33,7 +33,7 @@ class ParamsFormatterTest: XCTestCase {
     let newResponse = ParamsFormatter(for: request.params).addToResponse(response)
     let expected = "variable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?"
 
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, expected.toBytes)
   }
 
   func testItCanDecodeAndFormatMultipleParams() {
@@ -44,7 +44,7 @@ class ParamsFormatterTest: XCTestCase {
     let newResponse = ParamsFormatter(for: request.params).addToResponse(response)
     let expected = "variable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?\nvariable_2 = stuff"
 
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, expected.toBytes)
   }
 
   func testItAppendParamsToExistingBody() {
@@ -55,7 +55,7 @@ class ParamsFormatterTest: XCTestCase {
     let newResponse = ParamsFormatter(for: request.params).addToResponse(response)
     let expected = "wow\n\nvariable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?\nvariable_2 = stuff"
 
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, expected.toBytes)
   }
 
   func testItDoesNotAppendParamsWhenParamsAreNil() {
@@ -65,7 +65,7 @@ class ParamsFormatterTest: XCTestCase {
 
     let newResponse = ParamsFormatter(for: request.params).addToResponse(response)
 
-    XCTAssertEqual(newResponse.body!, "wow".toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, "wow".toBytes)
   }
 
 }

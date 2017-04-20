@@ -98,7 +98,7 @@ class RouteResponderTest: XCTestCase {
 
       let expected = "GET /someRoute HTTP/1.1"
 
-      XCTAssertEqual(response.body!, expected.toBytes)
+      XCTAssertEqual(response.body!.toBytes, expected.toBytes)
     }
 
 }

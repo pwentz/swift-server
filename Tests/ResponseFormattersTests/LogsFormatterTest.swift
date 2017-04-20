@@ -12,7 +12,7 @@ class LogsFormatterTest: XCTestCase {
 
     let expected = "GET /someRoute HTTP/1.1"
 
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, expected.toBytes)
   }
 
   func testItAppendsLogsToExistingBody() {
@@ -23,7 +23,7 @@ class LogsFormatterTest: XCTestCase {
 
     let expected = "neat\n\nGET /someRoute HTTP/1.1"
 
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, expected.toBytes)
   }
 
   func testItReturnsExistingBodyIfNoLogsAreGiven() {
@@ -31,7 +31,7 @@ class LogsFormatterTest: XCTestCase {
 
     let newResponse = LogsFormatter(logs: nil).addToResponse(response)
 
-    XCTAssertEqual(newResponse.body!, "neat".toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, "neat".toBytes)
   }
 
   func testItReturnsAnEmptyBodyIfBodyWasEmptyAndNoGivenLogs() {

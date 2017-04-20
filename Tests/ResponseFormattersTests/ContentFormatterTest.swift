@@ -16,7 +16,7 @@ class ContentFormatterTest: XCTestCase {
     let contentFormatter = ContentFormatter(for: "/file1", data: contents)
     let newResponse = contentFormatter.addToResponse(response)
 
-    XCTAssertEqual(newResponse.body!, "this is a text file.".toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, "this is a text file.".toBytes)
   }
 
   func testItCanUpdateContentTypeHeaderWhenExtensionIsMissing() {
@@ -55,7 +55,7 @@ class ContentFormatterTest: XCTestCase {
     let contentFormatter = ContentFormatter(for: "/image.jpeg", data: contents)
     let newResponse = contentFormatter.addToResponse(response)
 
-    XCTAssertEqual(newResponse.body!, "some encoded stuff".toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, "some encoded stuff".toBytes)
   }
 
   func testItCanUpdateContentTypeHeaderWithJPEG() {
@@ -120,6 +120,6 @@ class ContentFormatterTest: XCTestCase {
     let contentFormatter = ContentFormatter(for: "/file1.txt", data: contents)
     let newResponse = contentFormatter.addToResponse(response)
 
-    XCTAssertEqual(newResponse.body!, "hello, \n\nthis is a text file.".toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, "hello, \n\nthis is a text file.".toBytes)
   }
 }

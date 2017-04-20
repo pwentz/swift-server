@@ -13,7 +13,7 @@ class DirectoryLinksFormatterTest: XCTestCase {
 
     let expected = "<a href=\"/file1\">file1</a><br><a href=\"/file2\">file2</a>"
 
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, expected.toBytes)
   }
 
   func testItReturnsANewResponseWithExistingBodyAndAdditionalLinks() {
@@ -25,7 +25,7 @@ class DirectoryLinksFormatterTest: XCTestCase {
 
     let expected = "neat!\n\n<a href=\"/file1\">file1</a><br><a href=\"/file2\">file2</a>"
 
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, expected.toBytes)
   }
 
   func testItDoesNotAddDirectoryLinksIfFilesAreNil() {
@@ -41,7 +41,7 @@ class DirectoryLinksFormatterTest: XCTestCase {
 
     let newResponse = DirectoryLinksFormatter(files: nil).addToResponse(response)
 
-    XCTAssertEqual(newResponse.body!, "neat!".toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, "neat!".toBytes)
   }
 
   func testItDoesNotAppendHTMLDataWhenContentTypeIsText() {
@@ -55,6 +55,6 @@ class DirectoryLinksFormatterTest: XCTestCase {
 
     let newResponse = DirectoryLinksFormatter(files: files).addToResponse(response)
 
-    XCTAssertEqual(newResponse.body!, "some image content".toBytes)
+    XCTAssertEqual(newResponse.body!.toBytes, "some image content".toBytes)
   }
 }

@@ -24,11 +24,11 @@ class ResponseTest: XCTestCase {
 
   func testItHasABody() {
     let headers = ["Content-Type": "ABCD"]
-    let body: BytesRepresentable = "BODY"
+    let body = "BODY"
 
     let response = HTTPResponse(status: ok, headers: headers, body: body)
 
-    XCTAssertEqual(response.body!, body)
+    XCTAssertEqual(response.body!.toBytes, body.toBytes)
   }
 
   func testItCanFormatItsHeaders() {

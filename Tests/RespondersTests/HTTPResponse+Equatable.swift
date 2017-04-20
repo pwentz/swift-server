@@ -9,7 +9,7 @@ extension HTTPResponse: Equatable {
 
       return lhs.statusCode == rhs.statusCode &&
               leftHeaders == rightHeaders &&
-                lhs.body ?? [] == rhs.body ?? []
+                lhs.body?.toBytes ?? [] == rhs.body?.toBytes ?? []
     }
   }
 }

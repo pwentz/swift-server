@@ -17,9 +17,8 @@ public struct HTTPResponse {
 
   public func updateBody(with newBody: BytesRepresentable) -> BytesRepresentable? {
     return self.body.map { b -> BytesRepresentable in
-      let bytes = b.plus(bodyDivide)
-
-      return bytes.plus(newBody)
+      // return Data(bytes: b.toBytes + bodyDivide.toBytes + newBody.toBytes)
+      return b.plus(bodyDivide).plus(newBody)
     } ?? newBody
   }
 
@@ -28,9 +27,7 @@ public struct HTTPResponse {
       return newHeaders
     }
 
-    for (k, v) in newHeaders {
-      existingHeaders[k] = v
-    }
+    newHeaders.forEach { existingHeaders[$0] = $1 }
 
     return existingHeaders
   }
@@ -39,6 +36,7 @@ public struct HTTPResponse {
     let joinedHeaders = headers?.map { $0 + headerDivide + $1 }.joined(separator: crlf) ?? ""
     let statusLine = "\(transferProtocol) \(statusCode + crlf)"
     let formattedBody = body.map { bodyDivide.plus($0) }?.toBytes ?? []
+    // let formattedBody = body.map { bodyDivide.toBytes + $0.toBytes } ?? []
 
     return statusLine.toBytes + joinedHeaders.toBytes + formattedBody
   }

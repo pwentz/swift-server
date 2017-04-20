@@ -4,6 +4,7 @@ extension String: BytesRepresentable {
   public var toBytes: [UInt8] {
     return Array(self.utf8)
   }
+
 }
 
 public extension String {
@@ -24,4 +25,8 @@ public extension String {
   init?(bytes: BytesRepresentable) {
     self.init(bytes: bytes.toBytes, encoding: .utf8)
   }
+
+  // public static func == (lhs: BytesRepresentable, rhs: String) -> Bool {
+  //   return lhs.toBytes == rhs.toBytes
+  // }
 }
