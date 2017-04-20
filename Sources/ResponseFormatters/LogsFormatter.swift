@@ -16,7 +16,7 @@ public class LogsFormatter: ResponseFormatter {
     return HTTPResponse(
       status: TwoHundred.Ok,
       headers: response.headers,
-      body: response.updateBody(with: logs.joined(separator: "\n").toData)
+      body: response.updateBody(with: logs.joined(separator: "\n"))
     )
   }
 

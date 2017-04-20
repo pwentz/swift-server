@@ -2,15 +2,15 @@ import Responses
 import Foundation
 
 public class ResourceData {
-  private var contents: [String: Data]
+  private var contents: [String: BytesRepresentable]
   public let fileNames: [String]
 
-  public init(_ fileContents: [String: Data]) {
+  public init(_ fileContents: [String: BytesRepresentable]) {
     self.contents = fileContents
     self.fileNames = [String](fileContents.keys)
   }
 
-  public subscript(key: String) -> Data? {
+  public subscript(key: String) -> BytesRepresentable? {
     return contents[key]
   }
 
@@ -19,7 +19,7 @@ public class ResourceData {
       return
     }
 
-    contents.updateValue(confirmedValue.toData, forKey: key)
+    contents.updateValue(confirmedValue, forKey: key)
   }
 
   public func remove(at key: String) {

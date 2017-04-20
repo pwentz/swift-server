@@ -23,7 +23,7 @@ public class CookieFormatter: ResponseFormatter {
     return HTTPResponse(
       status: TwoHundred.Ok,
       headers: cookieHeaders.map { response.updateHeaders(with: $0) } ?? response.headers,
-      body: formatBody(cookieBody).flatMap { response.updateBody(with: $0.toData) }
+      body: formatBody(cookieBody).flatMap { response.updateBody(with: $0) }
     )
   }
 

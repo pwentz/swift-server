@@ -16,9 +16,8 @@ public class PartialFormatter: ResponseFormatter {
     }
 
     let partialBody = response.body
-                              .flatMap { String(bytes: $0, encoding: .utf8) }
-                              .map { rangeOf($0, range: validRange) }?
-                              .toData
+                              .flatMap { String(bytes: $0) }
+                              .map { rangeOf($0, range: validRange) }
 
     return HTTPResponse(
       status: TwoHundred.PartialContent,

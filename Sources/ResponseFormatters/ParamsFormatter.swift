@@ -17,7 +17,6 @@ public class ParamsFormatter: ResponseFormatter {
                            .toDictionary()
                            .map { $0 + " = " + $1 }
                            .joined(separator: "\n")
-                           .toData
 
     return HTTPResponse(
       status: TwoHundred.Ok,

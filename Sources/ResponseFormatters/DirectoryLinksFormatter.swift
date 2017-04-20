@@ -19,7 +19,6 @@ public class DirectoryLinksFormatter: ResponseFormatter {
 
     let formattedLinks = fileNames.map(htmlLink)
                                   .joined(separator: "<br>")
-                                  .toData
 
     return HTTPResponse(
       status: TwoHundred.Ok,

@@ -7,8 +7,8 @@ extension String: BytesRepresentable {
 }
 
 public extension String {
-  var toData: Data {
-    return self.toBytes.toData
+  var count: Int {
+    return self.characters.count
   }
 
   init?(response: HTTPResponse) {
@@ -21,4 +21,7 @@ public extension String {
     self.init(statusLine + joinedHeaders)
   }
 
+  init?(bytes: BytesRepresentable) {
+    self.init(bytes: bytes.toBytes, encoding: .utf8)
+  }
 }
