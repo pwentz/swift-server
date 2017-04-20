@@ -4,38 +4,51 @@ import Responses
 @testable import ResponseFormatters
 
 class LogsFormatterTest: XCTestCase {
+  let ok = TwoHundred.Ok
+
   func testItReturnsNewBodyWithLogsIfGivenLogs() {
-    let response = HTTPResponse(status: TwoHundred.Ok)
+    let response = HTTPResponse(status: ok)
     let existingLogs = ["GET /someRoute HTTP/1.1"]
 
     let newResponse = LogsFormatter(logs: existingLogs).addToResponse(response)
 
-    let expected = "GET /someRoute HTTP/1.1"
+    let expectedResponse = HTTPResponse(
+      status: ok,
+      body: "GET /someRoute HTTP/1.1"
+    )
 
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
+    XCTAssertEqual(newResponse, expectedResponse)
   }
 
   func testItAppendsLogsToExistingBody() {
-    let response = HTTPResponse(status: TwoHundred.Ok, body: "neat")
+    let response = HTTPResponse(status: ok, body: "neat")
     let existingLogs = ["GET /someRoute HTTP/1.1"]
 
     let newResponse = LogsFormatter(logs: existingLogs).addToResponse(response)
 
-    let expected = "neat\n\nGET /someRoute HTTP/1.1"
+    let expectedResponse = HTTPResponse(
+      status: ok,
+      body: "neat\n\nGET /someRoute HTTP/1.1"
+    )
 
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
+    XCTAssertEqual(newResponse, expectedResponse)
   }
 
   func testItReturnsExistingBodyIfNoLogsAreGiven() {
-    let response = HTTPResponse(status: TwoHundred.Ok, body: "neat")
+    let response = HTTPResponse(status: ok, body: "neat")
 
     let newResponse = LogsFormatter(logs: nil).addToResponse(response)
 
-    XCTAssertEqual(newResponse.body!, "neat".toBytes)
+    let expectedResponse = HTTPResponse(
+      status: ok,
+      body: "neat"
+    )
+
+    XCTAssertEqual(newResponse, expectedResponse)
   }
 
   func testItReturnsAnEmptyBodyIfBodyWasEmptyAndNoGivenLogs() {
-    let response = HTTPResponse(status: TwoHundred.Ok)
+    let response = HTTPResponse(status: ok)
 
     let newResponse = LogsFormatter(logs: nil).addToResponse(response)
 

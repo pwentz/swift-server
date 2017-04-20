@@ -4,68 +4,78 @@ import Responses
 @testable import ResponseFormatters
 
 class ParamsFormatterTest: XCTestCase {
+  let ok = TwoHundred.Ok
+
   func testItCanHandleNoParams() {
-    let rawRequest = "GET /parameters HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
-    let request = HTTPRequest(for: rawRequest)!
-    let response = HTTPResponse(status: TwoHundred.Ok)
+    let request = HTTPRequest(for: "GET /parameters HTTP/1.1\r\n")!
+    let response = HTTPResponse(status: ok)
 
     let newResponse = ParamsFormatter(for: request.params).addToResponse(response)
 
     XCTAssertNil(newResponse.body)
   }
 
-  func testItCanDecodeSimpleParams() {
-    let rawRequest = "GET /parameters?variable_1=Operators HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
+  func testItCanHandleSimpleParams() {
+    let rawRequest = "GET /parameters?variable_1=Operators HTTP/1.1\r\n"
     let request = HTTPRequest(for: rawRequest)!
-    let response = HTTPResponse(status: TwoHundred.Ok)
+    let response = HTTPResponse(status: ok)
 
     let newResponse = ParamsFormatter(for: request.params).addToResponse(response)
-    let expected = "variable_1 = Operators"
 
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
+    let expectedResponse = HTTPResponse(
+      status: ok,
+      body: "variable_1 = Operators"
+    )
+
+    XCTAssertEqual(newResponse, expectedResponse)
   }
 
   func testItCanDecodeComplexParams() {
-    let rawRequest = "GET /parameters?variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
+    let rawRequest = "GET /parameters?variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F HTTP/1.1\r\n"
     let request = HTTPRequest(for: rawRequest)!
-    let response = HTTPResponse(status: TwoHundred.Ok)
+    let response = HTTPResponse(status: ok)
 
     let newResponse = ParamsFormatter(for: request.params).addToResponse(response)
-    let expected = "variable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?"
 
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
+    let expectedResponse = HTTPResponse(
+      status: ok,
+      body: "variable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?"
+    )
+
+    XCTAssertEqual(newResponse, expectedResponse)
   }
 
-  func testItCanDecodeAndFormatMultipleParams() {
-    let rawRequest = "GET /parameters?variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F&variable_2=stuff HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
+  func testItCanDecodeAndAppendMultipleParams() {
+    let paramOne = "variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F"
+    let paramTwo = "variable_2=stuff"
+
+    let rawRequest = "GET /parameters?\(paramOne)&\(paramTwo) HTTP/1.1\r\n"
     let request = HTTPRequest(for: rawRequest)!
-    let response = HTTPResponse(status: TwoHundred.Ok)
+    let response = HTTPResponse(status: ok, body: "wow")
 
     let newResponse = ParamsFormatter(for: request.params).addToResponse(response)
-    let expected = "variable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?\nvariable_2 = stuff"
 
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
-  }
+    let expectedResponse = HTTPResponse(
+      status: ok,
+      body: "wow\n\nvariable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?\nvariable_2 = stuff"
+    )
 
-  func testItAppendParamsToExistingBody() {
-    let rawRequest = "GET /parameters?variable_1=Operators%20%3C%2C%20%3E%2C%20%3D%2C%20!%3D%3B%20%2B%2C%20-%2C%20*%2C%20%26%2C%20%40%2C%20%23%2C%20%24%2C%20%5B%2C%20%5D%3A%20%22is%20that%20all%22%3F&variable_2=stuff HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
-    let request = HTTPRequest(for: rawRequest)!
-    let response = HTTPResponse(status: TwoHundred.Ok, body: "wow")
-
-    let newResponse = ParamsFormatter(for: request.params).addToResponse(response)
-    let expected = "wow\n\nvariable_1 = Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?\nvariable_2 = stuff"
-
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
+    XCTAssertEqual(newResponse, expectedResponse)
   }
 
   func testItDoesNotAppendParamsWhenParamsAreNil() {
-    let rawRequest = "GET /parameters HTTP/1.1\r\nHost: localhost:5000\r\nConnection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\nAccept-Encoding: gzip,deflate"
+    let rawRequest = "GET /parameters HTTP/1.1"
     let request = HTTPRequest(for: rawRequest)!
-    let response = HTTPResponse(status: TwoHundred.Ok, body: "wow")
+    let response = HTTPResponse(status: ok, body: "wow")
 
     let newResponse = ParamsFormatter(for: request.params).addToResponse(response)
 
-    XCTAssertEqual(newResponse.body!, "wow".toBytes)
+    let expectedResponse = HTTPResponse(
+      status: ok,
+      body: "wow"
+    )
+
+    XCTAssertEqual(newResponse, expectedResponse)
   }
 
 }

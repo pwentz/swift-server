@@ -20,11 +20,13 @@ public class CookieFormatter: ResponseFormatter {
       String(params: params).map { ["Set-Cookie": $0] }
     }
 
-    return HTTPResponse(
-      status: TwoHundred.Ok,
-      headers: cookieHeaders.map { response.updateHeaders(with: $0) } ?? response.headers,
-      body: formatBody(cookieBody).flatMap { response.updateBody(with: $0.toData) }
+    let newResponse = HTTPResponse(
+      status: response.status,
+      headers: cookieHeaders,
+      body: formatBody(cookieBody)
     )
+
+    return response + newResponse
   }
 
   private func getCookieValue(from cookieHeader: String) -> String {

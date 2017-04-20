@@ -16,13 +16,13 @@ public class ParamsFormatter: ResponseFormatter {
     let formattedParams = [String: String](params: validParams)
                            .map { $0 + " = " + $1 }
                            .joined(separator: "\n")
-                           .toData
 
-    return HTTPResponse(
-      status: TwoHundred.Ok,
-      headers: response.headers,
-      body: response.updateBody(with: formattedParams)
+    let newResponse = HTTPResponse(
+      status: response.status,
+      body: formattedParams
     )
+
+    return response + newResponse
   }
 
 }

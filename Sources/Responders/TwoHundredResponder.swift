@@ -16,15 +16,15 @@ class TwoHundredResponder {
   }
 
   public func response(to request: HTTPRequest) -> HTTPResponse {
-    let validResponse = HTTPResponse(status: TwoHundred.Ok)
+    let successResponse = HTTPResponse(status: TwoHundred.Ok)
     switch request.verb {
 
     case let verb where verb == .Get:
       let formatters = getFormatters(request: request, route: route)
 
       return isAnImage(request.path) ?
-        formatters.first!.addToResponse(validResponse) :
-        formatters.reduce(validResponse) { $1.addToResponse($0) }
+        formatters.first!.addToResponse(successResponse) :
+        formatters.reduce(successResponse) { $1.addToResponse($0) }
 
     case let verb where verb == .Options:
       let allowedMethods = route
@@ -36,7 +36,7 @@ class TwoHundredResponder {
 
     case let verb where verb == .Post:
       data.update(request.path, withVal: request.body)
-      return validResponse
+      return successResponse
 
     case let verb where verb == .Put:
       let resource = data[request.path]
@@ -44,7 +44,7 @@ class TwoHundredResponder {
 
       return resource == nil ?
         HTTPResponse(status: TwoHundred.Created) :
-        validResponse
+        successResponse
 
     case let verb where verb == .Patch:
       data.update(request.path, withVal: request.body)
@@ -55,10 +55,10 @@ class TwoHundredResponder {
 
     case let verb where verb == .Delete:
       data.remove(at: request.path)
-      return validResponse
+      return successResponse
 
     default:
-      return validResponse
+      return successResponse
     }
   }
 

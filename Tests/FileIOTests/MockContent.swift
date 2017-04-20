@@ -9,7 +9,7 @@ class MockContent: Writable {
     self.fileURLWithPath = fileURLWithPath
   }
 
-  func write(content: String) throws {
+  func write(_ content: String) throws {
     self.content = content
   }
 }

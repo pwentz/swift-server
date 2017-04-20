@@ -19,11 +19,13 @@ public class ContentFormatter: ResponseFormatter {
 
     let newHeaders = ["Content-Type": getContentType()]
 
-    return HTTPResponse(
-      status: TwoHundred.Ok,
-      headers: response.updateHeaders(with: newHeaders),
-      body: response.updateBody(with: resource)
+    let newResponse = HTTPResponse(
+      status: response.status,
+      headers: newHeaders,
+      body: resource
     )
+
+    return response + newResponse
   }
 
   private func getContentType() -> String {

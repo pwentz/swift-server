@@ -7,9 +7,9 @@ extension HTTPResponse: Equatable {
       let leftHeaders = lhs.headers ?? [:]
       let rightHeaders = rhs.headers ?? [:]
 
-      return lhs.statusCode == rhs.statusCode &&
+      return lhs.status.description == rhs.status.description &&
               leftHeaders == rightHeaders &&
-                lhs.body ?? [] == rhs.body ?? []
+                lhs.body?.toBytes ?? [] == rhs.body?.toBytes ?? []
     }
   }
 }

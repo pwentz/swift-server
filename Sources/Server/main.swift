@@ -14,11 +14,7 @@ let dateHelper = DateHelper(today: Date(), calendar: Calendar.current, formatter
 func onReceive(_ timestamp: String) -> (_ content: String) throws -> Void {
   let urlPath = URL(fileURLWithPath: logsPath + "/" + timestamp).appendingPathExtension("txt")
 
-  func write(_ content: String) throws {
-    try urlPath.write(content: content)
-  }
-
-  return write
+  return urlPath.write
 }
 
 do {

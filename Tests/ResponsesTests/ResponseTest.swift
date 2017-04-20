@@ -10,7 +10,7 @@ class ResponseTest: XCTestCase {
 
     let response = HTTPResponse(status: ok, headers: headers, body: body)
 
-    XCTAssertEqual(response.statusCode, "200 OK")
+    XCTAssertEqual(response.status.description, "200 OK")
   }
 
   func testItCanCompleteOtherStatusCodes() {
@@ -19,7 +19,7 @@ class ResponseTest: XCTestCase {
 
     let response = HTTPResponse(status: FourHundred.Teapot, headers: headers, body: body)
 
-    XCTAssertEqual(response.statusCode, "418 I'm a teapot")
+    XCTAssertEqual(response.status.description, "418 I'm a teapot")
   }
 
   func testItHasABody() {
@@ -28,7 +28,7 @@ class ResponseTest: XCTestCase {
 
     let response = HTTPResponse(status: ok, headers: headers, body: body)
 
-    XCTAssertEqual(response.body!, body.toBytes)
+    XCTAssertEqual(response.body!.toBytes, body.toBytes)
   }
 
   func testItCanFormatItsHeaders() {
@@ -65,15 +65,14 @@ class ResponseTest: XCTestCase {
     let rawHeaders = "Content-Type:text/html\r\nWWW-Authenticate:Basic realm=\"simple\""
     let formattedStatus: [UInt8] = Array("HTTP/1.1 200 OK\r\n".utf8)
     let formattedHeaders: [UInt8] = Array(rawHeaders.utf8)
-    let body: [UInt8] = []
-    let formattedResponse = formattedStatus + formattedHeaders + body
+    let formattedResponse = formattedStatus + formattedHeaders + []
 
-    let response = HTTPResponse(status: ok, headers: headers, body: nil)
+    let response = HTTPResponse(status: ok, headers: headers)
 
     XCTAssertEqual(response.formatted, formattedResponse)
   }
 
-  func testItCanBeRepresentedByAString() {
+  func testItsStatusAndHeadersCanBeRepresentedByAString() {
     let headers = ["Content-Type": "ABCD"]
 
     let response = HTTPResponse(status: ok, headers: headers)

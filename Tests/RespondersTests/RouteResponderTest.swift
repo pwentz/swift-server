@@ -9,26 +9,24 @@ class RouteResponderTest: XCTestCase {
 
   // Early Returns
     func testItReturnsA404IfRouteIsNotSpecified() {
-      let rawRequest = "GET /someRoute HTTP/1.1"
-      let request = HTTPRequest(for: rawRequest)!
+      let request = HTTPRequest(for: "GET /someRoute HTTP/1.1")!
       let route = Route(auth: "XYZ", allowedMethods: [.Get])
       let routes = ["/logs": route]
 
       let response = RouteResponder(routes: routes).getResponse(to: request)
 
-      XCTAssertEqual(response.statusCode, "404 Not Found")
+      XCTAssertEqual(response.status.description, "404 Not Found")
     }
 
     func testItReturnsA405IfMethodIsNotSpecifiedInRoute() {
-      let rawRequest = "POST /logs HTTP/1.1"
-      let request = HTTPRequest(for: rawRequest)!
+      let request = HTTPRequest(for: "POST /logs HTTP/1.1")!
 
       let route = Route(allowedMethods: [.Get])
       let routes = ["/logs": route]
 
       let response = RouteResponder(routes: routes).getResponse(to: request)
 
-      XCTAssertEqual(response.statusCode, "405 Method Not Allowed")
+      XCTAssertEqual(response.status.description, "405 Method Not Allowed")
     }
 
     func testItReturnsA401IfRouteAuthDoesNotMatchCredentialsInRequest() {
@@ -40,12 +38,11 @@ class RouteResponderTest: XCTestCase {
 
       let response = RouteResponder(routes: routes).getResponse(to: request)
 
-      XCTAssertEqual(response.statusCode, "401 Unauthorized")
+      XCTAssertEqual(response.status.description, "401 Unauthorized")
     }
 
     func testItReturnsA302IfRedirectRouteIsSpecified() {
-      let rawRequest = "GET /logs HTTP/1.1"
-      let request = HTTPRequest(for: rawRequest)!
+      let request = HTTPRequest(for: "GET /logs HTTP/1.1")!
 
       let route = Route(allowedMethods: [.Get], redirectPath: "/redirect")
       let redirectRoute = Route(allowedMethods: [.Get])
@@ -53,12 +50,11 @@ class RouteResponderTest: XCTestCase {
 
       let response = RouteResponder(routes: routes).getResponse(to: request)
 
-      XCTAssertEqual(response.statusCode, "302 Found")
+      XCTAssertEqual(response.status.description, "302 Found")
     }
 
     func testItReturnsACustomResponseIfSpecified() {
-      let rawRequest = "GET /logs HTTP/1.1"
-      let request = HTTPRequest(for: rawRequest)!
+      let request = HTTPRequest(for: "GET /logs HTTP/1.1")!
 
       let customResponse = HTTPResponse(status: FourHundred.Teapot, body: "ponies")
 
@@ -71,15 +67,14 @@ class RouteResponderTest: XCTestCase {
     }
 
     func testItReturnsAValidResponseOtherwise() {
-      let rawRequest = "GET /logs HTTP/1.1"
-      let request = HTTPRequest(for: rawRequest)!
+      let request = HTTPRequest(for: "GET /logs HTTP/1.1")!
 
       let route = Route(allowedMethods: [.Get])
       let routes = ["/logs": route]
 
       let response = RouteResponder(routes: routes).getResponse(to: request)
 
-      XCTAssertEqual(response.statusCode, "200 OK")
+      XCTAssertEqual(response.status.description, "200 OK")
     }
 
   // Edge Cases
@@ -96,9 +91,12 @@ class RouteResponderTest: XCTestCase {
       let _ = responder.getResponse(to: invalidRequest)
       let response = responder.getResponse(to: request)
 
-      let expected = "GET /someRoute HTTP/1.1"
+      let expectedResponse = HTTPResponse(
+        status: TwoHundred.Ok,
+        body: "GET /someRoute HTTP/1.1"
+      )
 
-      XCTAssertEqual(response.body!, expected.toBytes)
+      XCTAssertEqual(response, expectedResponse)
     }
 
 }
