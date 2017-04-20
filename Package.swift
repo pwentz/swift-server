@@ -31,7 +31,8 @@ let package = Package(
       Target(name: "Router", dependencies: [
         .Target(name: "Requests"),
         .Target(name: "Responses"),
-        .Target(name: "Responders")
+        .Target(name: "Responders"),
+        .Target(name: "Util")
       ]),
       Target(name: "Util", dependencies: [
         .Target(name: "Errors"),
