@@ -3,7 +3,6 @@ import XCTest
 import Util
 import Requests
 import Responses
-import RespondersTests
 
 class ContentFormatterTest: XCTestCase {
   let ok = TwoHundred.Ok

@@ -1,4 +1,5 @@
 import Foundation
+import Util
 
 public struct HTTPResponse {
   public let status: HTTPStatusCode
@@ -22,12 +23,14 @@ public struct HTTPResponse {
     self.body = body
   }
 
-  public var formatted: [UInt8] {
+  public func format(dateHelper: DateHelper) -> [UInt8] {
     let joinedHeaders = headers?.map { $0 + headerDivide + $1 }.joined(separator: crlf) ?? ""
+    let dateHeader = "\(crlf)Date: \(dateHelper.rfcTimestamp + (crlf + crlf))"
     let statusLine = "\(transferProtocol) \(status.description + crlf)"
-    let formattedBody = body.map { bodyDivide.plus($0) }?.toBytes ?? []
+    let formattedBody = body?.toBytes ?? []
 
-    return statusLine.toBytes + joinedHeaders.toBytes + formattedBody
+    let finalFormat = statusLine.toBytes + (joinedHeaders + dateHeader).toBytes + formattedBody
+    return finalFormat
   }
 
   private func updateBody(with newBody: BytesRepresentable?) -> BytesRepresentable? {

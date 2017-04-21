@@ -39,7 +39,7 @@ public class Router {
 
       try onReceive.map { callback throws in
         let write = callback(timestamp)
-        let content = "REQUEST: \(try data.toString())\n\nRESPONSE: \(String(response: response))"
+        let content = "REQUEST: \(try data.toString())\r\nRESPONSE: \(String(response: response))"
         try write(content)
       }
 
@@ -53,7 +53,7 @@ public class Router {
 
   internal func getDispatchCallback(_ response: HTTPResponse, client: Socket) -> () throws -> Void {
     return {
-      try client.send(data: response.formatted)
+      try client.send(data: response.format(dateHelper: self.dateHelper))
       try client.close()
     }
   }

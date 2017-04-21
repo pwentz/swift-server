@@ -1,5 +1,3 @@
-import Responses
-
 extension HTTPResponse: Equatable {
   static public func == (lhs: HTTPResponse, rhs: HTTPResponse) -> Bool {
     switch (lhs, rhs) {

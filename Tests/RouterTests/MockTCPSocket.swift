@@ -39,6 +39,8 @@ class MockTCPSocket: Socket {
     let parsedResponse = String(bytes: data, encoding: .utf8)!
 
     sentResponseCode = parsedResponse
+                        .components(separatedBy: "\r\n")
+                        .first!
                         .components(separatedBy: " ")
                         .dropFirst()
                         .joined(separator: " ")
