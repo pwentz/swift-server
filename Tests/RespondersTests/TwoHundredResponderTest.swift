@@ -268,22 +268,4 @@ class TwoHundredResponderTest: XCTestCase {
       XCTAssertEqual(response, expectedResponse)
     }
 
-    func testItTreatsMissingBodyOnPostRequestsAsEmptyString() {
-      let missingBodyPostRequest = HTTPRequest(for: "POST /someRoute HTTP/1.1\r\n\r\n")!
-      let getRequest = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\n\r\n")!
-
-      let route = Route(allowedMethods: [.Post, .Get])
-
-      let responder = TwoHundredResponder(route: route)
-      let _ = responder.response(to: missingBodyPostRequest)
-      let response = responder.response(to: getRequest)
-
-      let expectedResponse = HTTPResponse(
-        status: ok,
-        headers: ["Content-Type": "text/html"],
-        body: ""
-      )
-
-      XCTAssertEqual(response, expectedResponse)
-    }
 }

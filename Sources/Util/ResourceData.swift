@@ -15,7 +15,11 @@ public class ResourceData {
   }
 
   public func update(_ key: String, withVal value: String?) {
-    contents.updateValue(value ?? "", forKey: key)
+    guard let validValue = value else {
+      return
+    }
+
+    contents.updateValue(validValue, forKey: key)
   }
 
   public func remove(at key: String) {
