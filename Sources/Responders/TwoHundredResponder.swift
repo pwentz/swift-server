@@ -20,7 +20,7 @@ class TwoHundredResponder {
     switch request.verb {
 
     case let verb where verb == .Get:
-      let formatters = getFormatters(request: request, route: route)
+      let formatters = gatherFormatters(request: request, route: route)
 
       return isAnImage(request.path) ?
         formatters.first!.addToResponse(successResponse) :
@@ -52,7 +52,6 @@ class TwoHundredResponder {
 
       return HTTPResponse(status: TwoHundred.NoContent, headers: headers)
 
-
     case let verb where verb == .Delete:
       data.remove(at: request.path)
       return successResponse
@@ -62,7 +61,7 @@ class TwoHundredResponder {
     }
   }
 
-  private func getFormatters(request: HTTPRequest, route: Route) -> [ResponseFormatter] {
+  private func gatherFormatters(request: HTTPRequest, route: Route) -> [ResponseFormatter] {
     return [
       ContentFormatter(for: request.path, data: data),
       route.cookiePrefix.map { CookieFormatter(for: request, prefix: $0) } ?? ParamsFormatter(for: request.params),

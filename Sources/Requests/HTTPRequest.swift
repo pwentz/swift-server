@@ -19,19 +19,20 @@ public struct HTTPRequest {
   }
 
   public init?(for rawRequest: String) {
+    guard rawRequest.contains(transferProtocol) else {
+      return nil
+    }
+
     let splitRequest = rawRequest.components(separatedBy: crlf)
     let requestTail = splitRequest.last
 
     let requestLineParts = splitRequest.first?.components(separatedBy: " ")
 
-    guard let splitRequestLine = requestLineParts, splitRequestLine.count >= 2 else {
+    guard let splitRequestLine = requestLineParts, splitRequestLine.count >= 3 else {
       return nil
     }
 
-    let fullPath = splitRequestLine
-                     .first(where: { $0.hasPrefix("/") })?
-                     .trimAndRemoveMultiples(of: "/")
-                     .prepend("/")
+    let fullPath = splitRequestLine.first(where: { $0.hasPrefix("/") })
 
     guard let validPath = fullPath else {
       return nil
@@ -58,7 +59,7 @@ public struct HTTPRequest {
 
   private func requestHeaders(_ result: [String: String], _ rawHeader: String) -> [String: String] {
     var mutableResult = result
-    let separatorIndex = rawHeader.range(of: ":")
+    let separatorIndex = rawHeader.range(of: headerDivide)
 
     let key = separatorIndex.map {
       rawHeader.substring(to: $0.lowerBound)

@@ -88,7 +88,7 @@ class ResponseTest: XCTestCase {
     let headers = ["Content-Type": "ABCD"]
 
     let response = HTTPResponse(status: ok, headers: headers)
-    let expected = "HTTP/1.1 200 OK\r\nContent-Type:ABCD"
+    let expected = "HTTP/1.1 200 OK\r\nContent-Type:ABCD\r\n\r\n"
 
     XCTAssertEqual(String(response: response), expected)
   }

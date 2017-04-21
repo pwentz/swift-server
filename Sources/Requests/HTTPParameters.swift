@@ -1,13 +1,14 @@
 public class HTTPParameters {
-  public let keyValueSeparator: String = "="
-  public let multipleSeparator: String = "&"
+  public let keyValueSeparator = "="
+  public let multipleSeparator = "&"
   public var keys: [String] = []
   public var values: [String] = []
 
   public init?(for rawParams: String) {
-    let flattenedParams = rawParams.components(separatedBy: multipleSeparator)
-                                   .flatMap { $0.components(separatedBy: keyValueSeparator) }
-                                   .filter { !$0.isEmpty }
+    let flattenedParams = rawParams
+                            .components(separatedBy: multipleSeparator)
+                            .flatMap { $0.components(separatedBy: keyValueSeparator) }
+                            .filter { !$0.isEmpty }
 
     guard flattenedParams.count >= 2 else {
       return nil

@@ -16,7 +16,7 @@ public class CookieFormatter: ResponseFormatter {
       "\(prefix) \(getCookieValue(from: cookie))"
     }
 
-    let cookieHeaders = request.params.flatMap { params -> [String: String]? in
+    let cookieHeaders = request.params.flatMap { params in
       String(params: params).map { ["Set-Cookie": $0] }
     }
 
