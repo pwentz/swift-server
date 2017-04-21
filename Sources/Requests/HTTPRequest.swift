@@ -12,6 +12,12 @@ public struct HTTPRequest {
 
   public var headers: [String: String] = [:]
 
+  public var shouldHaveBody: Bool {
+    return self.verb == .Post ||
+            self.verb == .Patch ||
+              self.verb == .Put
+  }
+
   public init?(for rawRequest: String) {
     let splitRequest = rawRequest.components(separatedBy: crlf)
     let requestTail = splitRequest[splitRequest.index(before: splitRequest.endIndex)]
@@ -64,4 +70,5 @@ public struct HTTPRequest {
 
     return mutableResult
   }
+
 }

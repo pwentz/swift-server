@@ -30,13 +30,13 @@ class ControllerDataTest: XCTestCase {
     XCTAssertEqual(referenceToData["file1"]!.toBytes, "I'm a modified text file".toBytes)
   }
 
-  func testItUnwrapsUpdateOptionalToEmptyStringIfNil() {
+  func testItDoesNotUpdateWhenPassedNil() {
     let contents = ["file1": "I'm a text file"]
     let data = ResourceData(contents)
 
     data.update("file1", withVal: nil)
 
-    XCTAssertEqual(data["file1"]!.toBytes, "".toBytes)
+    XCTAssertEqual(data["file1"]!.toBytes, "I'm a text file".toBytes)
   }
 
   func testItRemovesValue() {

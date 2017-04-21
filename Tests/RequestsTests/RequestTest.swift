@@ -142,4 +142,14 @@ class RequestTest: XCTestCase {
       XCTAssertEqual(request.headers, [:])
       XCTAssertEqual(request.body!, "data:fatcat")
     }
+
+    func testItCanSayWhetherItShouldHaveABody() {
+      let postRequest = HTTPRequest(for: "POST /cookie HTTP/1.1\r\n\r\n")!
+      let putRequest = HTTPRequest(for: "PUT /cookie HTTP/1.1\r\n\r\n")!
+      let patchRequest = HTTPRequest(for: "PATCH /cookie HTTP/1.1\r\n\r\n")!
+
+      XCTAssert(postRequest.shouldHaveBody)
+      XCTAssert(putRequest.shouldHaveBody)
+      XCTAssert(patchRequest.shouldHaveBody)
+    }
 }

@@ -36,6 +36,26 @@ class FourHundredResponderTest: XCTestCase {
     XCTAssertEqual(response, expectedResponse)
   }
 
+  func testItReturnsABadRequestIfPostPatchOrPutIsMissingBody() {
+    let invalidPostRequest = HTTPRequest(for: "POST /someRoute HTTP/1.1\r\n\r\n")!
+    let invalidPutRequest = HTTPRequest(for: "PUT /someRoute HTTP/1.1\r\n\r\n")!
+    let invalidPatchRequest = HTTPRequest(for: "PATCH /someRoute HTTP/1.1\r\n\r\n")!
+
+    let route = Route(allowedMethods: [.Post, .Put, .Patch])
+
+    let responder = FourHundredResponder(route: route)
+
+    let postResponse = responder.response(to: invalidPostRequest)
+    let putResponse = responder.response(to: invalidPutRequest)
+    let patchResponse = responder.response(to: invalidPatchRequest)
+
+    let expectedResponse = HTTPResponse(status: FourHundred.BadRequest)
+
+    XCTAssertEqual(postResponse, expectedResponse)
+    XCTAssertEqual(putResponse, expectedResponse)
+    XCTAssertEqual(patchResponse, expectedResponse)
+  }
+
   func testItReturnsA416IfGivenEndRangeIsOutOfBounds() {
     let rawRequest = "GET /someRoute HTTP/1.1\r\nRange: bytes=5-80\r\n\r\n"
     let request = HTTPRequest(for: rawRequest)!

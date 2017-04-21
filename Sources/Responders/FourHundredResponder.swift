@@ -27,6 +27,10 @@ class FourHundredResponder {
       return HTTPResponse(status: FourHundred.MethodNotAllowed)
     }
 
+    if request.shouldHaveBody, request.body == nil {
+      return HTTPResponse(status: FourHundred.BadRequest)
+    }
+
     if let resource = data[request.path], isRangeOutOfBounds(for: resource.count, rangeHeader) {
       let byteMax = resource.count - 1
 
