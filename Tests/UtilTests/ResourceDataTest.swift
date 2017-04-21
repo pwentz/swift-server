@@ -4,14 +4,14 @@ import Responses
 
 class ControllerDataTest: XCTestCase {
   func testItHasAGetter() {
-    let contents: [String: BytesRepresentable] = ["file1": "I'm a text file"]
+    let contents = ["file1": "I'm a text file"]
     let data = ResourceData(contents)
 
     XCTAssertEqual(data["file1"]!.toBytes, "I'm a text file".toBytes)
   }
 
   func testItCanMutateValues() {
-    let contents: [String: BytesRepresentable] = ["file1": "I'm a text file"]
+    let contents = ["file1": "I'm a text file"]
     let data = ResourceData(contents)
 
     data.update("file1", withVal: "I'm a modified text file")
@@ -20,13 +20,31 @@ class ControllerDataTest: XCTestCase {
   }
 
   func testMutationsPersistToReferences() {
-    let contents: [String: BytesRepresentable] = ["file1": "I'm a text file"]
+    let contents = ["file1": "I'm a text file"]
     let data = ResourceData(contents)
 
-    let referenceToData: [ResourceData] = [data]
+    let referenceToData = data
 
     data.update("file1", withVal: "I'm a modified text file")
 
-    XCTAssertEqual(referenceToData.first!["file1"]!.toBytes, "I'm a modified text file".toBytes)
+    XCTAssertEqual(referenceToData["file1"]!.toBytes, "I'm a modified text file".toBytes)
+  }
+
+  func testItUnwrapsUpdateOptionalToEmptyStringIfNil() {
+    let contents = ["file1": "I'm a text file"]
+    let data = ResourceData(contents)
+
+    data.update("file1", withVal: nil)
+
+    XCTAssertEqual(data["file1"]!.toBytes, "".toBytes)
+  }
+
+  func testItRemovesValue() {
+    let contents = ["file1": "I'm a text file"]
+    let data = ResourceData(contents)
+
+    data.remove(at: "file1")
+
+    XCTAssertNil(data["file1"])
   }
 }

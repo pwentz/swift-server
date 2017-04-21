@@ -9,7 +9,7 @@ class FourHundredResponderTest: XCTestCase {
   let route = Route(auth: "XYZ", allowedMethods: [.Get], redirectPath: "/")
 
   func testItReturns401WhenAuthDoesntMatch() {
-    let rawRequest = "GET /someRoute HTTP/1.1\r\nAuthorization: Basic ABC"
+    let rawRequest = "GET /someRoute HTTP/1.1\r\nAuthorization: Basic ABC\r\n\r\n"
     let request = HTTPRequest(for: rawRequest)!
 
     let responder = FourHundredResponder(route: route)
@@ -24,7 +24,7 @@ class FourHundredResponderTest: XCTestCase {
   }
 
   func testItReturnsMethodNotAllowedWhenMethodIsNotInConfig() {
-    let request = HTTPRequest(for: "POST /someRoute HTTP/1.1")!
+    let request = HTTPRequest(for: "POST /someRoute HTTP/1.1\r\n\r\ndata=wow")!
 
     let route = Route(allowedMethods: [.Get])
 
@@ -37,7 +37,7 @@ class FourHundredResponderTest: XCTestCase {
   }
 
   func testItReturnsA416IfGivenEndRangeIsOutOfBounds() {
-    let rawRequest = "GET /someRoute HTTP/1.1\r\nRange: bytes=5-80"
+    let rawRequest = "GET /someRoute HTTP/1.1\r\nRange: bytes=5-80\r\n\r\n"
     let request = HTTPRequest(for: rawRequest)!
 
     let route = Route(allowedMethods: [.Get])
@@ -61,7 +61,7 @@ class FourHundredResponderTest: XCTestCase {
   }
 
   func testItReturnsA416IfGivenStartRangeIsOutOfBounds() {
-    let rawRequest = "GET /someRoute HTTP/1.1\r\nRange: bytes=80-5"
+    let rawRequest = "GET /someRoute HTTP/1.1\r\nRange: bytes=80-5\r\n\r\n"
     let request = HTTPRequest(for: rawRequest)!
 
     let route = Route(allowedMethods: [.Get])

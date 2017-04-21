@@ -15,11 +15,7 @@ public class ResourceData {
   }
 
   public func update(_ key: String, withVal value: String?) {
-    guard let confirmedValue = value else {
-      return
-    }
-
-    contents.updateValue(confirmedValue, forKey: key)
+    contents.updateValue(value ?? "", forKey: key)
   }
 
   public func remove(at key: String) {
