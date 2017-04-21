@@ -9,6 +9,17 @@ import Responders
 
 let reader = CommandLineReader(args: CommandLine.arguments)
 var contents: [String: Data] = [:]
+let dateHelper = DateHelper(today: Date(), calendar: Calendar.current, formatter: DateFormatter())
+
+func onReceive(_ timestamp: String) -> (_ content: String) throws -> Void {
+  let urlPath = URL(fileURLWithPath: logsPath + "/" + timestamp).appendingPathExtension("txt")
+
+  func write(_ content: String) throws {
+    try urlPath.write(content: content)
+  }
+
+  return write
+}
 
 do {
   let port = try reader.portArgs() ?? defaultPort
@@ -31,17 +42,23 @@ do {
 
   let responder = RouteResponder(routes: routes, data: persistedData)
 
-  let router = Router(socket: socket, threadQueue: DispatchQueue.global(qos: .userInteractive), port: port, responder: responder)
+  let router = Router(
+    socket: socket,
+    threadQueue: DispatchQueue.global(qos: .userInteractive),
+    port: port,
+    responder: responder,
+    dateHelper: dateHelper
+  )
 
-  try router.listen()
+  try router.listen(onReceive: onReceive)
 
   while true {
     try router.receive()
   }
 } catch {
-  let fileName = DateHelper(today: Date(), calendar: Calendar.current, formatter: DateFormatter()).formatTimestamp(prefix: "FAILURE")
-  let urlPath = URL(fileURLWithPath: logsPath + "/" + fileName).appendingPathExtension("txt")
-  try urlPath.write(content: "ERROR: \(error)")
+  let timestamp = dateHelper.formatTimestamp(prefix: "FAILURE")
+  let write = onReceive(timestamp)
+  try write("ERROR: \(error)")
 
   throw error
 }
