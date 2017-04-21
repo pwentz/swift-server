@@ -7,7 +7,7 @@ class WritableLocationTest: XCTestCase {
     let path = "/some/path/to/somewhere"
     let content = MockContent(fileURLWithPath: path + "/file1")
 
-    try content.write(content: "some stuff")
+    try content.write("some stuff")
 
     XCTAssertEqual(content.content!, "some stuff")
   }

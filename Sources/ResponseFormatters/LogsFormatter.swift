@@ -13,11 +13,12 @@ public class LogsFormatter: ResponseFormatter {
       return response
     }
 
-    return HTTPResponse(
-      status: TwoHundred.Ok,
-      headers: response.headers,
-      body: response.updateBody(with: logs.joined(separator: "\n").toData)
+    let newResponse = HTTPResponse(
+      status: response.status,
+      body: logs.joined(separator: "\n")
     )
+
+    return response + newResponse
   }
 
 }

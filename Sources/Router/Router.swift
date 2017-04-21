@@ -37,7 +37,7 @@ public class Router {
 
       let timestamp = dateHelper.formatTimestamp(prefix: "SUCCESS")
 
-      try self.onReceive.map { callback throws in
+      try onReceive.map { callback throws in
         let write = callback(timestamp)
         let content = "REQUEST: \(try data.toString())\n\nRESPONSE: \(String(response: response))"
         try write(content)

@@ -19,13 +19,13 @@ public class DirectoryLinksFormatter: ResponseFormatter {
 
     let formattedLinks = fileNames.map(htmlLink)
                                   .joined(separator: "<br>")
-                                  .toData
 
-    return HTTPResponse(
-      status: TwoHundred.Ok,
-      headers: response.headers,
-      body: response.updateBody(with: formattedLinks)
+    let newResponse = HTTPResponse(
+      status: response.status,
+      body: formattedLinks
     )
+
+    return response + newResponse
   }
 
   private func trimSlash(in file: String) -> String {

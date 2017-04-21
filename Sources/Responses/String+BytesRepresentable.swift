@@ -4,11 +4,12 @@ extension String: BytesRepresentable {
   public var toBytes: [UInt8] {
     return Array(self.utf8)
   }
+
 }
 
 public extension String {
-  var toData: Data {
-    return self.toBytes.toData
+  var count: Int {
+    return self.characters.count
   }
 
   init(response: HTTPResponse) {
@@ -16,9 +17,13 @@ public extension String {
                                 .map { $0 + response.headerDivide + $1 }
                                 .joined(separator: response.crlf) ?? ""
 
-    let statusLine = "\(response.transferProtocol) \(response.statusCode + response.crlf)"
+    let statusLine = "\(response.transferProtocol) \(response.status.description + response.crlf)"
 
     self.init(statusLine + joinedHeaders)!
+  }
+
+  init?(bytes: BytesRepresentable) {
+    self.init(bytes: bytes.toBytes, encoding: .utf8)
   }
 
 }

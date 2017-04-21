@@ -43,10 +43,10 @@ class FourHundredResponderTest: XCTestCase {
     let route = Route(allowedMethods: [.Get])
     let content = "content less than 80 chars"
 
-    let contentLength = content.characters.count - 1
+    let contentLength = content.count - 1
 
     let data = ResourceData(
-      ["/someRoute": content.toData]
+      ["/someRoute": content]
     )
 
     let responder = FourHundredResponder(route: route, data: data)
@@ -70,7 +70,7 @@ class FourHundredResponderTest: XCTestCase {
     let contentLength = content.characters.count - 1
 
     let data = ResourceData(
-      ["/someRoute": content.toData]
+      ["/someRoute": content]
     )
 
     let responder = FourHundredResponder(route: route, data: data)

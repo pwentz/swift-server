@@ -4,71 +4,73 @@ import Responses
 import Requests
 
 class PartialFormatterTest: XCTestCase {
+  let ok = TwoHundred.Ok
+  let partial = TwoHundred.PartialContent
+  let content = "This is a file that contains text to read part of in order to fulfill a 206.\n"
+
   func testItCanUpdateBodyOnResponseGivenRangeStart() {
-    let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\nRange:bytes=4-\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = HTTPRequest(for: rawRequest)!
-    let content = "This is a file that contains text to read part of in order to fulfill a 206.\n"
-    let response = HTTPResponse(status: TwoHundred.Ok, body: content)
+    let request = HTTPRequest(for: "GET /partial_content.txt HTTP/1.1\r\nRange:bytes=4-")!
+
+    let response = HTTPResponse(status: ok, body: content)
 
     let partialFormatter = PartialFormatter(for: request.headers["range"])
 
     let newResponse = partialFormatter.addToResponse(response)
-    let expected = " is a file that contains text to read part of in order to fulfill a 206.\n"
 
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
+    let expectedResponse = HTTPResponse(
+      status: partial,
+      body: " is a file that contains text to read part of in order to fulfill a 206.\n"
+    )
+
+    XCTAssertEqual(newResponse, expectedResponse)
   }
 
   func testItCanUpdateBodyOnResponseGivenRangeEnd() {
-    let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\nRange:bytes=-6\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = HTTPRequest(for: rawRequest)!
+    let request = HTTPRequest(for: "GET /partial_content.txt HTTP/1.1\r\nRange:bytes=-6")!
 
-    let content = "This is a file that contains text to read part of in order to fulfill a 206.\n"
-    let response = HTTPResponse(status: TwoHundred.Ok, body: content)
+    let response = HTTPResponse(status: ok, body: content)
 
     let partialFormatter = PartialFormatter(for: request.headers["range"])
 
     let newResponse = partialFormatter.addToResponse(response)
 
-    let expected = " 206.\n"
+    let expectedResponse = HTTPResponse(
+      status: partial,
+      body: " 206.\n"
+    )
 
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
+    XCTAssertEqual(newResponse, expectedResponse)
   }
 
   func testItCanUpdateBodyOnResponseGiveRangeStartAndEnd() {
-    let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\nRange:bytes=0-4\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = HTTPRequest(for: rawRequest)!
+    let request = HTTPRequest(for: "GET /partial_content.txt HTTP/1.1\r\nRange:bytes=0-4")!
 
-    let content = "This is a file that contains text to read part of in order to fulfill a 206.\n"
-    let response = HTTPResponse(status: TwoHundred.Ok, body: content)
-
-    let partialFormatter = PartialFormatter(for: request.headers["range"])
-    let newResponse = partialFormatter.addToResponse(response)
-    let expected = "This "
-
-    XCTAssertEqual(newResponse.body!, expected.toBytes)
-  }
-
-  func testItCanUpdateStatusOnResponse() {
-    let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\nRange:bytes=0-4\r\n User-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
-    let request = HTTPRequest(for: rawRequest)!
-    let content = "This is a file that contains text to read part of in order to fulfill a 206.\n"
-    let response = HTTPResponse(status: TwoHundred.Ok, body: content)
+    let response = HTTPResponse(status: ok, body: content)
 
     let partialFormatter = PartialFormatter(for: request.headers["range"])
     let newResponse = partialFormatter.addToResponse(response)
 
-    XCTAssertEqual(newResponse.statusCode, "206 Partial Content")
+    let expectedResponse = HTTPResponse(
+      status: partial,
+      body: "This "
+    )
+
+    XCTAssertEqual(newResponse, expectedResponse)
   }
 
   func testItReturnsTheResponseBodyAsIsIfNoRangeGiven() {
-    let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n Host: localhost:5000\r\n Connection: Keep-Alive\r\nUser-Agent: Apache-HttpClient/4.3.5 (java 1.5)\r\n Accept-Encoding: gzip,deflate"
+    let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n"
     let request = HTTPRequest(for: rawRequest)!
-    let content = "This is a file that contains text to read part of in order to fulfill a 206.\n"
-    let response = HTTPResponse(status: TwoHundred.Ok, body: content)
+    let response = HTTPResponse(status: ok, body: content)
 
     let partialFormatter = PartialFormatter(for: request.headers["range"])
     let newResponse = partialFormatter.addToResponse(response)
 
-    XCTAssertEqual(newResponse.body!, content.toBytes)
+    let expectedResponse = HTTPResponse(
+      status: ok,
+      body: content
+    )
+
+    XCTAssertEqual(newResponse, expectedResponse)
   }
 }
