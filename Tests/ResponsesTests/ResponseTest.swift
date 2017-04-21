@@ -1,4 +1,5 @@
 import XCTest
+import Util
 @testable import Responses
 
 class ResponseTest: XCTestCase {
@@ -42,20 +43,25 @@ class ResponseTest: XCTestCase {
     XCTAssertEqual(response.headers!, headers)
   }
 
-  func testItCanFormatItselfWithExistingBody() {
+  func testItCanFormatItselfWithCurrentDataInHeaders() {
     let headers = ["Content-Type": "text/html",
                    "WWW-Authenticate" : "Basic realm=\"simple\""]
 
     let rawHeaders = "Content-Type:text/html\r\nWWW-Authenticate:Basic realm=\"simple\""
+
+    let mockCalendar = MockCalendar(hour: 6, minute: 25, second: 10)
+    let mockFormatter = MockFormatter(month: "04", day: "21", year: "2017")
+
+    let dateHelper = DateHelper(today: Date(), calendar: mockCalendar, formatter: mockFormatter)
+
+    let rfcDateHeader = "\r\nDate: Fri, 21 Apr 2017\r\n\r\n"
     let body = "BODY"
     let formattedStatus = "HTTP/1.1 200 OK\r\n".toBytes
-    let formattedHeaders = rawHeaders.toBytes
-    let formattedBody = "\n\n\(body)".toBytes
-    let formattedResponse = formattedStatus + formattedHeaders + formattedBody
+    let formattedResponse = formattedStatus + (rawHeaders + rfcDateHeader).toBytes + body.toBytes
 
     let response = HTTPResponse(status: ok, headers: headers, body: body)
 
-    XCTAssertEqual(response.formatted, formattedResponse)
+    XCTAssertEqual(response.format(dateHelper: dateHelper), formattedResponse)
   }
 
   func testItCanFormatItselfWithNoBody() {
@@ -63,13 +69,19 @@ class ResponseTest: XCTestCase {
                    "WWW-Authenticate" : "Basic realm=\"simple\""]
 
     let rawHeaders = "Content-Type:text/html\r\nWWW-Authenticate:Basic realm=\"simple\""
-    let formattedStatus: [UInt8] = Array("HTTP/1.1 200 OK\r\n".utf8)
-    let formattedHeaders: [UInt8] = Array(rawHeaders.utf8)
-    let formattedResponse = formattedStatus + formattedHeaders + []
+
+    let mockCalendar = MockCalendar(hour: 6, minute: 25, second: 10)
+    let mockFormatter = MockFormatter(month: "04", day: "21", year: "2017")
+
+    let dateHelper = DateHelper(today: Date(), calendar: mockCalendar, formatter: mockFormatter)
+
+    let rfcDateHeader = "\r\nDate: Fri, 21 Apr 2017\r\n\r\n"
+
+    let formattedResponse = "HTTP/1.1 200 OK\r\n".toBytes + (rawHeaders + rfcDateHeader).toBytes + []
 
     let response = HTTPResponse(status: ok, headers: headers)
 
-    XCTAssertEqual(response.formatted, formattedResponse)
+    XCTAssertEqual(response.format(dateHelper: dateHelper), formattedResponse)
   }
 
   func testItsStatusAndHeadersCanBeRepresentedByAString() {

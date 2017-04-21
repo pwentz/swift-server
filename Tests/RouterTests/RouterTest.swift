@@ -5,7 +5,6 @@ import Requests
 import Responses
 import FileIO
 import Util
-import UtilTests
 
 class MockResponder: Responder {
   public func getResponse(to request: HTTPRequest) -> HTTPResponse {
@@ -29,7 +28,7 @@ class MockCaller {
 }
 
 class RouterTest: XCTestCase {
-  let rawRequest = "GET /logs HTTP/1.1"
+  let rawRequest = "GET /logs HTTP/1.1\r\n\r\n"
   let port: UInt16 = 5000
   let dateHelper = DateHelper(
     today: Date(),
@@ -48,7 +47,7 @@ class RouterTest: XCTestCase {
     try router.listen(onReceive: listenCallback)
     try router.receive()
 
-    XCTAssertEqual(mockCaller.timestamp, "SUCCESS-2:45:30--04/15/2017")
+    XCTAssertEqual(mockCaller.timestamp, "SUCCESS-2:45:30--04-15-2017")
   }
 
   func testItCallsOnSendNestedCallbackWithResponse() throws {
@@ -62,7 +61,7 @@ class RouterTest: XCTestCase {
     try router.listen(onReceive: listenCallback)
     try router.receive()
 
-    let expectedContents = "REQUEST: GET /logs HTTP/1.1\n\nRESPONSE: HTTP/1.1 200 OK\r\n"
+    let expectedContents = "REQUEST: GET /logs HTTP/1.1\r\n\r\n\r\nRESPONSE: HTTP/1.1 200 OK\r\n"
 
     XCTAssertEqual(mockCaller.writtenContent, expectedContents)
   }

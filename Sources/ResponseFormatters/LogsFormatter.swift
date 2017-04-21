@@ -1,5 +1,4 @@
 import Responses
-import Util
 
 public class LogsFormatter: ResponseFormatter {
   let serverLogs: [String]?

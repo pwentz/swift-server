@@ -5,6 +5,11 @@ public class DateHelper {
   private let calendar: Calendarizable
   private var formatter: DateFormattable
 
+  public var rfcTimestamp: String {
+    formatter.dateFormat = "E, d MMM yyyy HH:mm:ss Z"
+    return formatter.string(from: today)
+  }
+
   public init(today: Date, calendar: Calendarizable, formatter: DateFormattable) {
     self.today = today
     self.calendar = calendar

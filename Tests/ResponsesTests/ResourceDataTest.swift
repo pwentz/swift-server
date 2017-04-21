@@ -1,6 +1,6 @@
 import XCTest
-import Responses
-@testable import Util
+@testable import Responses
+import Util
 
 class ControllerDataTest: XCTestCase {
   func testItHasAGetter() {

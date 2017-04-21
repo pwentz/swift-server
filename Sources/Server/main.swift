@@ -1,11 +1,12 @@
 import Foundation
 import SocksCore
 import Router
-import Util
 import Config
 import FileIO
 import Routes
 import Responders
+import Responses
+import Util
 
 let reader = CommandLineReader(args: CommandLine.arguments)
 var contents: [String: Data] = [:]

@@ -35,16 +35,19 @@ let package = Package(
         .Target(name: "Util")
       ]),
       Target(name: "Util", dependencies: [
-        .Target(name: "Errors"),
-        .Target(name: "Responses")
+        .Target(name: "Errors")
       ]),
       Target(name: "FileIO", dependencies: [
         .Target(name: "Config"),
-        .Target(name: "Errors")
+        .Target(name: "Errors"),
+        .Target(name: "Util")
       ]),
       Target(name: "Routes", dependencies: [
         .Target(name: "Requests"),
         .Target(name: "Responses")
+      ]),
+      Target(name: "Responses", dependencies: [
+        .Target(name: "Util")
       ])
     ],
     dependencies: [

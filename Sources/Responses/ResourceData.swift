@@ -1,4 +1,3 @@
-import Responses
 import Foundation
 
 public class ResourceData {
