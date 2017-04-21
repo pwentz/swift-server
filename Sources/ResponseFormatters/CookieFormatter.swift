@@ -35,7 +35,7 @@ public class CookieFormatter: ResponseFormatter {
   }
 
   private func formatBody(_ cookieBody: String?) -> String? {
-    let prefixedBody = request.params.map { _ in prefix }
+    let prefixedBody = request.params != nil ? prefix : nil
 
     return cookieBody.map {
       $0 + " " + (prefixedBody ?? "")

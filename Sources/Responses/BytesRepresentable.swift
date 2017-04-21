@@ -12,3 +12,7 @@ public extension BytesRepresentable {
   }
 
 }
+
+public func + (lhs: BytesRepresentable, rhs: BytesRepresentable?) -> BytesRepresentable {
+  return lhs.plus(rhs)
+}

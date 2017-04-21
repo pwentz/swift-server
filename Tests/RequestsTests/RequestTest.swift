@@ -152,4 +152,16 @@ class RequestTest: XCTestCase {
       XCTAssert(putRequest.shouldHaveBody)
       XCTAssert(patchRequest.shouldHaveBody)
     }
+
+    func testItWillFailIfPathHasNoLeadingSlash() {
+      let request = HTTPRequest(for: "GET someRoute HTTP/1.1\r\n\r\n")
+
+      XCTAssertNil(request)
+    }
+
+    func testItWillFormatPathWithMultipleSlashesOrTrailingSlash() {
+      let request = HTTPRequest(for: "GET //someRoute//to///////somewhere/ HTTP/1.1\r\n\r\n")!
+
+      XCTAssertEqual(request.path, "/someRoute/to/somewhere")
+    }
 }

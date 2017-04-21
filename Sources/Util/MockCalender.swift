@@ -11,10 +11,16 @@ public class MockCalendar: Calendarizable {
     self.second = second
   }
 
-  public func currentHour(from today: Date) -> Int { return hour }
+  public func currentHour(from today: Date) -> Int {
+    return hour
+  }
 
-  public func currentMinute(from today: Date) -> Int { return minute }
+  public func currentMinute(from today: Date) -> Int {
+    return minute
+  }
 
-  public func currentSecond(from today: Date) -> Int { return second }
+  public func currentSecond(from today: Date) -> Int {
+    return second
+  }
 }
 

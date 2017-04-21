@@ -7,4 +7,15 @@ extension String {
 
     self.init(result.trimmingCharacters(in: .newlines))
   }
+
+  public func prepend(_ value: String) -> String {
+    return value + self
+  }
+
+  public func trimAndRemoveMultiples(of value: String) -> String {
+    return self
+             .components(separatedBy: value)
+             .filter { !$0.isEmpty }
+             .joined(separator: value)
+  }
 }

@@ -29,7 +29,7 @@ public class DirectoryLinksFormatter: ResponseFormatter {
   }
 
   private func trimSlash(in file: String) -> String {
-    return file.substring(from: file.index(after: file.startIndex))
+    return String(file.characters.dropFirst())
   }
 
   private func htmlLink(_ file: String) -> String {

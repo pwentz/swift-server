@@ -27,9 +27,9 @@ public class PartialFormatter: ResponseFormatter {
   }
 
   private func rangeOf(_ currentBody: String, range: String) -> String {
-    let chars = Array(currentBody.characters).map { String($0) }
+    let chars = currentBody.characters.map { String($0) }
 
-    let range = calculateRange(length: currentBody.characters.count)
+    let range = calculateRange(length: currentBody.count)
 
     return chars[range].joined(separator: "")
   }
