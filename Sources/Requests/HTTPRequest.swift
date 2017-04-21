@@ -20,27 +20,35 @@ public struct HTTPRequest {
 
   public init?(for rawRequest: String) {
     let splitRequest = rawRequest.components(separatedBy: crlf)
-    let requestTail = splitRequest[splitRequest.index(before: splitRequest.endIndex)]
+    let requestTail = splitRequest.last
 
-    let splitRequestLine = splitRequest[splitRequest.startIndex].components(separatedBy: " ")
+    let requestLineParts = splitRequest.first?.components(separatedBy: " ")
 
-    guard splitRequestLine.count >= 2 else {
+    guard let splitRequestLine = requestLineParts, splitRequestLine.count >= 2 else {
       return nil
     }
 
-    let givenVerb = splitRequestLine[splitRequestLine.startIndex]
+    let fullPath = splitRequestLine
+                     .first(where: { $0.hasPrefix("/") })?
+                     .trimAndRemoveMultiples(of: "/")
+                     .prepend("/")
 
-    let fullPath = splitRequestLine[splitRequestLine.index(after: splitRequestLine.startIndex)]
+    guard let validPath = fullPath else {
+      return nil
+    }
 
-    let splitPath = fullPath.components(separatedBy: parameterDivide)
+    verb = HTTPRequestMethod(verb: splitRequestLine.first?.capitalized)
 
-    verb = HTTPRequestMethod(rawValue: givenVerb.capitalized)
+    path = validPath
+             .range(of: parameterDivide)
+             .flatMap { validPath.substring(to: $0.lowerBound) } ?? validPath
 
-    path = fullPath.range(of: parameterDivide).map { fullPath.substring(to: $0.lowerBound) } ?? fullPath
+    params = validPath
+               .components(separatedBy: parameterDivide)
+               .first(where: { $0.contains("=") })
+               .flatMap { HTTPParameters(for: $0) }
 
-    params = splitPath.first(where: { $0.contains("=") }).flatMap { HTTPParameters(for: $0) }
-
-    body = requestTail.isEmpty ? nil : requestTail
+    body = requestTail.flatMap { $0.isEmpty ? nil : $0 }
 
     headers = splitRequest
                .dropFirst()
@@ -52,21 +60,22 @@ public struct HTTPRequest {
     var mutableResult = result
     let separatorIndex = rawHeader.range(of: ":")
 
-    // missing key w/ value or vice-versa appears as empty string
     let key = separatorIndex.map {
       rawHeader.substring(to: $0.lowerBound)
                .trimmingCharacters(in: .whitespaces)
                .lowercased()
-    } ?? ""
+    }
 
     let value = separatorIndex.map {
       rawHeader.substring(from: $0.upperBound)
                .trimmingCharacters(in: .whitespaces)
-    } ?? ""
-
-    if !key.isEmpty, !value.isEmpty {
-      mutableResult[key] = value
     }
+
+    guard let k = key, let v = value, !k.isEmpty, !v.isEmpty else {
+      return mutableResult
+    }
+
+    mutableResult[k] = v
 
     return mutableResult
   }

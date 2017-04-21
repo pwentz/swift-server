@@ -1,4 +1,5 @@
 extension HTTPResponse: Equatable {
+
   static public func == (lhs: HTTPResponse, rhs: HTTPResponse) -> Bool {
     switch (lhs, rhs) {
     default:
@@ -10,4 +11,5 @@ extension HTTPResponse: Equatable {
                 lhs.body?.toBytes ?? [] == rhs.body?.toBytes ?? []
     }
   }
+
 }

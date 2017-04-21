@@ -8,11 +8,10 @@ public struct HTTPResponse {
   public let crlf: String = "\r\n"
   public let headerDivide: String = ":"
   public let transferProtocol: String = "HTTP/1.1"
-  public let bodyDivide: String = "\n\n"
 
   public static func + (lhs: HTTPResponse, rhs: HTTPResponse) -> HTTPResponse {
-    let newBody = lhs.updateBody(with: rhs.body)
-    let newHeaders = lhs.updateHeaders(with: rhs.headers)
+    let newBody = lhs.mergeBody(with: rhs.body)
+    let newHeaders = lhs.mergeHeaders(with: rhs.headers)
 
     return HTTPResponse(status: rhs.status, headers: newHeaders, body: newBody)
   }
@@ -27,17 +26,17 @@ public struct HTTPResponse {
     let joinedHeaders = headers?.map { $0 + headerDivide + $1 }.joined(separator: crlf) ?? ""
     let dateHeader = "\(crlf)Date: \(dateHelper.rfcTimestamp + (crlf + crlf))"
     let statusLine = "\(transferProtocol) \(status.description + crlf)"
-    let formattedBody = body?.toBytes ?? []
 
-    let finalFormat = statusLine.toBytes + (joinedHeaders + dateHeader).toBytes + formattedBody
+    let finalFormat = (statusLine + joinedHeaders + dateHeader + body).toBytes
+
     return finalFormat
   }
 
-  private func updateBody(with newBody: BytesRepresentable?) -> BytesRepresentable? {
-    return self.body.map { $0.plus(bodyDivide).plus(newBody) } ?? newBody
+  private func mergeBody(with newBody: BytesRepresentable?) -> BytesRepresentable? {
+    return self.body.map { $0 + "\n\n" + newBody } ?? newBody
   }
 
-  private func updateHeaders(with newHeaders: [String: String]?) -> [String: String]? {
+  private func mergeHeaders(with newHeaders: [String: String]?) -> [String: String]? {
     guard var existingHeaders = self.headers else {
       return newHeaders
     }
