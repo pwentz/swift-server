@@ -9,7 +9,7 @@ class PartialFormatterTest: XCTestCase {
   let content = "This is a file that contains text to read part of in order to fulfill a 206.\n"
 
   func testItCanUpdateBodyOnResponseGivenRangeStart() {
-    let request = HTTPRequest(for: "GET /partial_content.txt HTTP/1.1\r\nRange:bytes=4-")!
+    let request = HTTPRequest(for: "GET /partial_content.txt HTTP/1.1\r\nRange:bytes=4-\r\n\r\n")!
 
     let response = HTTPResponse(status: ok, body: content)
 
@@ -26,7 +26,7 @@ class PartialFormatterTest: XCTestCase {
   }
 
   func testItCanUpdateBodyOnResponseGivenRangeEnd() {
-    let request = HTTPRequest(for: "GET /partial_content.txt HTTP/1.1\r\nRange:bytes=-6")!
+    let request = HTTPRequest(for: "GET /partial_content.txt HTTP/1.1\r\nRange:bytes=-6\r\n\r\n")!
 
     let response = HTTPResponse(status: ok, body: content)
 
@@ -43,7 +43,7 @@ class PartialFormatterTest: XCTestCase {
   }
 
   func testItCanUpdateBodyOnResponseGiveRangeStartAndEnd() {
-    let request = HTTPRequest(for: "GET /partial_content.txt HTTP/1.1\r\nRange:bytes=0-4")!
+    let request = HTTPRequest(for: "GET /partial_content.txt HTTP/1.1\r\nRange:bytes=0-4\r\n\r\n")!
 
     let response = HTTPResponse(status: ok, body: content)
 
@@ -59,7 +59,7 @@ class PartialFormatterTest: XCTestCase {
   }
 
   func testItReturnsTheResponseBodyAsIsIfNoRangeGiven() {
-    let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n"
+    let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n\r\n"
     let request = HTTPRequest(for: rawRequest)!
     let response = HTTPResponse(status: ok, body: content)
 

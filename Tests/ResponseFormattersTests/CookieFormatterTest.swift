@@ -7,7 +7,7 @@ class CookieFormatterTest: XCTestCase {
   let ok = TwoHundred.Ok
 
   func testItCanAppendCookiePrefixWhenNoCookieExistsYet() {
-    let request = HTTPRequest(for: "GET /cookie?type=chocolate HTTP/1.1\r\n")!
+    let request = HTTPRequest(for: "GET /cookie?type=chocolate HTTP/1.1\r\n\r\n")!
     let response = HTTPResponse(status: ok)
     let cookiePrefix = "Eat"
 
@@ -23,7 +23,7 @@ class CookieFormatterTest: XCTestCase {
   }
 
   func testItCanAppendToExistingResponse() {
-    let request = HTTPRequest(for: "GET /cookie?type=chocolate HTTP/1.1\r\n")!
+    let request = HTTPRequest(for: "GET /cookie?type=chocolate HTTP/1.1\r\n\r\n")!
     let response = HTTPResponse(status: ok, headers: ["Content-Type": "text/html"], body: "some stuff")
     let cookiePrefix = "Eat"
 
@@ -42,7 +42,7 @@ class CookieFormatterTest: XCTestCase {
   }
 
   func testItCanAppendCookiePrefixAfterCookieIsSet() {
-    let request = HTTPRequest(for: "GET /eat_cookie HTTP/1.1\r\nCookie: type=chocolate")!
+    let request = HTTPRequest(for: "GET /eat_cookie HTTP/1.1\r\nCookie: type=chocolate\r\n\r\n")!
     let response = HTTPResponse(status: ok)
     let cookiePrefix = "wow"
 
@@ -57,7 +57,7 @@ class CookieFormatterTest: XCTestCase {
   }
 
   func testItCanSetCookieAndRespondWithCookie() {
-    let request = HTTPRequest(for: "GET /eat_cookie?type=oatmeal HTTP/1.1\r\nCookie: type=chocolate")!
+    let request = HTTPRequest(for: "GET /eat_cookie?type=oatmeal HTTP/1.1\r\nCookie: type=chocolate\r\n\r\n")!
     let response = HTTPResponse(status: ok)
     let cookiePrefix = "wow"
 
@@ -73,7 +73,7 @@ class CookieFormatterTest: XCTestCase {
   }
 
   func testItWillNotAppendIfNoCookieHeader() {
-    let request = HTTPRequest(for: "GET /eat_cookie HTTP/1.1\r\n")!
+    let request = HTTPRequest(for: "GET /eat_cookie HTTP/1.1\r\n\r\n")!
     let response = HTTPResponse(status: ok)
     let cookiePrefix = "wow"
 

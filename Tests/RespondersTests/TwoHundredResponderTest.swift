@@ -9,7 +9,7 @@ class TwoHundredResponderTest: XCTestCase {
   let ok = TwoHundred.Ok
   // Compound Routes
     func testItCanGetContentWithACookiePrefix() {
-      let request = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\nCookie: type=oatmeal")!
+      let request = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\nCookie: type=oatmeal\r\n\r\n")!
 
       let data = ResourceData(["/someRoute": "this is a file."])
 
@@ -27,7 +27,7 @@ class TwoHundredResponderTest: XCTestCase {
     }
 
     func testItCanGetContentWithCookiePrefixAndLogsIncluded() {
-      let request = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\nCookie: type=oatmeal")!
+      let request = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\nCookie: type=oatmeal\r\n\r\n")!
 
       let data = ResourceData(["/someRoute": "this is a file."])
 
@@ -51,7 +51,7 @@ class TwoHundredResponderTest: XCTestCase {
     }
 
     func testItCanGetContentWithCookiePrefixAndDirectoryLinksAndLogsIncluded() {
-      let request = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\nCookie: type=oatmeal")!
+      let request = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\nCookie: type=oatmeal\r\n\r\n")!
 
       let data = ResourceData(["/someRoute": "this is a file."])
 
@@ -77,7 +77,7 @@ class TwoHundredResponderTest: XCTestCase {
 
   // CRUD functionality
     func testItCanDeliverContentsWithoutExtension() {
-      let request = HTTPRequest(for: "GET /someRoute HTTP/1.1")!
+      let request = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\n\r\n")!
       let data = ResourceData(
         ["/someRoute": "I'm a file"]
       )
@@ -96,7 +96,7 @@ class TwoHundredResponderTest: XCTestCase {
     }
 
     func testItReturnsEmptyResponseBodyIfNoContent() {
-      let request = HTTPRequest(for: "GET /someRoute HTTP/1.1")!
+      let request = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\n\r\n")!
 
       let route = Route(allowedMethods: [.Get])
 
@@ -106,8 +106,8 @@ class TwoHundredResponderTest: XCTestCase {
     }
 
     func testItCanCreateNewDataWithPost() {
-      let postRequest = HTTPRequest(for: "POST /someRoute HTTP/1.1\r\ncheese")!
-      let getRequest = HTTPRequest(for: "GET /someRoute HTTP/1.1")!
+      let postRequest = HTTPRequest(for: "POST /someRoute HTTP/1.1\r\n\r\ncheese")!
+      let getRequest = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\n\r\n")!
 
       let route = Route(allowedMethods: [.Get, .Post])
 
@@ -125,8 +125,8 @@ class TwoHundredResponderTest: XCTestCase {
     }
 
     func testItCanUpdateExistingRouteDataWithPut() {
-      let putRequest = HTTPRequest(for: "PUT /someRoute HTTP/1.1\r\nupdated cheese")!
-      let getRequest = HTTPRequest(for: "GET /someRoute HTTP/1.1")!
+      let putRequest = HTTPRequest(for: "PUT /someRoute HTTP/1.1\r\n\r\nupdated cheese")!
+      let getRequest = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\n\r\n")!
 
       let data = ResourceData(["/someRoute": "cheese"])
 
@@ -146,8 +146,8 @@ class TwoHundredResponderTest: XCTestCase {
     }
 
     func testItCanRemoveExistingRouteDataWithDelete() {
-      let deleteRequest = HTTPRequest(for: "DELETE /someRoute HTTP/1.1")!
-      let getRequest = HTTPRequest(for: "GET /someRoute HTTP/1.1")!
+      let deleteRequest = HTTPRequest(for: "DELETE /someRoute HTTP/1.1\r\n\r\n")!
+      let getRequest = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\n\r\n")!
 
       let data = ResourceData(["/someRoute": "cheese"])
 
@@ -163,8 +163,8 @@ class TwoHundredResponderTest: XCTestCase {
     }
 
     func testItCanUpdateExistingDataWithPatch() {
-      let patchRequest = HTTPRequest(for: "PATCH /someRoute HTTP/1.1\r\nnew cheese")!
-      let getRequest = HTTPRequest(for: "GET /someRoute HTTP/1.1")!
+      let patchRequest = HTTPRequest(for: "PATCH /someRoute HTTP/1.1\r\n\r\nnew cheese")!
+      let getRequest = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\n\r\n")!
 
       let data = ResourceData(["/someRoute": "cheese"])
 
@@ -184,7 +184,7 @@ class TwoHundredResponderTest: XCTestCase {
     }
 
     func testItSendsETagInHeaderIfPresentInRequest() {
-      let patchRequest = HTTPRequest(for: "PATCH /someRoute HTTP/1.1\r\nIf-Match: abcde\r\nnew cheese")!
+      let patchRequest = HTTPRequest(for: "PATCH /someRoute HTTP/1.1\r\nIf-Match: abcde\r\n\r\nnew cheese")!
 
       let data = ResourceData(["/someRoute": "cheese"])
 
@@ -203,7 +203,7 @@ class TwoHundredResponderTest: XCTestCase {
 
   // Other request methods
     func testItReturnsAllowedMethodsOnOptionsRequest() {
-      let request = HTTPRequest(for: "OPTIONS /someRoute HTTP/1.1")!
+      let request = HTTPRequest(for: "OPTIONS /someRoute HTTP/1.1\r\n\r\n")!
 
       let route = Route(allowedMethods: [.Options, .Post, .Head])
 
@@ -218,7 +218,7 @@ class TwoHundredResponderTest: XCTestCase {
     }
 
     func testItCanHandleHeadRequests() {
-      let request = HTTPRequest(for: "HEAD /someRoute HTTP/1.1")!
+      let request = HTTPRequest(for: "HEAD /someRoute HTTP/1.1\r\n\r\n")!
 
       let route = Route(allowedMethods: [.Head])
 
@@ -231,8 +231,8 @@ class TwoHundredResponderTest: XCTestCase {
 
   // Edge cases
     func testItCanUpdateNonExistingData() {
-      let putRequest = HTTPRequest(for: "PUT /someRoute HTTP/1.1\r\nupdated cheese")!
-      let getRequest = HTTPRequest(for: "GET /someRoute HTTP/1.1")!
+      let putRequest = HTTPRequest(for: "PUT /someRoute HTTP/1.1\r\n\r\nupdated cheese")!
+      let getRequest = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\n\r\n")!
 
       let route = Route(allowedMethods: [.Get, .Put])
 
@@ -251,8 +251,7 @@ class TwoHundredResponderTest: XCTestCase {
     }
 
     func testItDoesNotAppendAdditionalDataToImage() {
-      let rawRequest = "GET /someRoute.jpeg HTTP/1.1\r\nCookie: type=oatmeal"
-      let request = HTTPRequest(for: rawRequest)!
+      let request = HTTPRequest(for: "GET /someRoute.jpeg HTTP/1.1\r\nCookie: type=oatmeal\r\n\r\n")!
 
       let data = ResourceData(["/someRoute.jpeg": "this is an image file"])
 
@@ -264,6 +263,25 @@ class TwoHundredResponderTest: XCTestCase {
         status: ok,
         headers: ["Content-Type": "image/jpeg"],
         body: "this is an image file"
+      )
+
+      XCTAssertEqual(response, expectedResponse)
+    }
+
+    func testItTreatsMissingBodyOnPostRequestsAsEmptyString() {
+      let missingBodyPostRequest = HTTPRequest(for: "POST /someRoute HTTP/1.1\r\n\r\n")!
+      let getRequest = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\n\r\n")!
+
+      let route = Route(allowedMethods: [.Post, .Get])
+
+      let responder = TwoHundredResponder(route: route)
+      let _ = responder.response(to: missingBodyPostRequest)
+      let response = responder.response(to: getRequest)
+
+      let expectedResponse = HTTPResponse(
+        status: ok,
+        headers: ["Content-Type": "text/html"],
+        body: ""
       )
 
       XCTAssertEqual(response, expectedResponse)

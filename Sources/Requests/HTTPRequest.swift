@@ -34,10 +34,11 @@ public struct HTTPRequest {
 
     params = splitPath.first(where: { $0.contains("=") }).flatMap { HTTPParameters(for: $0) }
 
-    body = requestTail.contains(headerDivide) ? nil : requestTail
+    body = requestTail.isEmpty ? nil : requestTail
 
     headers = splitRequest
                .dropFirst()
+               .dropLast()
                .reduce([:], requestHeaders)
   }
 
