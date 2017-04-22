@@ -37,7 +37,7 @@ class DirectoryLinksFormatterTest: XCTestCase {
   }
 
   func testItDoesNotAddDirectoryLinksIfFilesAreNil() {
-    let response = HTTPResponse(status: TwoHundred.Ok)
+    let response = HTTPResponse(status: ok)
 
     let newResponse = DirectoryLinksFormatter(files: nil).addToResponse(response)
 
@@ -45,11 +45,16 @@ class DirectoryLinksFormatterTest: XCTestCase {
   }
 
   func testItReturnsNewResponseBodyAsIsIfFilesAreNil() {
-    let response = HTTPResponse(status: TwoHundred.Ok, body: "neat!")
+    let response = HTTPResponse(status: ok, body: "neat!")
 
     let newResponse = DirectoryLinksFormatter(files: nil).addToResponse(response)
 
-    XCTAssertEqual(newResponse.body!.toBytes, "neat!".toBytes)
+    let expectedResponse = HTTPResponse(
+      status: ok,
+      body: "neat!"
+    )
+
+    XCTAssertEqual(newResponse, expectedResponse)
   }
 
   func testItDoesNotAppendHTMLDataWhenContentTypeIsText() {

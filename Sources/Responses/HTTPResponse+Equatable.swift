@@ -8,7 +8,7 @@ extension HTTPResponse: Equatable {
 
       return lhs.status.description == rhs.status.description &&
               leftHeaders == rightHeaders &&
-                lhs.body?.toBytes ?? [] == rhs.body?.toBytes ?? []
+                (lhs.body?.toBytes ?? []) == (rhs.body?.toBytes ?? [])
     }
   }
 

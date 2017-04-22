@@ -10,7 +10,7 @@ class ThreeHundredResponder {
   }
 
   func response(to request: HTTPRequest) -> HTTPResponse? {
-    return redirectPath.map { foundResponse(location: $0) }
+    return redirectPath.map(foundResponse)
   }
 
   private func foundResponse(location: String) -> HTTPResponse {

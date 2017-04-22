@@ -14,7 +14,7 @@ public struct HTTPResponse {
   }
 
   public static func + (lhs: HTTPResponse, rhs: HTTPResponse) -> HTTPResponse {
-    let newBody = lhs.mergeBody(with: rhs.body)
+    let newBody = rhs.body.flatMap(lhs.mergeBody)
     let newHeaders = lhs.mergeHeaders(with: rhs.headers)
 
     return HTTPResponse(status: rhs.status, headers: newHeaders, body: newBody)
@@ -39,7 +39,7 @@ public struct HTTPResponse {
     ).toBytes
   }
 
-  private func mergeBody(with newBody: BytesRepresentable?) -> BytesRepresentable? {
+  private func mergeBody(with newBody: BytesRepresentable) -> BytesRepresentable? {
     return self.body.map { $0 + "\n\n" + newBody } ?? newBody
   }
 

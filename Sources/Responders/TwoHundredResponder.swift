@@ -19,14 +19,14 @@ class TwoHundredResponder {
     let successResponse = HTTPResponse(status: TwoHundred.Ok)
     switch request.verb {
 
-    case let verb where verb == .Get:
+    case .some(.Get):
       let formatters = gatherFormatters(request: request, route: route)
 
       return isAnImage(request.path) ?
         formatters.first!.addToResponse(successResponse) :
         formatters.reduce(successResponse) { $1.addToResponse($0) }
 
-    case let verb where verb == .Options:
+    case .some(.Options):
       let allowedMethods = route
                             .allowedMethods
                             .map { $0.rawValue.uppercased() }
@@ -34,11 +34,11 @@ class TwoHundredResponder {
 
       return HTTPResponse(status: TwoHundred.Ok, headers: ["Allow": allowedMethods])
 
-    case let verb where verb == .Post:
+    case .some(.Post):
       data.update(request.path, withVal: request.body)
       return successResponse
 
-    case let verb where verb == .Put:
+    case .some(.Put):
       let resource = data[request.path]
       data.update(request.path, withVal: request.body)
 
@@ -46,13 +46,13 @@ class TwoHundredResponder {
         HTTPResponse(status: TwoHundred.Created) :
         successResponse
 
-    case let verb where verb == .Patch:
+    case .some(.Patch):
       data.update(request.path, withVal: request.body)
       let headers = request.headers["if-match"].map { ["ETag": $0] }
 
       return HTTPResponse(status: TwoHundred.NoContent, headers: headers)
 
-    case let verb where verb == .Delete:
+    case .some(.Delete):
       data.remove(at: request.path)
       return successResponse
 

@@ -5,39 +5,41 @@ import Util
 
 public class PartialFormatter: ResponseFormatter {
   let range: String?
+  private let parsedRange: (start: Int?, end: Int?)
 
   public init(for range: String?) {
     self.range = range
+    self.parsedRange = parseRangeHeader(range)
   }
 
   public func addToResponse(_ response: HTTPResponse) -> HTTPResponse {
-    guard let validRange = range else {
+    guard range != nil else {
       return response
     }
 
-    let partialBody = response
-                        .body
-                        .flatMap { String(responseBody: $0) }
-                        .map { rangeOf($0, range: validRange) }
+    let originalContent = response.body.flatMap(String.init)
+    let contentLength = originalContent?.count
+    let givenRange = contentLength.map(calculateRange)
+
+    let newHeaders = givenRange.map { rnge -> [String: String] in
+      let length: Any = contentLength ?? "*"
+      return [
+        "Content-Range": "bytes \(rnge.lowerBound)-\(rnge.upperBound - 1)/\(length)"
+      ]
+    }
 
     return HTTPResponse(
       status: TwoHundred.PartialContent,
-      headers: response.headers,
-      body: partialBody
+      headers: newHeaders,
+      body: givenRange.flatMap { originalContent.map(toChars)?[$0] }?.joined(separator: "")
     )
   }
 
-  private func rangeOf(_ currentBody: String, range: String) -> String {
-    let chars = currentBody.characters.map { String($0) }
-
-    let range = calculateRange(length: currentBody.count)
-
-    return chars[range].joined(separator: "")
+  private func toChars(_ body: String) -> [String] {
+    return body.characters.map { String($0) }
   }
 
   private func calculateRange(length contentLength: Int) -> Range<Int> {
-    let parsedRange = parseRangeHeader(range)
-
     let rangeEnd = parsedRange.end ?? contentLength - 1
 
     let rangeStart = parsedRange.start ?? contentLength - rangeEnd

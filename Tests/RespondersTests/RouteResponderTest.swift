@@ -10,7 +10,7 @@ class RouteResponderTest: XCTestCase {
   // Early Returns
     func testItReturnsA404IfRouteIsNotSpecified() {
       let request = HTTPRequest(for: "GET /someRoute HTTP/1.1")!
-      let route = Route(auth: "XYZ", allowedMethods: [.Get])
+      let route = Route(allowedMethods: [.Get], auth: "XYZ")
       let routes = ["/logs": route]
 
       let response = RouteResponder(routes: routes).response(to: request)
@@ -33,7 +33,7 @@ class RouteResponderTest: XCTestCase {
       let rawRequest = "GET /logs HTTP/1.1\r\nAuthorization: Basic someencodedstuff=="
       let request = HTTPRequest(for: rawRequest)!
 
-      let route = Route(auth: "XYZ", allowedMethods: [.Get])
+      let route = Route(allowedMethods: [.Get], auth: "XYZ")
       let routes = ["/logs": route]
 
       let response = RouteResponder(routes: routes).response(to: request)
@@ -83,7 +83,7 @@ class RouteResponderTest: XCTestCase {
       let invalidRequest = HTTPRequest(for: "HELLO /someRoute HTTP/1.1")!
       let request = HTTPRequest(for: "GET /someRoute HTTP/1.1")!
 
-      let route = Route(includeLogs: true, allowedMethods: [.Get])
+      let route = Route(allowedMethods: [.Get], includeLogs: true)
       let routes = ["/someRoute": route]
 
       let responder = RouteResponder(routes: routes)

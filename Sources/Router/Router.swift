@@ -33,7 +33,7 @@ public class Router {
       let request = try HTTPRequest(for: data.toString())
       let badRequestResponse = HTTPResponse(status: FourHundred.BadRequest)
 
-      let response = request.map { responder.response(to: $0) } ?? badRequestResponse
+      let response = request.map(responder.response) ?? badRequestResponse
 
       let timestamp = dateHelper.formatTimestamp(prefix: "SUCCESS")
 
