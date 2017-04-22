@@ -31,12 +31,10 @@ public class PartialFormatter: ResponseFormatter {
     return HTTPResponse(
       status: TwoHundred.PartialContent,
       headers: newHeaders,
-      body: givenRange.flatMap { originalContent.map(toChars)?[$0] }?.joined(separator: "")
+      body: givenRange.flatMap { range in
+        originalContent.map(chars)?[range].joined(separator: "")
+      }
     )
-  }
-
-  private func toChars(_ body: String) -> [String] {
-    return body.characters.map { String($0) }
   }
 
   private func calculateRange(length contentLength: Int) -> Range<Int> {
@@ -46,6 +44,10 @@ public class PartialFormatter: ResponseFormatter {
 
     return rangeEnd < rangeStart ? rangeStart..<contentLength
                                  : rangeStart..<rangeEnd + 1
+  }
+
+  private func chars(_ body: String) -> [String] {
+    return body.characters.map { String($0) }
   }
 
 }

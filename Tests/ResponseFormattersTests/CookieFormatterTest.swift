@@ -41,7 +41,7 @@ class CookieFormatterTest: XCTestCase {
     XCTAssertEqual(newResponse, expectedResponse)
   }
 
-  func testItCanAppendCookiePrefixAfterCookieIsSet() {
+  func testItCanPrependCookiePrefixAfterCookieIsSet() {
     let request = HTTPRequest(for: "GET /eat_cookie HTTP/1.1\r\nCookie: type=chocolate\r\n\r\n")!
     let response = HTTPResponse(status: ok)
     let cookiePrefix = "wow"
@@ -56,7 +56,7 @@ class CookieFormatterTest: XCTestCase {
     XCTAssertEqual(newResponse, expectedResponse)
   }
 
-  func testItCanSetCookieAndRespondWithCookie() {
+  func testItPrependsCookiePrefixIfParamsArePresent() {
     let request = HTTPRequest(for: "GET /eat_cookie?type=oatmeal HTTP/1.1\r\nCookie: type=chocolate\r\n\r\n")!
     let response = HTTPResponse(status: ok)
     let cookiePrefix = "wow"
@@ -66,7 +66,7 @@ class CookieFormatterTest: XCTestCase {
     let expectedResponse = HTTPResponse(
       status: ok,
       headers: ["Set-Cookie": "type=oatmeal"],
-      body: "wow chocolate wow"
+      body: "wow chocolate"
     )
 
     XCTAssertEqual(newResponse, expectedResponse)

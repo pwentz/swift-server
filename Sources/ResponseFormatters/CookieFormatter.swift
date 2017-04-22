@@ -21,10 +21,12 @@ public class CookieFormatter: ResponseFormatter {
                          .flatMap(String.init)
                          .map { ["Set-Cookie": $0] }
 
+    let prefixedBody = request.params != nil ? prefix : nil
+
     let newResponse = HTTPResponse(
       status: response.status,
       headers: cookieHeaders,
-      body: formatBody(cookieBody)
+      body: cookieBody ?? prefixedBody
     )
 
     return response + newResponse
@@ -32,15 +34,7 @@ public class CookieFormatter: ResponseFormatter {
 
   private func toPrefixedCookie(_ cookie: String) -> String {
     let cookieVal = cookie.components(separatedBy: "=").last
-    return prefix + " " + (cookieVal ?? "")
-  }
-
-  private func formatBody(_ cookieBody: String?) -> String? {
-    let prefixedBody = request.params != nil ? prefix : nil
-
-    return cookieBody.map {
-      $0 + " " + (prefixedBody ?? "")
-    }?.trimmingCharacters(in: .whitespaces) ?? prefixedBody
+    return "\(prefix) \(cookieVal ?? "")"
   }
 
 }
