@@ -12,13 +12,14 @@ public class CookieFormatter: ResponseFormatter {
   }
 
   public func addToResponse(_ response: HTTPResponse) -> HTTPResponse {
-    let cookieBody = request.headers["cookie"].map { cookie in
-      "\(prefix) \(getCookieValue(from: cookie))"
-    }
+    let cookieBody = request
+                       .headers["cookie"]
+                       .map(toPrefixedCookie)
 
-    let cookieHeaders = request.params.flatMap { params in
-      String(params: params).map { ["Set-Cookie": $0] }
-    }
+    let cookieHeaders = request
+                         .params
+                         .flatMap(String.init)
+                         .map { ["Set-Cookie": $0] }
 
     let newResponse = HTTPResponse(
       status: response.status,
@@ -29,9 +30,9 @@ public class CookieFormatter: ResponseFormatter {
     return response + newResponse
   }
 
-  private func getCookieValue(from cookieHeader: String) -> String {
-    let separatedCookie = cookieHeader.components(separatedBy: "=")
-    return separatedCookie[separatedCookie.index(before: separatedCookie.endIndex)]
+  private func toPrefixedCookie(_ cookie: String) -> String {
+    let cookieVal = cookie.components(separatedBy: "=").last
+    return prefix + " " + (cookieVal ?? "")
   }
 
   private func formatBody(_ cookieBody: String?) -> String? {

@@ -17,7 +17,9 @@ public class ContentFormatter: ResponseFormatter {
       return response
     }
 
-    let newHeaders = ["Content-Type": getContentType()]
+    let newHeaders = [
+      "Content-Type": path.range(of: ".").map(contentType) ?? "text/html"
+    ]
 
     let newResponse = HTTPResponse(
       status: response.status,
@@ -28,12 +30,10 @@ public class ContentFormatter: ResponseFormatter {
     return response + newResponse
   }
 
-  private func getContentType() -> String {
-    return path.range(of: ".").map { extStart -> String in
-      let ext = path.substring(from: extStart.upperBound)
+  private func contentType(_ extStart: Range<String.Index>) -> String {
+    let ext = path.substring(from: extStart.upperBound)
 
-      return isAnImage(ext) ? "image/\(ext)" : "text/plain"
-    } ?? "text/html"
+    return isAnImage(ext) ? "image/\(ext)" : "text/plain"
   }
 
 }

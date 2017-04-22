@@ -1,7 +1,7 @@
 import Requests
 import Responses
 
-public class Route {
+public struct Route {
   public let auth: String?
   public let cookiePrefix: String?
   public let includeLogs: Bool
@@ -10,11 +10,11 @@ public class Route {
   public let redirectPath: String?
   public let customResponse: HTTPResponse?
 
-  public init(auth: String? = nil, cookiePrefix: String? = nil, includeLogs: Bool = false, allowedMethods: [HTTPRequestMethod], includeDirectoryLinks: Bool = false, redirectPath: String? = nil) {
+  public init(allowedMethods: [HTTPRequestMethod], auth: String? = nil, cookiePrefix: String? = nil, includeLogs: Bool = false, includeDirectoryLinks: Bool = false, redirectPath: String? = nil) {
+    self.allowedMethods = allowedMethods
     self.auth = auth
     self.cookiePrefix = cookiePrefix
     self.includeLogs = includeLogs
-    self.allowedMethods = allowedMethods
     self.includeDirectoryLinks = includeDirectoryLinks
     self.redirectPath = redirectPath
     self.customResponse = nil
@@ -31,7 +31,7 @@ public class Route {
   }
 
   public func canRespondTo(_ verb: HTTPRequestMethod?) -> Bool {
-    return verb.map { allowedMethods.contains($0) } ?? false
+    return verb.map(allowedMethods.contains) ?? false
   }
 
 }

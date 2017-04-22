@@ -56,12 +56,12 @@ class ResponseTest: XCTestCase {
 
     let rfcDateHeader = "\r\nDate: Fri, 21 Apr 2017\r\n\r\n"
     let body = "BODY"
-    let formattedStatus = "HTTP/1.1 200 OK\r\n".toBytes
-    let formattedResponse = formattedStatus + (rawHeaders + rfcDateHeader).toBytes + body.toBytes
+    let formattedStatus = "HTTP/1.1 200 OK\r\n"
+    let formattedResponse = formattedStatus + rawHeaders + rfcDateHeader + body
 
     let response = HTTPResponse(status: ok, headers: headers, body: body)
 
-    XCTAssertEqual(response.format(dateHelper: dateHelper), formattedResponse)
+    XCTAssertEqual(response.format(dateHelper: dateHelper), formattedResponse.toBytes)
   }
 
   func testItCanFormatItselfWithNoBody() {
@@ -77,11 +77,11 @@ class ResponseTest: XCTestCase {
 
     let rfcDateHeader = "\r\nDate: Fri, 21 Apr 2017\r\n\r\n"
 
-    let formattedResponse = "HTTP/1.1 200 OK\r\n".toBytes + (rawHeaders + rfcDateHeader).toBytes + []
+    let formattedResponse = "HTTP/1.1 200 OK\r\n" + rawHeaders + rfcDateHeader
 
     let response = HTTPResponse(status: ok, headers: headers)
 
-    XCTAssertEqual(response.format(dateHelper: dateHelper), formattedResponse)
+    XCTAssertEqual(response.format(dateHelper: dateHelper), formattedResponse.toBytes)
   }
 
   func testItsStatusAndHeadersCanBeRepresentedByAString() {

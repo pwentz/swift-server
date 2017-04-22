@@ -19,6 +19,7 @@ class PartialFormatterTest: XCTestCase {
 
     let expectedResponse = HTTPResponse(
       status: partial,
+      headers: ["Content-Range": "bytes 4-76/77"],
       body: " is a file that contains text to read part of in order to fulfill a 206.\n"
     )
 
@@ -36,6 +37,7 @@ class PartialFormatterTest: XCTestCase {
 
     let expectedResponse = HTTPResponse(
       status: partial,
+      headers: ["Content-Range": "bytes 71-76/77"],
       body: " 206.\n"
     )
 
@@ -52,13 +54,14 @@ class PartialFormatterTest: XCTestCase {
 
     let expectedResponse = HTTPResponse(
       status: partial,
+      headers: ["Content-Range": "bytes 0-4/77"],
       body: "This "
     )
 
     XCTAssertEqual(newResponse, expectedResponse)
   }
 
-  func testItReturnsTheResponseBodyAsIsIfNoRangeGiven() {
+  func testItReturnsTheResponseAsIsIfNoRangeGiven() {
     let rawRequest = "GET /partial_content.txt HTTP/1.1\r\n\r\n"
     let request = HTTPRequest(for: rawRequest)!
     let response = HTTPResponse(status: ok, body: content)

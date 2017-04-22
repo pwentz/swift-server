@@ -13,7 +13,7 @@ class TwoHundredResponderTest: XCTestCase {
 
       let data = ResourceData(["/someRoute": "this is a file."])
 
-      let route = Route(cookiePrefix: "neat", allowedMethods: [.Get])
+      let route = Route(allowedMethods: [.Get], cookiePrefix: "neat")
 
       let response = TwoHundredResponder(route: route, data: data).response(to: request)
 
@@ -31,7 +31,7 @@ class TwoHundredResponderTest: XCTestCase {
 
       let data = ResourceData(["/someRoute": "this is a file."])
 
-      let route = Route(cookiePrefix: "neat", includeLogs: true, allowedMethods: [.Get])
+      let route = Route(allowedMethods: [.Get], cookiePrefix: "neat", includeLogs: true)
       let logs = ["GET /someRoute HTTP/1.1"]
 
       let responder = TwoHundredResponder(route: route, data: data, logs: logs)
@@ -55,7 +55,7 @@ class TwoHundredResponderTest: XCTestCase {
 
       let data = ResourceData(["/someRoute": "this is a file."])
 
-      let route = Route(cookiePrefix: "neat", includeLogs: true, allowedMethods: [.Get], includeDirectoryLinks: true)
+      let route = Route(allowedMethods: [.Get], cookiePrefix: "neat", includeLogs: true, includeDirectoryLinks: true)
       let logs = ["GET /someRoute HTTP/1.1"]
 
       let responder = TwoHundredResponder(route: route, data: data, logs: logs)
@@ -255,7 +255,7 @@ class TwoHundredResponderTest: XCTestCase {
 
       let data = ResourceData(["/someRoute.jpeg": "this is an image file"])
 
-      let route = Route(cookiePrefix: "neat", includeLogs: true, allowedMethods: [.Get], includeDirectoryLinks: true)
+      let route = Route(allowedMethods: [.Get], cookiePrefix: "neat", includeLogs: true, includeDirectoryLinks: true)
 
       let response = TwoHundredResponder(route: route, data: data).response(to: request)
 

@@ -34,27 +34,29 @@ public struct HTTPRequest {
 
     let fullPath = splitRequestLine.first(where: { $0.hasPrefix("/") })
 
-    guard let validPath = fullPath else {
+    guard let path = fullPath else {
       return nil
     }
 
-    verb = HTTPRequestMethod(verb: splitRequestLine.first?.capitalized)
+    self.verb = splitRequestLine
+                  .first
+                  .flatMap { HTTPRequestMethod(rawValue: $0.capitalized) }
 
-    path = validPath
-             .range(of: parameterDivide)
-             .flatMap { validPath.substring(to: $0.lowerBound) } ?? validPath
+    self.path = path
+                 .range(of: parameterDivide)
+                 .flatMap { path.substring(to: $0.lowerBound) } ?? path
 
-    params = validPath
-               .components(separatedBy: parameterDivide)
-               .first(where: { $0.contains("=") })
-               .flatMap { HTTPParameters(for: $0) }
+    self.params = path
+                   .components(separatedBy: parameterDivide)
+                   .first(where: { $0.contains("=") })
+                   .flatMap(HTTPParameters.init)
 
-    body = requestTail.flatMap { $0.isEmpty ? nil : $0 }
+    self.body = requestTail.flatMap { $0.isEmpty ? nil : $0 }
 
-    headers = splitRequest
-               .dropFirst()
-               .dropLast()
-               .reduce([:], requestHeaders)
+    self.headers = splitRequest
+                     .dropFirst()
+                     .dropLast()
+                     .reduce([:], requestHeaders)
   }
 
   private func requestHeaders(_ result: [String: String], _ rawHeader: String) -> [String: String] {

@@ -6,12 +6,12 @@ public let authCredentials = "YWRtaW46aHVudGVyMg=="
 public let defaultPort: UInt16 = 5000
 
 public var routes: [String: Route] = [
-  "/logs": Route(auth: authCredentials, includeLogs: true, allowedMethods: [.Get]),
+  "/logs": Route(allowedMethods: [.Get], auth: authCredentials, includeLogs: true),
   "/log": Route(allowedMethods: [.Get]),
   "/these": Route(allowedMethods: [.Put]),
   "/requests": Route(allowedMethods: [.Head]),
-  "/cookie": Route(cookiePrefix: "Eat", allowedMethods: [.Get]),
-  "/eat_cookie": Route(cookiePrefix: "mmmm", allowedMethods: [.Get]),
+  "/cookie": Route(allowedMethods: [.Get], cookiePrefix: "Eat"),
+  "/eat_cookie": Route(allowedMethods: [.Get], cookiePrefix: "mmmm"),
   "/coffee": Route(
     allowedMethods: [.Get],
     customResponse: HTTPResponse(status: FourHundred.Teapot, body: "I'm a teapot")),

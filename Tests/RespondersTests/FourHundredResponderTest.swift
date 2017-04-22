@@ -6,7 +6,7 @@ import Requests
 import Util
 
 class FourHundredResponderTest: XCTestCase {
-  let route = Route(auth: "XYZ", allowedMethods: [.Get], redirectPath: "/")
+  let route = Route(allowedMethods: [.Get], auth: "XYZ", redirectPath: "/")
 
   func testItReturns401WhenAuthDoesntMatch() {
     let rawRequest = "GET /someRoute HTTP/1.1\r\nAuthorization: Basic ABC\r\n\r\n"
