@@ -206,7 +206,7 @@ class ParamsTest: XCTestCase {
     let expected = ["variable_1": "Operators <, >, =, !=; +, -, *, &, @, #, $, [, ]: \"is that all\"?", "variable_2": "stuff"]
     let result = [String: String](params: params)
 
-    XCTAssertEqual(result, expected)
+      XCTAssertEqual(result, expected)
   }
 
   func testItCanHandleNonEncodedParams() {
