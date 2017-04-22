@@ -9,6 +9,10 @@ public struct HTTPResponse {
   public let headerDivide: String = ":"
   public let transferProtocol: String = "HTTP/1.1"
 
+  public var joinedHeaders: String? {
+    return headers?.reduce("") { $0 + ($1.0 + headerDivide + $1.1) + crlf }
+  }
+
   public static func + (lhs: HTTPResponse, rhs: HTTPResponse) -> HTTPResponse {
     let newBody = lhs.mergeBody(with: rhs.body)
     let newHeaders = lhs.mergeHeaders(with: rhs.headers)
@@ -23,13 +27,16 @@ public struct HTTPResponse {
   }
 
   public func format(dateHelper: DateHelper) -> [UInt8] {
-    let joinedHeaders = headers?.map { $0 + headerDivide + $1 }.joined(separator: crlf) ?? ""
-    let dateHeader = "\(crlf)Date: \(dateHelper.rfcTimestamp + (crlf + crlf))"
+    let dateHeader = "Date: \(dateHelper.rfcTimestamp + crlf)"
     let statusLine = "\(transferProtocol) \(status.description + crlf)"
 
-    let finalFormat = (statusLine + joinedHeaders + dateHeader + body).toBytes
-
-    return finalFormat
+    return (
+      statusLine +
+      joinedHeaders +
+      dateHeader +
+      crlf +
+      body
+    ).toBytes
   }
 
   private func mergeBody(with newBody: BytesRepresentable?) -> BytesRepresentable? {

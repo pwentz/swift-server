@@ -15,7 +15,7 @@ public class RouteResponder: Responder {
     self.data = data
   }
 
-  public func getResponse(to request: HTTPRequest) -> HTTPResponse {
+  public func response(to request: HTTPRequest) -> HTTPResponse {
     guard let route = routes[request.path] else {
       return HTTPResponse(status: FourHundred.NotFound)
     }

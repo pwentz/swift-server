@@ -2,5 +2,5 @@ import Requests
 import Responses
 
 public protocol Responder {
-  func getResponse(to request: HTTPRequest) -> HTTPResponse
+  func response(to request: HTTPRequest) -> HTTPResponse
 }

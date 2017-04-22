@@ -13,17 +13,13 @@ public extension String {
   }
 
   init(response: HTTPResponse) {
-    let joinedHeaders = response.headers?
-                                .map { $0 + response.headerDivide + $1 }
-                                .joined(separator: response.crlf) ?? ""
-
     let statusLine = "\(response.transferProtocol) \(response.status.description + response.crlf)"
 
-    self.init(statusLine + joinedHeaders)!
+    self.init(statusLine + (response.joinedHeaders ?? "") + response.crlf)!
   }
 
-  init?(bytes: BytesRepresentable) {
-    self.init(bytes: bytes.toBytes, encoding: .utf8)
+  init?(responseBody: BytesRepresentable) {
+    self.init(bytes: responseBody.toBytes, encoding: .utf8)
   }
 
 }

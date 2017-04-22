@@ -7,7 +7,7 @@ import FileIO
 import Util
 
 class MockResponder: Responder {
-  public func getResponse(to request: HTTPRequest) -> HTTPResponse {
+  public func response(to request: HTTPRequest) -> HTTPResponse {
     return HTTPResponse(status: TwoHundred.Ok)
   }
 }
@@ -61,7 +61,7 @@ class RouterTest: XCTestCase {
     try router.listen(onReceive: listenCallback)
     try router.receive()
 
-    let expectedContents = "REQUEST: GET /logs HTTP/1.1\r\n\r\n\r\nRESPONSE: HTTP/1.1 200 OK\r\n"
+    let expectedContents = "REQUEST: GET /logs HTTP/1.1\r\n\r\n\r\nRESPONSE: HTTP/1.1 200 OK\r\n\r\n"
 
     XCTAssertEqual(mockCaller.writtenContent, expectedContents)
   }

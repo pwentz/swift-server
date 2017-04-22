@@ -4,7 +4,7 @@ import Errors
 
 class FileReaderTest: XCTestCase {
   func testItCanReadFileNames() {
-    let path = "/Users/patrickwentz/cob_spec/public"
+    let path = "/valid/path/to/contents"
     let fileManager = MockFileManager()
 
     let fileReader = DirectoryReader(fileManager)
@@ -14,7 +14,7 @@ class FileReaderTest: XCTestCase {
     XCTAssertEqual(result, ["file1", "file2"])
   }
 
-  func testItThrowsIfPathIsNotCobSpecPath() throws {
+  func testItThrowsIfPathIsInvalid() throws {
     let path = "/some/random/path"
     let fileManager = MockFileManager()
 

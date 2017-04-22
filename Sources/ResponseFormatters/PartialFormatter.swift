@@ -15,9 +15,10 @@ public class PartialFormatter: ResponseFormatter {
       return response
     }
 
-    let partialBody = response.body
-                              .flatMap { String(bytes: $0) }
-                              .map { rangeOf($0, range: validRange) }
+    let partialBody = response
+                        .body
+                        .flatMap { String(responseBody: $0) }
+                        .map { rangeOf($0, range: validRange) }
 
     return HTTPResponse(
       status: TwoHundred.PartialContent,
@@ -39,7 +40,7 @@ public class PartialFormatter: ResponseFormatter {
 
     let rangeEnd = parsedRange.end ?? contentLength - 1
 
-    let rangeStart = parsedRange.start  ?? contentLength - rangeEnd
+    let rangeStart = parsedRange.start ?? contentLength - rangeEnd
 
     return rangeEnd < rangeStart ? rangeStart..<contentLength
                                  : rangeStart..<rangeEnd + 1

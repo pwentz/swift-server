@@ -9,11 +9,11 @@ public class DirectoryReader {
   }
 
   public func getFileNames(at path: String) throws -> [String] {
-    guard path == defaultPublicDirPath else {
+    do {
+      return try fileManager.contentsOfDirectory(atPath: path)
+    } catch {
       throw ServerStartError.InvalidPublicDirectoryGiven
     }
-
-    return try fileManager.contentsOfDirectory(atPath: path)
   }
 
 }
