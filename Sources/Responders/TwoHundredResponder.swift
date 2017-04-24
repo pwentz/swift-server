@@ -9,6 +9,13 @@ class TwoHundredResponder {
   let data: ResourceData
   let logs: [String]
 
+  private var allowedMethods: String {
+    return route
+            .allowedMethods
+            .map { $0.rawValue.uppercased() }
+            .joined(separator: ",")
+  }
+
   public init(route: Route, data: ResourceData = EmptyResourceData(), logs: [String] = []) {
     self.route = route
     self.data = data
@@ -27,11 +34,6 @@ class TwoHundredResponder {
         formatters.reduce(successResponse) { $1.addToResponse($0) }
 
     case .some(.Options):
-      let allowedMethods = route
-                            .allowedMethods
-                            .map { $0.rawValue.uppercased() }
-                            .joined(separator: ",")
-
       return HTTPResponse(status: TwoHundred.Ok, headers: ["Allow": allowedMethods])
 
     case .some(.Post):

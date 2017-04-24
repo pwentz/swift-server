@@ -7,7 +7,7 @@ public class HTTPParameters {
   public init?(for rawParams: String) {
     let flattenedParams = rawParams
                             .components(separatedBy: multipleSeparator)
-                            .flatMap { $0.components(separatedBy: keyValueSeparator) }
+                            .flatMap(separateKeyValuePair)
                             .filter { !$0.isEmpty }
 
     guard flattenedParams.count >= 2 else {
@@ -25,6 +25,10 @@ public class HTTPParameters {
         values.append(decode(param))
       }
     }
+  }
+
+  private func separateKeyValuePair(_ rawParameter: String) -> [String] {
+    return rawParameter.components(separatedBy: keyValueSeparator)
   }
 
   private func decode(_ rawParams: String) -> String {

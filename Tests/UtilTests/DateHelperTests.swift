@@ -13,7 +13,7 @@ class DateHelperTest: XCTestCase {
     XCTAssertEqual(timestamp, expected)
   }
 
-  func testItFormatsRFCTimestamp() {
+  func testItReturnsRFCTimestamp() {
     let mockCalendar = MockCalendar(hour: 10, minute: 45, second: 15)
     let mockFormatter = MockFormatter(month: "04", day: "21", year: "2017")
     let dateHelper = DateHelper(today: Date(), calendar: mockCalendar, formatter: mockFormatter)

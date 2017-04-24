@@ -17,23 +17,27 @@ public class ContentFormatter: ResponseFormatter {
       return response
     }
 
-    let newHeaders = [
-      "Content-Type": path.range(of: ".").map(contentType) ?? "text/html"
-    ]
+    let contentType = path
+                       .range(of: ".")
+                       .map(getContentType)
 
     let newResponse = HTTPResponse(
       status: response.status,
-      headers: newHeaders,
+      headers: [
+        "Content-Type": contentType ?? "text/html"
+      ],
       body: resource
     )
 
     return response + newResponse
   }
 
-  private func contentType(_ extStart: Range<String.Index>) -> String {
+  private func getContentType(_ extStart: Range<String.Index>) -> String {
     let ext = path.substring(from: extStart.upperBound)
 
-    return isAnImage(ext) ? "image/\(ext)" : "text/plain"
+    return isAnImage(ext) ?
+            "image/\(ext)" :
+            "text/plain"
   }
 
 }
