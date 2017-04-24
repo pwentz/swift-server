@@ -5,9 +5,9 @@ public struct HTTPRequest {
   public let verb: HTTPRequestMethod?
   public let body: String?
   public let params: HTTPParameters?
-  public let crlf: String = "\r\n"
-  public let headerDivide: String = ":"
-  public let transferProtocol: String = "HTTP/1.1"
+  private let crlf: String = "\r\n"
+  private let headerDivide: String = ":"
+  private let transferProtocol: String = "HTTP/1.1"
   private let parameterDivide: String = "?"
 
   public var headers: [String: String] = [:]

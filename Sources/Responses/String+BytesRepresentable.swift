@@ -12,6 +12,10 @@ public extension String {
     return self.characters.count
   }
 
+  var chars: [String] {
+    return self.characters.map { String($0) }
+  }
+
   init(response: HTTPResponse) {
     let statusLine = "\(response.transferProtocol) \(response.status.description + response.crlf)"
 

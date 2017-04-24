@@ -3,12 +3,10 @@ import XCTest
 import Errors
 
 class FileReaderTest: XCTestCase {
+  let fileReader = DirectoryReader(MockFileManager())
+
   func testItCanReadFileNames() {
     let path = "/valid/path/to/contents"
-    let fileManager = MockFileManager()
-
-    let fileReader = DirectoryReader(fileManager)
-
     let result = try! fileReader.getFileNames(at: path)
 
     XCTAssertEqual(result, ["file1", "file2"])
@@ -16,9 +14,6 @@ class FileReaderTest: XCTestCase {
 
   func testItThrowsIfPathIsInvalid() throws {
     let path = "/some/random/path"
-    let fileManager = MockFileManager()
-
-    let fileReader = DirectoryReader(fileManager)
 
     XCTAssertThrowsError(try fileReader.getFileNames(at: path)) { error in
       XCTAssertEqual(error as! ServerStartError, ServerStartError.InvalidPublicDirectoryGiven)
