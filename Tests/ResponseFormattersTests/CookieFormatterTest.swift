@@ -5,11 +5,11 @@ import Responses
 
 class CookieFormatterTest: XCTestCase {
   let ok = TwoHundred.Ok
+  let cookiePrefix = "Eat"
 
   func testItCanAppendCookiePrefixWhenNoCookieExistsYet() {
     let request = HTTPRequest(for: "GET /cookie?type=chocolate HTTP/1.1\r\n\r\n")!
     let response = HTTPResponse(status: ok)
-    let cookiePrefix = "Eat"
 
     let newResponse = CookieFormatter(for: request, prefix: cookiePrefix).addToResponse(response)
 
@@ -25,7 +25,6 @@ class CookieFormatterTest: XCTestCase {
   func testItCanAppendToExistingResponse() {
     let request = HTTPRequest(for: "GET /cookie?type=chocolate HTTP/1.1\r\n\r\n")!
     let response = HTTPResponse(status: ok, headers: ["Content-Type": "text/html"], body: "some stuff")
-    let cookiePrefix = "Eat"
 
     let newResponse = CookieFormatter(for: request, prefix: cookiePrefix).addToResponse(response)
 
@@ -44,13 +43,12 @@ class CookieFormatterTest: XCTestCase {
   func testItCanPrependCookiePrefixAfterCookieIsSet() {
     let request = HTTPRequest(for: "GET /eat_cookie HTTP/1.1\r\nCookie: type=chocolate\r\n\r\n")!
     let response = HTTPResponse(status: ok)
-    let cookiePrefix = "wow"
 
     let newResponse = CookieFormatter(for: request, prefix: cookiePrefix).addToResponse(response)
 
     let expectedResponse = HTTPResponse(
       status: ok,
-      body: "wow chocolate"
+      body: "Eat chocolate"
     )
 
     XCTAssertEqual(newResponse, expectedResponse)
@@ -59,14 +57,13 @@ class CookieFormatterTest: XCTestCase {
   func testItPrependsCookiePrefixIfParamsArePresent() {
     let request = HTTPRequest(for: "GET /eat_cookie?type=oatmeal HTTP/1.1\r\nCookie: type=chocolate\r\n\r\n")!
     let response = HTTPResponse(status: ok)
-    let cookiePrefix = "wow"
 
     let newResponse = CookieFormatter(for: request, prefix: cookiePrefix).addToResponse(response)
 
     let expectedResponse = HTTPResponse(
       status: ok,
       headers: ["Set-Cookie": "type=oatmeal"],
-      body: "wow chocolate"
+      body: "Eat chocolate"
     )
 
     XCTAssertEqual(newResponse, expectedResponse)
@@ -75,8 +72,6 @@ class CookieFormatterTest: XCTestCase {
   func testItWillNotAppendIfNoCookieHeader() {
     let request = HTTPRequest(for: "GET /eat_cookie HTTP/1.1\r\n\r\n")!
     let response = HTTPResponse(status: ok)
-    let cookiePrefix = "wow"
-
     let newResponse = CookieFormatter(for: request, prefix: cookiePrefix).addToResponse(response)
 
     XCTAssertNil(newResponse.body)

@@ -3,15 +3,14 @@ import XCTest
 import Util
 
 class ControllerDataTest: XCTestCase {
+  let contents = ["file1": "I'm a text file"]
   func testItHasAGetter() {
-    let contents = ["file1": "I'm a text file"]
     let data = ResourceData(contents)
 
     XCTAssertEqual(data["file1"]!.toBytes, "I'm a text file".toBytes)
   }
 
   func testItCanMutateValues() {
-    let contents = ["file1": "I'm a text file"]
     let data = ResourceData(contents)
 
     data.update("file1", withVal: "I'm a modified text file")
@@ -20,7 +19,6 @@ class ControllerDataTest: XCTestCase {
   }
 
   func testMutationsPersistToReferences() {
-    let contents = ["file1": "I'm a text file"]
     let data = ResourceData(contents)
 
     let referenceToData = data
@@ -31,7 +29,6 @@ class ControllerDataTest: XCTestCase {
   }
 
   func testItDoesNotUpdateWhenPassedNil() {
-    let contents = ["file1": "I'm a text file"]
     let data = ResourceData(contents)
 
     data.update("file1", withVal: nil)
@@ -40,7 +37,6 @@ class ControllerDataTest: XCTestCase {
   }
 
   func testItRemovesValue() {
-    let contents = ["file1": "I'm a text file"]
     let data = ResourceData(contents)
 
     data.remove(at: "file1")

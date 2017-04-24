@@ -31,4 +31,5 @@ public class EmptyResourceData: ResourceData {
   public init() {
     super.init([:])
   }
+
 }
