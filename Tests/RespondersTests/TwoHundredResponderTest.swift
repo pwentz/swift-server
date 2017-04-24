@@ -7,58 +7,18 @@ import Routes
 
 class TwoHundredResponderTest: XCTestCase {
   let ok = TwoHundred.Ok
+  let configRoute = Route(allowedMethods: [.Get], cookiePrefix: "neat", includeLogs: true, includeDirectoryLinks: true)
+  let crudRoute = Route(allowedMethods: [.Options, .Get, .Put, .Post, .Patch, .Delete, .Head])
+
   // Compound Routes
-    func testItCanGetContentWithACookiePrefix() {
-      let request = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\nCookie: type=oatmeal\r\n\r\n")!
-
-      let data = ResourceData(["/someRoute": "this is a file."])
-
-      let route = Route(allowedMethods: [.Get], cookiePrefix: "neat")
-
-      let response = TwoHundredResponder(route: route, data: data).response(to: request)
-
-      let expectedResponse = HTTPResponse(
-        status: ok,
-        headers: ["Content-Type": "text/html"],
-        body: ["this is a file.", "neat oatmeal"].joined(separator: "\n\n")
-      )
-
-      XCTAssertEqual(response, expectedResponse)
-    }
-
-    func testItCanGetContentWithCookiePrefixAndLogsIncluded() {
-      let request = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\nCookie: type=oatmeal\r\n\r\n")!
-
-      let data = ResourceData(["/someRoute": "this is a file."])
-
-      let route = Route(allowedMethods: [.Get], cookiePrefix: "neat", includeLogs: true)
-      let logs = ["GET /someRoute HTTP/1.1"]
-
-      let responder = TwoHundredResponder(route: route, data: data, logs: logs)
-      let response = responder.response(to: request)
-
-      let expectedResponse = HTTPResponse(
-        status: ok,
-        headers: ["Content-Type": "text/html"],
-        body: [
-          "this is a file.",
-          "neat oatmeal",
-          "GET /someRoute HTTP/1.1"
-        ].joined(separator: "\n\n")
-      )
-
-      XCTAssertEqual(response, expectedResponse)
-    }
-
     func testItCanGetContentWithCookiePrefixAndDirectoryLinksAndLogsIncluded() {
       let request = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\nCookie: type=oatmeal\r\n\r\n")!
 
       let data = ResourceData(["/someRoute": "this is a file."])
 
-      let route = Route(allowedMethods: [.Get], cookiePrefix: "neat", includeLogs: true, includeDirectoryLinks: true)
       let logs = ["GET /someRoute HTTP/1.1"]
 
-      let responder = TwoHundredResponder(route: route, data: data, logs: logs)
+      let responder = TwoHundredResponder(route: configRoute, data: data, logs: logs)
       let response = responder.response(to: request)
 
       let expectedResponse = HTTPResponse(
@@ -82,9 +42,7 @@ class TwoHundredResponderTest: XCTestCase {
         ["/someRoute": "I'm a file"]
       )
 
-      let route = Route(allowedMethods: [.Get])
-
-      let response = TwoHundredResponder(route: route, data: data).response(to: request)
+      let response = TwoHundredResponder(route: crudRoute, data: data).response(to: request)
 
       let expectedResponse = HTTPResponse(
         status: ok,
@@ -98,9 +56,7 @@ class TwoHundredResponderTest: XCTestCase {
     func testItReturnsEmptyResponseBodyIfNoContent() {
       let request = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\n\r\n")!
 
-      let route = Route(allowedMethods: [.Get])
-
-      let response = TwoHundredResponder(route: route).response(to: request)
+      let response = TwoHundredResponder(route: crudRoute).response(to: request)
 
       XCTAssertNil(response.body)
     }
@@ -109,9 +65,7 @@ class TwoHundredResponderTest: XCTestCase {
       let postRequest = HTTPRequest(for: "POST /someRoute HTTP/1.1\r\n\r\ncheese")!
       let getRequest = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\n\r\n")!
 
-      let route = Route(allowedMethods: [.Get, .Post])
-
-      let responder = TwoHundredResponder(route: route)
+      let responder = TwoHundredResponder(route: crudRoute)
       let _ = responder.response(to: postRequest)
       let response = responder.response(to: getRequest)
 
@@ -130,9 +84,7 @@ class TwoHundredResponderTest: XCTestCase {
 
       let data = ResourceData(["/someRoute": "cheese"])
 
-      let route = Route(allowedMethods: [.Get, .Put])
-
-      let responder = TwoHundredResponder(route: route, data: data)
+      let responder = TwoHundredResponder(route: crudRoute, data: data)
       let _ = responder.response(to: putRequest)
       let response = responder.response(to: getRequest)
 
@@ -151,9 +103,7 @@ class TwoHundredResponderTest: XCTestCase {
 
       let data = ResourceData(["/someRoute": "cheese"])
 
-      let route = Route(allowedMethods: [.Get, .Delete])
-
-      let responder = TwoHundredResponder(route: route, data: data)
+      let responder = TwoHundredResponder(route: crudRoute, data: data)
       let _ = responder.response(to: deleteRequest)
       let response = responder.response(to: getRequest)
 
@@ -168,9 +118,7 @@ class TwoHundredResponderTest: XCTestCase {
 
       let data = ResourceData(["/someRoute": "cheese"])
 
-      let route = Route(allowedMethods: [.Get, .Patch])
-
-      let responder = TwoHundredResponder(route: route, data: data)
+      let responder = TwoHundredResponder(route: crudRoute, data: data)
       let _ = responder.response(to: patchRequest)
       let response = responder.response(to: getRequest)
 
@@ -188,9 +136,7 @@ class TwoHundredResponderTest: XCTestCase {
 
       let data = ResourceData(["/someRoute": "cheese"])
 
-      let route = Route(allowedMethods: [.Get, .Patch])
-
-      let responder = TwoHundredResponder(route: route, data: data)
+      let responder = TwoHundredResponder(route: crudRoute, data: data)
       let response = responder.response(to: patchRequest)
 
       let expectedResponse = HTTPResponse(
@@ -205,13 +151,11 @@ class TwoHundredResponderTest: XCTestCase {
     func testItReturnsAllowedMethodsOnOptionsRequest() {
       let request = HTTPRequest(for: "OPTIONS /someRoute HTTP/1.1\r\n\r\n")!
 
-      let route = Route(allowedMethods: [.Options, .Post, .Head])
-
-      let response = TwoHundredResponder(route: route).response(to: request)
+      let response = TwoHundredResponder(route: crudRoute).response(to: request)
 
       let expectedResponse = HTTPResponse(
         status: TwoHundred.Ok,
-        headers: ["Allow": "OPTIONS,POST,HEAD"]
+        headers: ["Allow": "OPTIONS,GET,PUT,POST,PATCH,DELETE,HEAD"]
       )
 
       XCTAssertEqual(response, expectedResponse)
@@ -220,9 +164,7 @@ class TwoHundredResponderTest: XCTestCase {
     func testItCanHandleHeadRequests() {
       let request = HTTPRequest(for: "HEAD /someRoute HTTP/1.1\r\n\r\n")!
 
-      let route = Route(allowedMethods: [.Head])
-
-      let response = TwoHundredResponder(route: route).response(to: request)
+      let response = TwoHundredResponder(route: crudRoute).response(to: request)
 
       let expectedResponse = HTTPResponse(status: ok)
 
@@ -234,9 +176,7 @@ class TwoHundredResponderTest: XCTestCase {
       let putRequest = HTTPRequest(for: "PUT /someRoute HTTP/1.1\r\n\r\nupdated cheese")!
       let getRequest = HTTPRequest(for: "GET /someRoute HTTP/1.1\r\n\r\n")!
 
-      let route = Route(allowedMethods: [.Get, .Put])
-
-      let responder = TwoHundredResponder(route: route)
+      let responder = TwoHundredResponder(route: crudRoute)
       let putResponse = responder.response(to: putRequest)
       let getResponse = responder.response(to: getRequest)
 
@@ -255,9 +195,7 @@ class TwoHundredResponderTest: XCTestCase {
 
       let data = ResourceData(["/someRoute.jpeg": "this is an image file"])
 
-      let route = Route(allowedMethods: [.Get], cookiePrefix: "neat", includeLogs: true, includeDirectoryLinks: true)
-
-      let response = TwoHundredResponder(route: route, data: data).response(to: request)
+      let response = TwoHundredResponder(route: configRoute, data: data).response(to: request)
 
       let expectedResponse = HTTPResponse(
         status: ok,

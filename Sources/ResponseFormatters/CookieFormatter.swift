@@ -32,9 +32,10 @@ public class CookieFormatter: ResponseFormatter {
     return response + newResponse
   }
 
-  private func toPrefixedCookie(_ cookie: String) -> String {
+  private func toPrefixedCookie(_ cookie: String) -> BytesRepresentable {
     let cookieVal = cookie.components(separatedBy: "=").last
-    return "\(prefix) \(cookieVal ?? "")"
+
+    return prefix + " " + cookieVal
   }
 
 }

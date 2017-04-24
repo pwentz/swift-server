@@ -9,7 +9,7 @@ public class Router {
   let threadQueue: ThreadQueue
   let responder: Responder
   let dateHelper: DateHelper
-  var onReceive: ((_ timestamp: String) -> (_ content: String) throws -> Void)? = nil
+  var onReceive: ((_ timestamp: String) -> (_ content: String) throws -> Void)?
 
   public init(socket: Socket, threadQueue: ThreadQueue, port: UInt16, responder: Responder, dateHelper: DateHelper) {
     self.port = port
