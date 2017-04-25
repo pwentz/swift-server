@@ -5,7 +5,7 @@ import Requests
 import Responses
 import Routes
 
-class RouteResponderTest: XCTestCase {
+class ResponderTest: XCTestCase {
 
   // Early Returns
     func testItReturnsA404IfRouteIsNotSpecified() {
@@ -13,7 +13,7 @@ class RouteResponderTest: XCTestCase {
       let route = Route(allowedMethods: [.Get], auth: "XYZ")
       let routes = ["/logs": route]
 
-      let response = RouteResponder(routes: routes).response(to: request)
+      let response = Responder(routes: routes).response(to: request)
 
       XCTAssertEqual(response.status.description, "404 Not Found")
     }
@@ -24,7 +24,7 @@ class RouteResponderTest: XCTestCase {
       let route = Route(allowedMethods: [.Get])
       let routes = ["/logs": route]
 
-      let response = RouteResponder(routes: routes).response(to: request)
+      let response = Responder(routes: routes).response(to: request)
 
       XCTAssertEqual(response.status.description, "405 Method Not Allowed")
     }
@@ -36,7 +36,7 @@ class RouteResponderTest: XCTestCase {
       let route = Route(allowedMethods: [.Get], auth: "XYZ")
       let routes = ["/logs": route]
 
-      let response = RouteResponder(routes: routes).response(to: request)
+      let response = Responder(routes: routes).response(to: request)
 
       XCTAssertEqual(response.status.description, "401 Unauthorized")
     }
@@ -48,7 +48,7 @@ class RouteResponderTest: XCTestCase {
       let redirectRoute = Route(allowedMethods: [.Get])
       let routes = ["/logs": route, "/redirect": redirectRoute]
 
-      let response = RouteResponder(routes: routes).response(to: request)
+      let response = Responder(routes: routes).response(to: request)
 
       XCTAssertEqual(response.status.description, "302 Found")
     }
@@ -61,7 +61,7 @@ class RouteResponderTest: XCTestCase {
       let route = Route(allowedMethods: [.Get], customResponse: customResponse)
       let routes = ["/logs": route]
 
-      let response = RouteResponder(routes: routes).response(to: request)
+      let response = Responder(routes: routes).response(to: request)
 
       XCTAssertEqual(response, customResponse)
     }
@@ -72,7 +72,7 @@ class RouteResponderTest: XCTestCase {
       let route = Route(allowedMethods: [.Get])
       let routes = ["/logs": route]
 
-      let response = RouteResponder(routes: routes).response(to: request)
+      let response = Responder(routes: routes).response(to: request)
 
       XCTAssertEqual(response.status.description, "200 OK")
     }
@@ -86,7 +86,7 @@ class RouteResponderTest: XCTestCase {
       let route = Route(allowedMethods: [.Get], includeLogs: true)
       let routes = ["/someRoute": route]
 
-      let responder = RouteResponder(routes: routes)
+      let responder = Responder(routes: routes)
 
       let _ = responder.response(to: invalidRequest)
       let response = responder.response(to: request)

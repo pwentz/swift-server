@@ -37,7 +37,7 @@ do {
     routes[$0] = Route(allowedMethods: [.Get, .Patch])
   }
 
-  let responder = RouteResponder(routes: routes, data: persistedData)
+  let responder = Responder(routes: routes, data: persistedData)
 
   let router = Router(
     socket: socket,

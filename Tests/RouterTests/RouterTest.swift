@@ -6,7 +6,7 @@ import Responses
 import FileIO
 import Util
 
-class MockResponder: Responder {
+class MockResponder: Respondable {
   public func response(to request: HTTPRequest) -> HTTPResponse {
     return HTTPResponse(status: TwoHundred.Ok)
   }

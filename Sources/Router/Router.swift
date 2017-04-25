@@ -7,11 +7,11 @@ public class Router {
   let port: UInt16
   let socket: Socket
   let threadQueue: ThreadQueue
-  let responder: Responder
+  let responder: Respondable
   let dateHelper: DateHelper
   var onReceive: ((_ timestamp: String) -> (_ content: String) throws -> Void)?
 
-  public init(socket: Socket, threadQueue: ThreadQueue, port: UInt16, responder: Responder, dateHelper: DateHelper) {
+  public init(socket: Socket, threadQueue: ThreadQueue, port: UInt16, responder: Respondable, dateHelper: DateHelper) {
     self.port = port
     self.socket = socket
     self.threadQueue = threadQueue
@@ -30,7 +30,7 @@ public class Router {
     let data = try client.recv()
 
     if !data.isEmpty {
-      let request = try HTTPRequest(for: data.toString())
+      let request = HTTPRequest(for: try data.toString())
       let badRequestResponse = HTTPResponse(status: FourHundred.BadRequest)
 
       let response = request.map(responder.response) ?? badRequestResponse
@@ -39,7 +39,8 @@ public class Router {
 
       try onReceive.map { callback throws in
         let write = callback(timestamp)
-        let content = "REQUEST: \(try data.toString())\r\nRESPONSE: \(String(response: response))"
+        let printedResponse = String(response: response) ?? "Unreadable Response"
+        let content = "REQUEST: \(try data.toString())\r\nRESPONSE: \(printedResponse)"
         try write(content)
       }
 
@@ -47,14 +48,14 @@ public class Router {
     }
   }
 
-  internal func dispatch(_ callback: @escaping () throws -> Void) {
+  internal func dispatch(_ callback: @escaping () -> Void) {
     threadQueue.async(callback)
   }
 
-  internal func getDispatchCallback(_ response: HTTPResponse, client: Socket) -> () throws -> Void {
+  internal func getDispatchCallback(_ response: HTTPResponse, client: Socket) -> () -> Void {
     return {
-      try client.send(data: response.format(dateHelper: self.dateHelper))
-      try client.close()
+      try! client.send(data: response.format(dateHelper: self.dateHelper))
+      try! client.close()
     }
   }
 

@@ -16,10 +16,10 @@ public extension String {
     return self.characters.map { String($0) }
   }
 
-  init(response: HTTPResponse) {
+  init?(response: HTTPResponse) {
     let statusLine = "\(response.transferProtocol) \(response.status.description + response.crlf)"
 
-    self.init(statusLine + (response.joinedHeaders ?? "") + response.crlf)!
+    self.init(statusLine + (response.joinedHeaders ?? "") + response.crlf)
   }
 
   init?(responseBody: BytesRepresentable) {
